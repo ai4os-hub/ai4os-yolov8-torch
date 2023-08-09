@@ -1,0 +1,2 @@
+[deepaas.v2.model]
+yolov8_api = yolov8_api.api

@@ -86,28 +86,13 @@ def predict(model_name, input_file, accept='application/json', **options):
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
-def train(model_name, input_file, accept='application/json', **options):
+def train(**options):
     """Performs model training from given input data and parameters.
 
     Arguments:
-        model_name -- Model name from registry to use for training values.
-        input_file -- File with data and labels to use for training.
-        accept -- Response parser type, default is json.
-        **options -- Arbitrary keyword arguments from TrainArgsSchema.
-
-    Raises:
-        HTTPException: Unexpected errors aim to return 50X
 
     Returns:
         Parsed history/summary of the training process.
     """
-    try:  # Call your AI model train() method
-        logger.info("Using model %s for training", model_name)
-        logger.debug("Loading data from input_file: %s", input_file)
-        logger.debug("Training with options: %s", options)
-        result = aimodel.training(model_name, input_file, **options)
-        logger.debug("Training result: %s", result)
-        logger.info("Returning content_type for: %s", accept)
-        return responses.content_types[accept](result, **options)
-    except Exception as err:
-        raise HTTPException(reason=err) from err
+    
+    return options

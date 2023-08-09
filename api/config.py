@@ -19,10 +19,6 @@ MODEL_NAME = os.getenv("MODEL_NAME", default="yolov8_api")
 # Get AI model metadata
 MODEL_METADATA = metadata.metadata(MODEL_NAME)  # .json
 
-# Fix metadata for emails from pyproject parsing
-_EMAILS = MODEL_METADATA["Author-email"].split(", ")
-_EMAILS = map(lambda s: s[:-1].split(" <"), _EMAILS)
-MODEL_METADATA["Author-emails"] = dict(_EMAILS)
 
 # Fix metadata for authors from pyproject parsing
 _AUTHORS = MODEL_METADATA.get("Author", "").split(", ")
