@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yolov8_api"
+description = "add api to yolov8"
+# !! Authors and Authors_emails are taken from setup.py. Otherwise wrongly rendered !!
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+classifiers = [
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: AI/ML/DL Researchers",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+]
+dynamic = ["version", "dependencies"]
+
+[project.urls]
+"Homepage" = "https://git.scc.kit.edu/m-team/ai/yolov8_api"
+"Bug Tracker" = "https://git.scc.kit.edu/m-team/ai/yolov8_api/issues"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+env = ["DATA_PATH=tests/datasets", "MODELS_PATH=tests/models"]
+
+[tool.setuptools]
+packages = ["yolov8_api", "yolov8_api.api"]
+
+[tool.setuptools.package-dir]
+"yolov8_api.api" = "api"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+version = { file = "VERSION" }
+
+[project.entry-points."deepaas.v2.model"]
+yolov8_api = "yolov8_api.api"

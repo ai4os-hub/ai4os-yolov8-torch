@@ -1,0 +1,10 @@
+# DEEPaaS framework requirements
+jupyterlab
+tox
+black
+isort
+Sphinx
+
+# Optinal tools
+# dvc
+# dvc-webdav

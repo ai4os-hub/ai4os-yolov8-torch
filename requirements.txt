@@ -1,0 +1,11 @@
+# DEEPaaS framework requirements
+deepaas~=2.1.0
+webargs~=5.5.2
+flaat~=1.1.1
+
+# external requirements
+fPDF2~=2.7.5
+
+# Optional tools
+# mlflow~=2.13.0
+

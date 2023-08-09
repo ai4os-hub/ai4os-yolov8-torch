@@ -1,92 +1,141 @@
-# Yolov8 Api
+# yolov8_api
 
+[![Build Status](https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code/DEEP-OC-org/yolov8_api/master)](https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/yolov8_api/job/master)
 
+add api to yolov8
 
-## Getting started
+To launch it, first install the package then run [deepaas](https://github.com/indigo-dc/DEEPaaS):
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.scc.kit.edu/m-team/ai/yolov8_api.git
-git branch -M main
-git push -uf origin main
+```bash
+git clone https://git.scc.kit.edu/m-team/ai/yolov8_api
+cd yolov8_api
+pip install -e .
+deepaas-run --listen-ip 0.0.0.0
 ```
 
-## Integrate with your tools
+The associated Docker container for this module can be found in https://git.scc.kit.edu/m-team/ai/DEEP-OC-yolov8_api.
 
-- [ ] [Set up project integrations](https://git.scc.kit.edu/m-team/ai/yolov8_api/-/settings/integrations)
+## Project structure
 
-## Collaborate with your team
+```
+├── Jenkinsfile             <- Describes basic Jenkins CI/CD pipeline
+├── LICENSE                 <- License file
+├── README.md               <- The top-level README for developers using this project.
+├── VERSION                 <- Version file indicating the version of the model
+│
+├── yolov8_api
+│   ├── README.md           <- Instructions on how to integrate your model with DEEPaaS.
+│   ├── __init__.py         <- Makes <your-model-source> a Python module
+│   ├── ...                 <- Other source code files
+│   └── config.py           <- Module to define CONSTANTS used across the AI-model python package
+│
+├── api                     <- API subpackage for the integration with DEEP API
+│   ├── __init__.py         <- Makes api a Python module, includes API interface methods
+│   ├── config.py           <- API module for loading configuration from environment
+│   ├── responses.py        <- API module with parsers for method responses
+│   ├── schemas.py          <- API module with definition of method arguments
+│   └── utils.py            <- API module with utility functions
+│
+├── data                    <- Data subpackage for the integration with DEEP API
+│   ├── external            <- Data from third party sources.
+│   ├── processed           <- The final, canonical data sets for modeling.
+│   └── raw                 <- The original, immutable data dump.
+│
+├── docs                   <- A default Sphinx project; see sphinx-doc.org for details
+│
+├── models                 <- Folder to store your models
+│
+├── notebooks              <- Jupyter notebooks. Naming convention is a number (for ordering),
+│                             the creator's initials (if many user development),
+│                             and a short `_` delimited description, e.g.
+│                             `1.0-jqp-initial_data_exploration.ipynb`.
+│
+├── references             <- Data dictionaries, manuals, and all other explanatory materials.
+│
+├── reports                <- Generated analysis as HTML, PDF, LaTeX, etc.
+│   └── figures            <- Generated graphics and figures to be used in reporting
+│
+├── requirements-dev.txt    <- Requirements file to install development tools
+├── requirements-test.txt   <- Requirements file to install testing tools
+├── requirements.txt        <- Requirements file to run the API and models
+│
+├── pyproject.toml         <- Makes project pip installable (pip install -e .)
+│
+├── tests                   <- Scripts to perform code testing
+│   ├── configurations      <- Folder to store the configuration files for DEEPaaS server
+│   ├── conftest.py         <- Pytest configuration file (Not to be modified in principle)
+│   ├── data                <- Folder to store the data for testing
+│   ├── models              <- Folder to store the models for testing
+│   ├── test_deepaas.py     <- Test file for DEEPaaS API server requirements (Start, etc.)
+│   ├── test_metadata       <- Tests folder for model metadata requirements
+│   ├── test_predictions    <- Tests folder for model predictions requirements
+│   └── test_training       <- Tests folder for model training requirements
+│
+└── tox.ini                <- tox file with settings for running tox; see tox.testrun.org
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Integrating your model with DEEPaaS
 
-## Test and Deploy
+After executing the cookiecutter template, you will have a folder structure
+ready to be integrated with DEEPaaS. The you can decide between starting the
+project from scratch or integrating your existing model with DEEPaaS.
 
-Use the built-in continuous integration in GitLab.
+The folder `yolov8_api` is designed to contain the source
+code of your model. You can add your model files there or replace it by another
+repository by using [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+The only requirement is that the folder `yolov8_api` contains
+an `__init__.py` file conserving the already defined methods. You can edit the
+template functions already defined inside or import your own functions from
+another file. See the [README.md](./yolov8_api/README.md)
+in the `yolov8_api` folder for more information.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Those methods, are used by the subpackage `api` to define the API interface.
+See the project structure section for more information about the `api` folder.
+You are allowed to customize your model API and CLI arguments and responses by
+editing `api.schemas` and`api.responses` modules. See documentation inside those
+files for more information.
 
-***
+## Documentation
 
-# Editing this README
+TODO: Add instructions on how to build documentation
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## Testing
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Testing process is automated by tox library. You can check the environments
+configured to be tested by running `tox --listenvs`. If you are missing one
+of the python environments configured to be tested (e.g. py310, py39) and
+you are using `conda` for managing your virtual environments, consider using
+`tox-conda` to automatically manage all python installation on your testing
+virtual environment.
 
-## Name
-Choose a self-explaining name for your project.
+Tests are implemented following [pytest](https://docs.pytest.org) framework.
+Fixtures and parametrization are placed inside `conftest.py` files meanwhile
+assertion tests are located on `test_*.py` files. As developer, you can edit
+any of the existing files or add new ones as needed. However, the project is
+designed so you only have to edit the files inside:
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+    - tests/data: To add your testing data (small datasets, etc.).
+    - tests/models: To add your testing models (small models, etc.).
+    - tests/test_metadata: To fix and test your metadata requirements.
+    - tests/test_predictions: To fix and test your predictions requirements.
+    - tests/test_training: To fix and test your training requirements.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+The folder `tests/data` should contain minimalistic but representative
+datasets to be used for testing. In a similar way, `tests/models` should
+contain simple models for testing that can fit on your code repository. This
+is important to avoid large files on your repository and to speed up the
+testing process.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Running the tests with tox:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```bash
+$ pip install -r requirements-dev.txt
+$ tox
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Running the tests with pytest:
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```bash
+$ pip install -r requirements-test.txt
+$ python -m pytest --numprocesses=auto --dist=loadscope tests
+```
