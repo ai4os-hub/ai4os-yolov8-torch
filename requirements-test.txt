@@ -1,0 +1,7 @@
+pytest
+pytest-xdist
+pytest-cov
+pytest-mock
+pytest-env
+flake8
+bandit
