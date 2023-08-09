@@ -1,3 +1,4 @@
+.gitmodules
 Jenkinsfile
 LICENSE
 README.md
@@ -13,6 +14,8 @@ api/config.py
 api/responses.py
 api/schemas.py
 api/utils.py
+api/__pycache__/__init__.cpython-39.pyc
+api/__pycache__/config.cpython-39.pyc
 data/external/.gitignore
 data/processed/.gitignore
 data/raw/.gitignore
@@ -51,3 +54,5 @@ yolov8_api.egg-info/dependency_links.txt
 yolov8_api.egg-info/entry_points.txt
 yolov8_api.egg-info/requires.txt
 yolov8_api.egg-info/top_level.txt
+yolov8_api/__pycache__/__init__.cpython-39.pyc
+yolov8_api/__pycache__/config.cpython-39.pyc

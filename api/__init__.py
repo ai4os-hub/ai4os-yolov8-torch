@@ -12,7 +12,7 @@ from aiohttp.web import HTTPException
 
 import yolov8_api as aimodel
 
-from . import config, responses, schemas, utils
+from  yolov8_api.api import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -86,7 +86,7 @@ def predict(model_name, input_file, accept='application/json', **options):
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
-def train(**options):
+def train(**args):
     """Performs model training from given input data and parameters.
 
     Arguments:
@@ -94,5 +94,8 @@ def train(**options):
     Returns:
         Parsed history/summary of the training process.
     """
-    
-    return options
+   
+    return args
+
+if __name__=='__main__':
+    train(**args)
