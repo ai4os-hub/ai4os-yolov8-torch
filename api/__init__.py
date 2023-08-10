@@ -10,8 +10,11 @@ import os
 import logging
 import yaml
 import datetime
-from ultralytics.engine import trainer
+ 
 #from yolov8_api.yolov8_api import trainer
+from ultralytics import YOLO
+from yolov8_api.yolov8_api import trainer
+
 
 
 from aiohttp.web import HTTPException
@@ -93,44 +96,46 @@ def predict(model_name, input_file, accept='application/json', **options):
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
-        """Performs model training from given input data and parameters.
+    """Performs model training from given input data and parameters.
 
         Arguments:
 
         Returns:
             Parsed history/summary of the training process.
-        """
-    # try:  # Call your AI model train() method #    
-        #   logger.debug("Train with options: %s", args)
-        #  result = aimodel.train(**args)
-        # logger.debug("Train result: %s", result)
-            #return result
-        #except Exception as err:
-            #raise HTTPException(reason=err) from err
-        #try: 
+    """
+    try:  # Call your AI model train() method #    
+    
         
         logger.info("Training model...")  
         logger.debug("Train with options: %s", args)
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-       # args['save_dir'] = os.path.join(config.MODELS_PATH, timestamp)
+      #  args['save_dir'] = os.path.join(config.MODELS_PATH, timestamp)
         args['mode']= 'train'
         args['name']=   None
        # os.makedirs(args['save_dir'], exist_ok=True)
-        filename = 'config.yaml'
+        #filename = 'config.yaml'
         #cfg_path = os.path.join(args['save_dir'], filename)
         # Write the args dictionary to the config file
-       # with open(cfg_path, 'w') as yaml_file:
+        #with open(cfg_path, 'w') as yaml_file:
         #    yaml.dump(args, yaml_file, default_flow_style=False)
+       # args=utils.DotDict(args)    
+        #3CFG=utils.load_config(cfg_path)
+       # trainer.train(cfg=args)   
+
+  
+        # Define the command and arguments as a list
+        args['name'] = os.path.join('models', timestamp)#Fixme:should be from root dir
+        args['project'] = 'yolov8_api' #FIXME:should be root dir
+        model = YOLO(args['model'])
+        os.environ['WANDB_DISABLED'] = 'true'
+        results = model.train(**args)
+           
+
         
-        #CFG=utils.load_config(cfg_path)
 
-        train_model = trainer.BaseTrainer(overrides=args)
-        train_model.train()
-        return {f"model was saved in the "}
-
-   # except Exception as err:
-      #  raise HTTPException(reason=err) from err        
+    except Exception as err:
+        raise HTTPException(reason=err) from err        
 
 
 if __name__=='__main__':
@@ -142,9 +147,9 @@ if __name__=='__main__':
             print(key, value)
             if value.missing:
                args[key]=value.missing
-    args['model'] = 'yolov8s.yaml'
+    args['model'] = 'yolov8s.pt'
     args['data']='/srv/yolov8_api/data/raw/PlantDoc.v1-resize-416x416.yolov8/data.yaml'
-    args['epochs']=30
+    args['epochs']=5
     args['resume']=False#FIXME
-    print(type(args))
+
     train(**args)

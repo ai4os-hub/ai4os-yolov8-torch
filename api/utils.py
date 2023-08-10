@@ -122,3 +122,11 @@ def load_config(default_cfg_path):
     
     except Exception as err:
         raise Exception(f"Error loading default config: {err}")
+class DotDict:
+    def __init__(self, dictionary):
+        for key, value in dictionary.items():
+            if isinstance(value, dict):
+                setattr(self, key, DotDict(value))
+            else:
+                setattr(self, key, value)
+    

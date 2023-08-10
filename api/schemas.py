@@ -140,7 +140,7 @@ class TrainArgsSchema(marshmallow.Schema):
     )
     device = fields.Str(
         description='Device to run on, e.g., "cuda:0" or "cpu"',
-        missing="cpu"
+        missing= "cuda:0"
     )
     workers = fields.Int(
         description='Number of worker threads for data loading (per RANK if DDP)',
@@ -376,11 +376,7 @@ class TrainArgsSchema(marshmallow.Schema):
         required=False,
         enum=[True,False]
     )
-    project = fields.Str(
-        description='Project name',
-        required=False,
-        missing='my_project'
-    )
+   
     name = fields.Str(
         description='Experiment name, results saved to \'project/name\' directory',
         required=False,
