@@ -23,7 +23,7 @@ MODEL_METADATA = metadata.metadata(MODEL_NAME)  # .json
 # Fix metadata for authors from pyproject parsing
 _AUTHORS = MODEL_METADATA.get("Author", "").split(", ")
 _AUTHORS = [] if _AUTHORS == [""] else _AUTHORS
-_AUTHORS += MODEL_METADATA["Author-emails"].keys()
+#_AUTHORS += MODEL_METADATA["Author-emails"].keys()
 MODEL_METADATA["Authors"] = sorted(_AUTHORS)
 
 # DEEPaaS can load more than one installed models. Therefore, in order to

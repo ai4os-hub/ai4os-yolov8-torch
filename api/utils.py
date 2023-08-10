@@ -10,7 +10,7 @@ import logging
 import subprocess
 import sys
 from subprocess import TimeoutExpired
-
+import  ultralytics
 from . import config
 
 logger = logging.getLogger(__name__)
@@ -102,3 +102,23 @@ def train_arguments(schema):
         sys.modules[func.__module__].get_train_args = get_args
         return func  # Decorator that returns same function
     return inject_function_schema
+
+import yaml
+from types import SimpleNamespace
+
+def load_config(default_cfg_path):
+    try:
+        with open(default_cfg_path, 'r') as yaml_file:
+            default_cfg_dict = yaml.load(yaml_file, Loader=yaml.Loader)
+            
+        for k, v in default_cfg_dict.items():
+            if isinstance(v, str) and v.lower() == 'none':
+                default_cfg_dict[k] = None
+                
+        default_cfg_keys = default_cfg_dict.keys()
+        default_cfg =  ultralytics.utils.IterableSimpleNamespace(**default_cfg_dict)
+        
+        return default_cfg, default_cfg_keys
+    
+    except Exception as err:
+        raise Exception(f"Error loading default config: {err}")

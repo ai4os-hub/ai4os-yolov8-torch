@@ -9,6 +9,8 @@ requirements-test.txt
 requirements.txt
 setup.py
 tox.ini
+.tox/py310/.tox-info.json
+.tox/py38/.tox-info.json
 api/__init__.py
 api/config.py
 api/responses.py
@@ -33,6 +35,7 @@ reports/.gitkeep
 reports/figures/.gitkeep
 tests/conftest.py
 tests/test_deepaas.py
+tests/__pycache__/conftest.cpython-39-pytest-7.4.0.pyc
 tests/configurations/deepaas_1.conf
 tests/configurations/deepaas_2.conf
 tests/data/external/.gitignore

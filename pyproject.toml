@@ -17,6 +17,10 @@ classifiers = [
 ]
 dynamic = ["version", "dependencies"]
 
+# Add author and author email here
+authors = ["Fahimeh"]
+authors-email = ["khadijeh.alibabaei@kit.edu"]
+
 [project.urls]
 "Homepage" = "https://git.scc.kit.edu/m-team/ai/yolov8_api"
 "Bug Tracker" = "https://git.scc.kit.edu/m-team/ai/yolov8_api/issues"
