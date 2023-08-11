@@ -139,12 +139,8 @@ class TrainArgsSchema(marshmallow.Schema):
 
     model = fields.Str(#FIXME
         description=' name of the model to train\n'
-                    '"yolov8nX.yaml" bulid a model from scratch\n'
-                    '"yolov8nX.pt" load a pretrained model (recommended for training)',
-                   # '"yolov8nX-cls.yaml" bulid a object detection model from scratch\n'
-                    #'"yolov8nX-cls.pt" load a pretrained object detection model (recommended for training)\n'
-                    #'"yolov8nX-seg.yaml" bulid a object segmentation from scratch\n'
-                    #'"yolov8nX-seg.pt" load a pretrained segmentation model (recommended for training)\n',
+                    '"yolov8X.yaml" bulid a model from scratch\n'
+                    '"yolov8X.pt" load a pretrained model (recommended for training)',
         required=True,
         enum= ["yolov8n.yaml", "yolov8n.pt", "yolov8s.yaml", "yolov8s.pt","yolov8m.yaml", "yolov8m.pt",
         "yolov8l.yaml", "yolov8l.pt", "yolov8x.yaml", "yolov8x.pt"]

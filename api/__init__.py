@@ -97,14 +97,12 @@ def train(**args):
         Returns:
             Parsed history/summary of the training process.
     """
-    try:  # Call your AI model train() method #    
-    
-        
+    try:  
         logger.info("Training model...")  
         logger.debug("Train with options: %s", args)
         #modified model name for seqmentation and classification tasks
         args['model']= utils.modify_model_name(args['model'], args['task_type'])
-
+        args['data']=os.path.join(config.DATA_PATH, 'raw',  args['data'])
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         
         #TODO: should  the project name
@@ -115,6 +113,7 @@ def train(**args):
         os.environ['WANDB_DISABLED'] = str(args['disable_wandb'])
         args.pop('disable_wandb', None)
         args.pop('task_type', None)
+
         model.train(**args)
         return {f'The model was trained successfully and was saved to: {os.path.join(args["project"], args["name"])}'}
 

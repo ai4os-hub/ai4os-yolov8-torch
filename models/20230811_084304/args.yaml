@@ -1,8 +1,8 @@
 task: detect
 mode: train
-model: yolov8s.pt
+model: yolov8n.pt
 data: /srv/yolov8_api/data/raw/PlantDoc.v1-resize-416x416.yolov8/data.yaml
-epochs: 30
+epochs: 100
 patience: 10
 batch: 2
 imgsz: 640
@@ -12,11 +12,11 @@ cache: false
 device: cuda:0
 workers: 4
 project: yolov8_api
-name: models/20230810_124621
+name: models/20230811_084304
 exist_ok: false
-pretrained: true
+pretrained: 'True'
 optimizer: auto
-verbose: true
+verbose: false
 seed: 42
 deterministic: true
 single_cls: false
@@ -24,10 +24,10 @@ rect: false
 cos_lr: false
 close_mosaic: 10
 resume: false
-amp: true
+amp: false
 fraction: 1.0
 profile: false
-overlap_mask: true
+overlap_mask: false
 mask_ratio: 4
 dropout: 0.0
 val: true
@@ -93,4 +93,4 @@ mixup: 0.0
 copy_paste: 0.0
 cfg: null
 tracker: botsort.yaml
-save_dir: yolov8_api/models/20230810_124621
+save_dir: yolov8_api/models/20230811_084304
