@@ -9,9 +9,10 @@ need to modify them for your needs.
 import logging
 import subprocess
 import sys
+import os
 from subprocess import TimeoutExpired
 import  ultralytics
-from . import config
+from yolov8_api.api import config
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -76,6 +77,28 @@ def copy_remote(frompath, topath, timeout=600):
             process.kill()
             outs, errs = process.communicate()
     return outs, errs
+ 
+def modify_model_name(model_name, task_type):
+    """
+    Modify the model name based on the task type.
+
+    Args:
+        model_name (str): The original model name (e.g., "yolov8n.yaml").
+        task_type (str): The task type ("det", "seg", "cls").
+
+    Returns:
+        str: The modified model name.
+    """
+    logger.info(f"Original model name: {model_name}")
+    logger.info(f"Task type: {task_type}")
+
+    if task_type in ["seg", "cls"]:
+        base_name, extension = os.path.splitext(model_name)
+        modified_model_name = f"{base_name}_{task_type}{extension}"
+    else:
+        modified_model_name = model_name
+    logger.info(f"Modified model name: {modified_model_name}")
+    return modified_model_name
 
 
 def generate_arguments(schema):

@@ -37,7 +37,12 @@ class Dataset(fields.String):
 # EXAMPLE of Prediction Args description
 # = HAVE TO MODIFY FOR YOUR NEEDS =
 
-class PredictionArgsSchema(marshmallow.Schema):
+class PredArgsSchema(marshmallow.Schema):
+    class Meta:  # Keep order of the parameters as they are defined.
+        # pylint: disable=missing-class-docstring
+        # pylint: disable=too-few-public-methods
+        ordered = True
+
     input= fields.Field(
         required=True,
         type="file",
@@ -120,32 +125,35 @@ class TrainArgsSchema(marshmallow.Schema):
     class Meta:  # Keep order of the parameters as they are defined.
         # pylint: disable=missing-class-docstring
         # pylint: disable=too-few-public-methods
-        ordered = True
-        
-    task = fields.Str(
-        description='one of the followings: "detect", "classify",  or "segment "',
-        required=True,
-        missing= "detect",
-        enum= ["detect", "classify",  "segment "]
+            ordered = True
+    task_type = fields.Str(
+        description='The type of task for the model:\n'
+                    '"det" for object detection model\n'
+                    '"seg" for object segmentation model\n'
+                    '"cls" for object classification model\n'
+                    'The default is "det"',
+        required=False,
+        missing='det',
+        enum=["det", "seg", "cls"],
     )
+
     model = fields.Str(#FIXME
         description=' name of the model to train\n'
-                    '"yolov8n.yaml" bulid a object detection model from scratch\n'
-                    '"yolov8n.pt" load a pretrained object detection model (recommended for training)\n'
-                    '"yolov8n-cls.yaml" bulid a object detection model from scratch\n'
-                    '"yolov8n-cls.pt" load a pretrained object detection model (recommended for training)\n'
-                    '"yolov8n-seg.yaml" bulid a object segmentation from scratch\n'
-                    '"yolov8n.pt-seg" load a pretrained segmentation model (recommended for training)\n',
-
-     
+                    '"yolov8nX.yaml" bulid a model from scratch\n'
+                    '"yolov8nX.pt" load a pretrained model (recommended for training)',
+                   # '"yolov8nX-cls.yaml" bulid a object detection model from scratch\n'
+                    #'"yolov8nX-cls.pt" load a pretrained object detection model (recommended for training)\n'
+                    #'"yolov8nX-seg.yaml" bulid a object segmentation from scratch\n'
+                    #'"yolov8nX-seg.pt" load a pretrained segmentation model (recommended for training)\n',
         required=True,
-        missing= "yolov8n.yaml",
-        enum= ["yolov8n.yaml", "yolov8n.pt", "yolov8n-cls.yaml", "yolov8n-cls.pt", "yolov8n-seg.yaml", "yolov8n-seg.pt"]
+        enum= ["yolov8n.yaml", "yolov8n.pt", "yolov8s.yaml", "yolov8s.pt","yolov8m.yaml", "yolov8m.pt",
+        "yolov8l.yaml", "yolov8l.pt", "yolov8x.yaml", "yolov8x.pt"]
+        
      )
 
     data = fields.Str(
-        description='Path to the data file, e.g., "coco128.yaml"',
-        required=False,
+        description='Path to the config data file, e.g., "coco128.yaml"',
+        required=True,
         allow_none=True
     )
     epochs = fields.Int(
@@ -193,12 +201,18 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=4
     )
     
-
+    resume = fields.Bool( 
+        description='Resume training from the last checkpoint',
+        required= False,
+        missing= False,
+        enum=[True,False],
+    )
     pretrained = fields.Str(
         description='Whether to use a pretrained model (bool) or a model to load weights from (str)',   
         missing=True,
         required=False
     )
+    
 
     optimizer = fields.Str(
         description='Optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]',
@@ -236,32 +250,7 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=False,
         enum=[True,False]
     )
-    close_mosaic = fields.Int(
-        description='Disable mosaic augmentation for final epochs',
-        missing=10
-    )
-    resume = fields.Bool( 
-        required= False,
-        missing= False,
-        enum=[True,False],
-    )
-    amp = fields.Bool(
-        description='Automatic Mixed Precision (AMP) training, choices=[True, False], True runs AMP check',
-        required=False,
-        missing=False,
-        enum=[True,False]
-    )
-    fraction = fields.Float(
-        description='Dataset fraction to train on (default is 1.0, all images in train set)',
-        required=False,
-        missing=1.0
-    )
-    profile = fields.Bool(
-        description='Profile ONNX and TensorRT speeds during training for loggers',
-        required=False,
-        missing=False,
-        enum=[True,False]
-    )
+
     overlap_mask = fields.Bool(
         description='Masks should overlap during training (segment train only)',
         required=False,
@@ -313,6 +302,28 @@ class TrainArgsSchema(marshmallow.Schema):
         description='Warmup initial bias lr',
         required=False,
         missing=1.0
+    )
+    close_mosaic = fields.Int(
+        description='Disable mosaic augmentation for final epochs',
+        missing=10
+    )
+
+    amp = fields.Bool(
+        description='Automatic Mixed Precision (AMP) training, choices=[True, False], True runs AMP check',
+        required=False,
+        missing=False,
+        enum=[True,False]
+    )
+    fraction = fields.Float(
+        description='Dataset fraction to train on (default is 1.0, all images in train set)',
+        required=False,
+        missing=1.0
+    )
+    profile = fields.Bool(
+        description='Profile ONNX and TensorRT speeds during training for loggers',
+        required=False,
+        missing=False,
+        enum=[True,False]
     )
     box = fields.Float(
         description='Box loss gain',

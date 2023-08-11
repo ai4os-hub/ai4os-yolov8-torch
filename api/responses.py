@@ -49,7 +49,7 @@ def json_response(result, **options):
 
 # EXAMPLE of pdf_response parser function
 # = HAVE TO MODIFY FOR YOUR NEEDS =
-def jpg_response(result, **options):
+def pdf_response(result, **options):
     """Converts the prediction or training results into pdf return format.
 
     Arguments:
@@ -90,7 +90,6 @@ def jpg_response(result, **options):
         raise RuntimeError("Unsupported response type") from err
 
 
-content_types = {
-    "application/json": json_response,
-    "'image/png'": pdf_response,
-}
+content_types = ["application/json", "application/pdf" ]
+ 
+ 

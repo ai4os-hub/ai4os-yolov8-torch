@@ -11,12 +11,8 @@ import logging
 import yaml
 import datetime
  
-#from yolov8_api.yolov8_api import trainer
+
 from ultralytics import YOLO
-from yolov8_api.yolov8_api import trainer
-
-
-
 from aiohttp.web import HTTPException
 
 import yolov8_api as aimodel
@@ -106,16 +102,19 @@ def train(**args):
         
         logger.info("Training model...")  
         logger.debug("Train with options: %s", args)
+        #modified model name for seqmentation and classification tasks
+        args['model']= utils.modify_model_name(args['model'], args['task_type'])
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         
-        #should  the project name
+        #TODO: should  the project name
         args['project'] = config.MODEL_NAME
-        #point to the model directory without root directory
-        args['name'] = os.path.join('models', timestamp)#Fixme:should be from root dir
+        #TODO: point to the model directory without root directory
+        args['name'] = os.path.join('models', timestamp)
         model = YOLO(args['model'])
         os.environ['WANDB_DISABLED'] = str(args['disable_wandb'])
         args.pop('disable_wandb', None)
+        args.pop('task_type', None)
         model.train(**args)
         return {f'The model was trained successfully and was saved to: {os.path.join(args["project"], args["name"])}'}
 
