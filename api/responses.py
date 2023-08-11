@@ -5,13 +5,16 @@ method into the desired format.
 The module shows simple but efficient example functions. However, you may
 need to modify them for your needs.
 """
-import io
-import logging
 
+import logging
+from PIL import Image
 import numpy as np
 from fpdf import FPDF
-
+import cv2
+from io import BytesIO
+from reportlab.pdfgen import canvas
 from . import config
+import tempfile
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -33,6 +36,7 @@ def json_response(result, **options):
     Returns:
         Converted result into json dictionary format.
     """
+    result= result.tojson()  #this method converts the result into json
     logger.debug("Response result type: %d", type(result))
     logger.debug("Response result: %d", result)
     logger.debug("Response options: %d", options)
@@ -49,6 +53,8 @@ def json_response(result, **options):
 
 # EXAMPLE of pdf_response parser function
 # = HAVE TO MODIFY FOR YOUR NEEDS =
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 def pdf_response(result, **options):
     """Converts the prediction or training results into pdf return format.
 
@@ -66,30 +72,59 @@ def pdf_response(result, **options):
     logger.debug("Response result type: %d", type(result))
     logger.debug("Response result: %d", result)
     logger.debug("Response options: %d", options)
+    
     try:
         # 1. create BytesIO object
-        buffer = io.BytesIO()
-        buffer.name = "output.pdf"
-        # 2. write the output of the method in the buffer
-        #    For the proper PDF document, you may use:
-        #    * matplotlib for images
-        #    * fPDF2 for text documents (pip3 install fPDF2)
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("helvetica", size=12)
-        # in this EXAMPLE we also add input parameters
-        print_out = {"input": str(options), "predictions": str(result)}
-        pdf.multi_cell(w=0, txt=str(print_out).replace(",", ",\n"))
-        pdf_output = pdf.output(dest="S")
-        buffer.write(pdf_output)
-        # 3. rewind buffer to the beginning
+        result=result.plot()
+
+        fig, ax = plt.subplots()
+
+        # Plot the NumPy array as an image
+        image = ax.imshow(result, cmap =None)
+        ax.axis('off')
+        # Create a PDF file
+        pdf_filename = 'numpy_array_image.pdf'
+        with PdfPages(pdf_filename) as pdf:
+            pdf.savefig(fig)
+            plt.close()
+        buffer = BytesIO()
+        fig.savefig(buffer, format='pdf')
         buffer.seek(0)
-        return buffer
+        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmpfile:
+                tmpfile.write(buffer.read())
+                tmpfile.flush()
+                message = open( tmpfile.name , 'rb')
+                return message
+      
     except Exception as err:  # TODO: Fix to specific exception
         logger.warning("Error converting result to pdf: %s", err)
         raise RuntimeError("Unsupported response type") from err
 
+def png_response(result, **options):
+    result= result.plot()
+    logger.debug("Response result type: %d", type(result))
+    logger.debug("Response result: %d", result)
+    logger.debug("Response options: %d", options)
+    try:
+        success, buffer = cv2.imencode(".png", result)
+        if not success:
+            return "Error encoding image", 500
 
-content_types = ["application/json", "application/pdf" ]
+         # Create a BytesIO object and write the buffer into it
+        image_buffer = BytesIO(buffer)
+        
+        return image_buffer
+    except Exception as err:  # TODO: Fix to specific exception
+        logger.warning("Error converting result to png: %s", err)
+        raise RuntimeError("Unsupported response type") from err
+    
+
+response_parsers = {
+    'application/json': json_response,
+    'application/pdf': pdf_response,
+    'image/png': png_response
+}
+content_types = list(response_parsers )
+
  
  

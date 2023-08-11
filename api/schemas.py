@@ -47,7 +47,12 @@ class PredArgsSchema(marshmallow.Schema):
         required=True,
         type="file",
         location="form",
-        description= 'Input an image.')    
+        description= 'Input an image.') 
+
+    model= fields.Str(
+        description='The timestamp that you saved the trained model.',
+        missing=None,
+    )
 
     show = fields.Boolean(
         description='Show results if possible',

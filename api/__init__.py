@@ -10,12 +10,14 @@ import os
 import logging
 import yaml
 import datetime
+import tempfile
+import shutil
  
 
 from ultralytics import YOLO
 from aiohttp.web import HTTPException
 
-import yolov8_api as aimodel
+import  yolov8_api as aimodel
 
 from  yolov8_api.api import config, responses, schemas, utils
 
@@ -63,29 +65,36 @@ def warm():
 
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
-def predict( **options):
-    """Performs model prediction from given input data and parameters.
+def predict( **args):
+        """Performs model prediction from given input data and parameters.
 
-    Arguments:
-        model_name -- Model name from registry to use for prediction values.
-        input_file -- File with data to perform predictions from model.
-        accept -- Response parser type, default is json.
-        **options -- Arbitrary keyword arguments from PredArgsSchema.
+        Arguments:
+            model_name -- Model name from registry to use for prediction values.
+            input_file -- File with data to perform predictions from model.
+            accept -- Response parser type, default is json.
+            **args -- Arbitrary keyword arguments from PredArgsSchema.
 
-    Raises:
-        HTTPException: Unexpected errors aim to return 50X
+        Raises:
+            HTTPException: Unexpected errors aim to return 50X
 
-    Returns:
-        The predicted model values (dict or str) or files.
-    """
-    try:  # Call your AI model predict() method
-        logger.debug("Predict with options: %s", options)
-        result = aimodel.predict(input_file.filename, model_name, **options)
-        logger.debug("Predict result: %s", result)
-        logger.info("Returning content_type for: %s", accept)
-        return responses.content_types[accept](result, **options)
-    except Exception as err:
-        raise HTTPException(reason=err) from err
+        Returns:
+            The predicted model values (dict or str) or files.
+        """
+   # try:  # Call your AI model predict() method
+        logger.debug("Predict with args: %s", args)
+        if args['model'] is not None:
+            args['model'] =  os.path.join(config.MODELS_PATH, args['model'],'weights/best.pt')
+            
+        with tempfile.TemporaryDirectory() as tmpdir: 
+            for f in [args['input']]:
+                shutil.copy(f.filename, tmpdir + '/' + f.original_filename )
+            args['input'] = [os.path.join(tmpdir, t) for t in os.listdir(tmpdir)]
+            result = aimodel.predict(**args)
+            logger.debug("Predict result: %s", result)
+            logger.info("Returning content_type for: %s", args['accept'])
+            return responses.response_parsers[args['accept']](result, **args)
+   # except Exception as err:
+    #    raise HTTPException(reason=err) from err
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
@@ -99,7 +108,7 @@ def train(**args):
     """
     try:  
         logger.info("Training model...")  
-        logger.debug("Train with options: %s", args)
+        logger.debug("Train with args: %s", args)
         #modified model name for seqmentation and classification tasks
         args['model']= utils.modify_model_name(args['model'], args['task_type'])
         args['data']=os.path.join(config.DATA_PATH, 'raw',  args['data'])
@@ -133,7 +142,22 @@ if __name__=='__main__':
                args[key]=value.missing
     args['model'] = 'yolov8s.pt'
     args['data']='/srv/yolov8_api/data/raw/PlantDoc.v1-resize-416x416.yolov8/data.yaml'
+    
     args['epochs']=5
     args['resume']=False#FIXME
 
     train(**args)
+    fields = schemas.PredArgsSchema().fields
+    from deepaas.model.v2.wrapper import UploadedFile
+    args={}
+    from  yolov8_api.api import  schemas
+    for key,  value in fields.items():
+            print(key, value)
+            if value.missing:
+               args[key]=value.missing
+
+    input ='/srv/yolov8_api/data/pexels-photo-2156311.jpeg' 
+    args['input']=UploadedFile('input', input, 'application/octet-stream', 'input')  
+    args['model']= None
+    args['accept']= 'image/jpeg'
+   # predict( **args)
