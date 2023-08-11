@@ -50,7 +50,8 @@ class PredArgsSchema(marshmallow.Schema):
         description= 'Input an image.') 
 
     model= fields.Str(
-        description='The timestamp that you saved the trained model.',
+        description='The timestamp that you saved your trained model. if not provided,'
+         'the pretraind object detection model will be loaded.',
         missing=None,
     )
 
