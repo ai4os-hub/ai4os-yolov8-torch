@@ -19,7 +19,7 @@ from aiohttp.web import HTTPException
 
 import  yolov8_api as aimodel
 
-from  yolov8_api.api import config, responses, schemas, utils
+from  . import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -66,7 +66,7 @@ def warm():
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
 def predict( **args):
-        """Performs model prediction from given input data and parameters.
+    """Performs model prediction from given input data and parameters.
 
         Arguments:
             model_name -- Model name from registry to use for prediction values.
@@ -79,22 +79,24 @@ def predict( **args):
 
         Returns:
             The predicted model values (dict or str) or files.
-        """
-   # try:  # Call your AI model predict() method
+    """
+    try:  # Call your AI model predict() method
         logger.debug("Predict with args: %s", args)
         if args['model'] is not None:
             args['model'] =  os.path.join(config.MODELS_PATH, args['model'],'weights/best.pt')
-            
+       
         with tempfile.TemporaryDirectory() as tmpdir: 
             for f in [args['input']]:
                 shutil.copy(f.filename, tmpdir + '/' + f.original_filename )
+           
             args['input'] = [os.path.join(tmpdir, t) for t in os.listdir(tmpdir)]
             result = aimodel.predict(**args)
             logger.debug("Predict result: %s", result)
             logger.info("Returning content_type for: %s", args['accept'])
             return responses.response_parsers[args['accept']](result, **args)
-   # except Exception as err:
-    #    raise HTTPException(reason=err) from err
+
+    except Exception as err:
+        raise HTTPException(reason=err) from err
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
