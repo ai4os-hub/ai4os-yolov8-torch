@@ -84,9 +84,6 @@ def pdf_response(result, **options):
         ax.axis('off')
         # Create a PDF file
         pdf_filename = 'numpy_array_image.pdf'
-        with PdfPages(pdf_filename) as pdf:
-            pdf.savefig(fig)
-            plt.close()
         buffer = BytesIO()
         fig.savefig(buffer, format='pdf')
         buffer.seek(0)

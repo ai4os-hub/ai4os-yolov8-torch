@@ -162,4 +162,3 @@ if __name__=='__main__':
     args['input']=UploadedFile('input', input, 'application/octet-stream', 'input')  
     args['model']= None
     args['accept']= 'image/jpeg'
-   # predict( **args)
