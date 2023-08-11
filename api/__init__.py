@@ -67,7 +67,7 @@ def warm():
 
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
-def predict(model_name, input_file, accept='application/json', **options):
+def predict( **options):
     """Performs model prediction from given input data and parameters.
 
     Arguments:
@@ -83,8 +83,6 @@ def predict(model_name, input_file, accept='application/json', **options):
         The predicted model values (dict or str) or files.
     """
     try:  # Call your AI model predict() method
-        logger.info("Using model %s for predictions", model_name)
-        logger.debug("Loading data from input_file: %s", input_file.filename)
         logger.debug("Predict with options: %s", options)
         result = aimodel.predict(input_file.filename, model_name, **options)
         logger.debug("Predict result: %s", result)
@@ -110,29 +108,17 @@ def train(**args):
         logger.debug("Train with options: %s", args)
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-      #  args['save_dir'] = os.path.join(config.MODELS_PATH, timestamp)
-        args['mode']= 'train'
-        args['name']=   None
-       # os.makedirs(args['save_dir'], exist_ok=True)
-        #filename = 'config.yaml'
-        #cfg_path = os.path.join(args['save_dir'], filename)
-        # Write the args dictionary to the config file
-        #with open(cfg_path, 'w') as yaml_file:
-        #    yaml.dump(args, yaml_file, default_flow_style=False)
-       # args=utils.DotDict(args)    
-        #3CFG=utils.load_config(cfg_path)
-       # trainer.train(cfg=args)   
-
-  
-        # Define the command and arguments as a list
-        args['name'] = os.path.join('models', timestamp)#Fixme:should be from root dir
-        args['project'] = 'yolov8_api' #FIXME:should be root dir
-        model = YOLO(args['model'])
-        os.environ['WANDB_DISABLED'] = 'true'
-        results = model.train(**args)
-           
-
         
+        #should  the project name
+        args['project'] = config.MODEL_NAME
+        #point to the model directory without root directory
+        args['name'] = os.path.join('models', timestamp)#Fixme:should be from root dir
+        model = YOLO(args['model'])
+        os.environ['WANDB_DISABLED'] = str(args['disable_wandb'])
+        args.pop('disable_wandb', None)
+        model.train(**args)
+        return {f'The model was trained successfully and was saved to: {os.path.join(args["project"], args["name"])}'}
+
 
     except Exception as err:
         raise HTTPException(reason=err) from err        

@@ -36,30 +36,72 @@ class Dataset(fields.String):
 
 # EXAMPLE of Prediction Args description
 # = HAVE TO MODIFY FOR YOUR NEEDS =
-class PredArgsSchema(marshmallow.Schema):
-    """Prediction arguments schema for api.predict function."""
 
-    class Meta:  # Keep order of the parameters as they are defined.
-        # pylint: disable=missing-class-docstring
-        # pylint: disable=too-few-public-methods
-        ordered = True
-
-    model_name = ModelName(
-        metadata={
-            "description": "String/Path identification for models.",
-        },
+class PredictionArgsSchema(marshmallow.Schema):
+    input= fields.Field(
         required=True,
-    )
+        type="file",
+        location="form",
+        description= 'Input an image.')    
 
-    input_file = fields.Field(
-        metadata={
-            "description": "File with np.arrays for predictions.",
-            "type": "file",
-            "location": "form",
-        },
-        required=True,
+    show = fields.Boolean(
+        description='Show results if possible',
+        missing=False
     )
-
+    save_txt = fields.Boolean(
+        description='Save results as .txt file',
+        missing=False
+    )
+    save_conf = fields.Boolean(
+        description='Save results with confidence scores',
+        missing=False
+    )
+    save_crop = fields.Boolean(
+        description='Save cropped images with results',
+        missing=False
+    )
+    show_labels = fields.Boolean(
+        description='Show object labels in plots',
+        missing=True
+    )
+    show_conf = fields.Boolean(
+        description='Show object confidence scores in plots',
+        missing=True
+    )
+    vid_stride = fields.Int(
+        description='Video frame-rate stride',
+        missing=1
+    )
+    line_width = fields.Int(
+        description='Line width of the bounding boxes',
+        required=False,
+        missing=None
+    )
+    visualize = fields.Boolean(
+        description='Visualize model features',
+        missing=False
+    )
+    augment = fields.Boolean(
+        description='Apply image augmentation to prediction sources',
+        missing=False
+    )
+    agnostic_nms = fields.Boolean(
+        description='Class-agnostic NMS',
+        missing=False
+    )
+    classes = fields.Field(
+        description='Filter results by class, i.e. class=0, or class=[0,2,3]',
+        required=False,
+        missing=None
+    )
+    retina_masks = fields.Boolean(
+        description='Use high-resolution segmentation masks',
+        missing=False
+    )
+    boxes = fields.Boolean(
+        description='Show boxes in segmentation predictions',
+        missing=True
+    )
     accept = fields.String(
         metadata={
             "description": "Return format for method response.",
@@ -82,19 +124,23 @@ class TrainArgsSchema(marshmallow.Schema):
         
     task = fields.Str(
         description='one of the followings: "detect", "classify",  or "segment "',
-        required=False,
+        required=True,
         missing= "detect",
         enum= ["detect", "classify",  "segment "]
     )
     model = fields.Str(#FIXME
-        description='Path to the model file, e.g., "yolov8n.yaml" for detection,'
-                   '"yolov8n-cls.yaml" for classification or "yolov8n-seg.yaml"'
-                   'for segmentation',
-                   # model = YOLO('yolov8n.yaml')  # build a new model from scratch
-      #  model = YOLO("yolov8n.pt")  # load a pretrained model (recommended for training)
-        required=False,
+        description=' name of the model to train\n'
+                    '"yolov8n.yaml" bulid a object detection model from scratch\n'
+                    '"yolov8n.pt" load a pretrained object detection model (recommended for training)\n'
+                    '"yolov8n-cls.yaml" bulid a object detection model from scratch\n'
+                    '"yolov8n-cls.pt" load a pretrained object detection model (recommended for training)\n'
+                    '"yolov8n-seg.yaml" bulid a object segmentation from scratch\n'
+                    '"yolov8n.pt-seg" load a pretrained segmentation model (recommended for training)\n',
+
+     
+        required=True,
         missing= "yolov8n.yaml",
-        enum= ["yolov8n.yaml", "yolov8n-cls.yaml",  "yolov8n-seg.yaml"]
+        enum= ["yolov8n.yaml", "yolov8n.pt", "yolov8n-cls.yaml", "yolov8n-cls.pt", "yolov8n-seg.yaml", "yolov8n-seg.pt"]
      )
 
     data = fields.Str(
@@ -377,8 +423,14 @@ class TrainArgsSchema(marshmallow.Schema):
         enum=[True,False]
     )
    
-    name = fields.Str(
-        description='Experiment name, results saved to \'project/name\' directory',
+    exist_ok = fields.Bool(
+        description='Whether to overwrite existing experiment',
+        missing=False,
         required=False,
-        allow_none=True
+        enum=[True,False]
+    )
+    disable_wandb = fields.Bool(
+        description='Whether disables wandb logging',
+        missing=True,
+        enum=[True,False]
     )

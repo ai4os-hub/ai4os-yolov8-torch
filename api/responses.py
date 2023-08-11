@@ -49,7 +49,7 @@ def json_response(result, **options):
 
 # EXAMPLE of pdf_response parser function
 # = HAVE TO MODIFY FOR YOUR NEEDS =
-def pdf_response(result, **options):
+def jpg_response(result, **options):
     """Converts the prediction or training results into pdf return format.
 
     Arguments:
@@ -92,5 +92,5 @@ def pdf_response(result, **options):
 
 content_types = {
     "application/json": json_response,
-    "application/pdf": pdf_response,
+    "'image/png'": pdf_response,
 }
