@@ -47,7 +47,8 @@ class PredArgsSchema(marshmallow.Schema):
         required=True,
         type="file",
         location="form",
-        description= 'Input an image.') 
+        description= 'Input an image. accepted formats: .bmo, .dng, .jpg, .jpeg, '
+                      '.mpo, .png, .tif, .tiff, .pfm, and.webp') 
 
     model= fields.Str(
         description='The timestamp that you saved your trained model. if not provided,'
@@ -55,7 +56,16 @@ class PredArgsSchema(marshmallow.Schema):
         missing=None,
     )
 
-    
+    conf= fields.Float(
+        description=	'object confidence threshold for detection',
+        missing=0.25
+    )
+
+    iou= fields.Float(
+        description=    'intersection over union (IoU) threshold for NMS',
+        missing=0.5
+    )
+
     show_labels = fields.Boolean(
         description='Show object labels in plots',
         missing=True
@@ -64,10 +74,10 @@ class PredArgsSchema(marshmallow.Schema):
         description='Show object confidence scores in plots',
         missing=True
     )
-    vid_stride = fields.Int(
-        description='Video frame-rate stride',
-        missing=1
-    )
+  #  vid_stride = fields.Int(
+  #      description='Video frame-rate stride',
+   #     missing=1
+   # )
     line_width = fields.Int(
         description='Line width of the bounding boxes',
         required=False,
@@ -107,9 +117,6 @@ class PredArgsSchema(marshmallow.Schema):
         validate=validate.OneOf(responses.content_types),
     )
 
-
-# EXAMPLE of Training Args description
-# = HAVE TO MODIFY FOR YOUR NEEDS =
 class TrainArgsSchema(marshmallow.Schema):
     """Training arguments schema for api.train function."""
 

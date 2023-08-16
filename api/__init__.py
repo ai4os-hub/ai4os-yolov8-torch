@@ -148,7 +148,7 @@ if __name__=='__main__':
     args['epochs']=5
     args['resume']=False#FIXME
 
-    train(**args)
+   # train(**args)
     fields = schemas.PredArgsSchema().fields
     from deepaas.model.v2.wrapper import UploadedFile
     args={}
@@ -162,3 +162,4 @@ if __name__=='__main__':
     args['input']=UploadedFile('input', input, 'application/octet-stream', 'input')  
     args['model']= None
     args['accept']= 'image/jpeg'
+    predict(**args)

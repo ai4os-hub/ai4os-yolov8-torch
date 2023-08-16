@@ -15,7 +15,7 @@ from io import BytesIO
 from reportlab.pdfgen import canvas
 from . import config
 import tempfile
-from PyPDF3 import PdfFileMerger
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -55,7 +55,8 @@ def json_response(result, **options):
 # EXAMPLE of pdf_response parser function
 # = HAVE TO MODIFY FOR YOUR NEEDS =
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
+from PIL import Image
+
 def pdf_response(result, **options):
     """Converts the prediction or training results into pdf return format.
 
@@ -76,20 +77,13 @@ def pdf_response(result, **options):
     
     try:
       #  merger = PdfFileMerger()
-       # for results in results:
-            # 1. create BytesIO object
             result=result.plot()
-
-            fig, ax = plt.subplots()
-
-            # Plot the NumPy array as an image
-            image = ax.imshow(result, cmap =None)
-            ax.axis('off')
+            im = Image.fromarray(result)
+            im  = im.convert('RGB')
             # Create a PDF file
-            pdf_filename = 'numpy_array_image.pdf'
             buffer = BytesIO()
             buffer.name = 'output.pdf'
-            fig.savefig(buffer, format='pdf')
+            im.save(buffer)
            # merger.append(buffer)
             buffer.seek(0)
        # buffer_out = BytesIO()

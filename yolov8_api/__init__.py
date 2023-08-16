@@ -49,7 +49,10 @@ def predict( **args):
     test_image_path = args['input']  
     for image_path in test_image_path:
         print('Evaluating:', image_path)
-        results = model(image_path)  # results list
+       # results = model(image_path)  # results list
+        args.pop('input', None)
+        args.pop('accept', None)
+        results= model.predict(image_path, **args)
         logger.debug(f"[predict()]: {results}")
     return results[0]
  
