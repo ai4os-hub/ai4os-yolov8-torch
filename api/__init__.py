@@ -19,7 +19,7 @@ from aiohttp.web import HTTPException
 
 import  yolov8_api as aimodel
 
-from  . import config, responses, schemas, utils
+from  yolov8_api.api import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -158,8 +158,8 @@ if __name__=='__main__':
             if value.missing:
                args[key]=value.missing
 
-    input ='/srv/yolov8_api/data/pexels-photo-2156311.jpeg' 
-    args['input']=UploadedFile('input', input, 'application/octet-stream', 'input')  
+    input ='/srv/yolov8_api/data/mixkit-white-cat-lying-among-the-grasses-seen-up-close-22732-large.mp4' 
+    args['input']=UploadedFile('input', input, 'application/octet-stream', 'input.mp4')  
     args['model']= None
-    args['accept']= 'image/jpeg'
+    args['accept']= 'video/mp4'
     predict(**args)
