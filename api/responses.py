@@ -15,6 +15,7 @@ from io import BytesIO
 from reportlab.pdfgen import canvas
 from . import config
 import tempfile
+from PyPDF3 import PdfFileMerger
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -74,31 +75,34 @@ def pdf_response(result, **options):
     logger.debug("Response options: %d", options)
     
     try:
-        # 1. create BytesIO object
-        result=result.plot()
+      #  merger = PdfFileMerger()
+       # for results in results:
+            # 1. create BytesIO object
+            result=result.plot()
 
-        fig, ax = plt.subplots()
+            fig, ax = plt.subplots()
 
-        # Plot the NumPy array as an image
-        image = ax.imshow(result, cmap =None)
-        ax.axis('off')
-        # Create a PDF file
-        pdf_filename = 'numpy_array_image.pdf'
-        buffer = BytesIO()
-        fig.savefig(buffer, format='pdf')
-        buffer.seek(0)
-        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmpfile:
-                tmpfile.write(buffer.read())
-                tmpfile.flush()
-                message = open( tmpfile.name , 'rb')
-                return message
-      
+            # Plot the NumPy array as an image
+            image = ax.imshow(result, cmap =None)
+            ax.axis('off')
+            # Create a PDF file
+            pdf_filename = 'numpy_array_image.pdf'
+            buffer = BytesIO()
+            buffer.name = 'output.pdf'
+            fig.savefig(buffer, format='pdf')
+           # merger.append(buffer)
+            buffer.seek(0)
+       # buffer_out = BytesIO()
+       # merger.write(buffer_out)
+       # buffer_out.name = 'output.pdf'
+       # buffer_out.seek(0)   
+            return buffer #buffer_out
     except Exception as err:  # TODO: Fix to specific exception
         logger.warning("Error converting result to pdf: %s", err)
         raise RuntimeError("Unsupported response type") from err
 
 def png_response(result, **options):
-    result= result.plot()
+    result= result.plot(options['show_labels'])#this will return a numpy array with the labels
     logger.debug("Response result type: %d", type(result))
     logger.debug("Response result: %d", result)
     logger.debug("Response options: %d", options)

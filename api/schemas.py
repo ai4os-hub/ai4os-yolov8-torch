@@ -55,22 +55,7 @@ class PredArgsSchema(marshmallow.Schema):
         missing=None,
     )
 
-    show = fields.Boolean(
-        description='Show results if possible',
-        missing=False
-    )
-    save_txt = fields.Boolean(
-        description='Save results as .txt file',
-        missing=False
-    )
-    save_conf = fields.Boolean(
-        description='Save results with confidence scores',
-        missing=False
-    )
-    save_crop = fields.Boolean(
-        description='Save cropped images with results',
-        missing=False
-    )
+    
     show_labels = fields.Boolean(
         description='Show object labels in plots',
         missing=True
