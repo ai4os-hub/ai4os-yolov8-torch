@@ -82,7 +82,10 @@ def predict( **args):
     """
     try:  # Call your AI model predict() method
         logger.debug("Predict with args: %s", args)
-        if args['model'] is not None:
+
+        if args['model'] is  None:
+            args['model'] = utils.modify_model_name('yolov8n.pt', args['task_type'])      
+        else:     
             args['model'] =  os.path.join(config.MODELS_PATH, args['model'],'weights/best.pt')
        
         with tempfile.TemporaryDirectory() as tmpdir: 
@@ -162,4 +165,5 @@ if __name__=='__main__':
     args['input']=UploadedFile('input', input, 'application/octet-stream', 'input.mp4')  
     args['model']= None
     args['accept']= 'video/mp4'
+    args['task_type'] = 'seg'
     predict(**args)

@@ -94,7 +94,7 @@ def modify_model_name(model_name, task_type):
 
     if task_type in ["seg", "cls"]:
         base_name, extension = os.path.splitext(model_name)
-        modified_model_name = f"{base_name}_{task_type}{extension}"
+        modified_model_name = f"{base_name}-{task_type}{extension}"
     else:
         modified_model_name = model_name
     logger.info(f"Modified model name: {modified_model_name}")

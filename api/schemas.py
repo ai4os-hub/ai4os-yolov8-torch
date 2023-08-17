@@ -47,13 +47,26 @@ class PredArgsSchema(marshmallow.Schema):
         required=True,
         type="file",
         location="form",
-        description= 'Input an image. accepted formats: .bmo, .dng, .jpg, .jpeg, '
-                      '.mpo, .png, .tif, .tiff, .pfm, and.webp') 
+        description= 'Input an image or Video.\n'
+                  'accepted image formats: .bmo, .dng, .jpg, .jpeg, '
+                      '.mpo, .png, .tif, .tiff, .pfm, and.webp. \n'
+                      'accepted video formats: .asf, .avi, .gif, .m4v, .mkv, .mov,.mpv4, .mpeg, '
+                      '.mpeg, .mpg, .ts, .wmv, webm') 
 
     model= fields.Str(
-        description='The timestamp that you saved your trained model. if not provided,'
-         'the pretraind object detection model will be loaded.',
+        description='The timestamp when you saved your trained model, if not provided,'
+'the pre-trained YOLOv8n model will be loaded based on the selected task_type.',
         missing=None,
+    )
+    task_type = fields.Str(
+        description='The type of task for load the pretrained model:\n'
+                    '"det" for object detection model\n'
+                    '"seg" for object segmentation model\n'
+                    '"cls" for object classification model\n'
+                    'The default is "det"',
+        required=False,
+        missing='det',
+        enum=["det", "seg", "cls"],
     )
 
     conf= fields.Float(

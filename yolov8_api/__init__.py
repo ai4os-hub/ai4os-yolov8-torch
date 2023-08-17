@@ -15,6 +15,8 @@ from pathlib import Path
 import yolov8_api.config as cfg
 from ultralytics import YOLO
 import json
+ 
+
 
 
 logger = logging.getLogger(__name__)
@@ -42,11 +44,7 @@ def predict( **args):
     # return results of prediction
     # Load a pretrained YOLOv8n model
     
-    if args['model'] is  None:
-        model = YOLO('yolov8n.pt')
-    else:     
-        model = YOLO(args['model'])
-
+    model = YOLO(args['model'])
     test_image_path = args['input']  
     results = []
     for image_path in test_image_path:
@@ -54,6 +52,7 @@ def predict( **args):
        # results = model(image_path)  # results list
         args.pop('input', None)
         args.pop('accept', None)
+        args.pop('task_type', None)
         result= model.predict(image_path, **args)
         logger.debug(f"[predict()]: {result}")
         results.append(result)
