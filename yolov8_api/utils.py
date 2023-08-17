@@ -37,3 +37,9 @@ def create_model(**kwargs):
     
     return model
 
+def remove_keys_from_dict(input_dict, keys_to_remove):
+    for key in keys_to_remove:
+        input_dict.pop(key, None)
+
+ 
+ 
