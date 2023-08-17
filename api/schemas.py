@@ -9,7 +9,7 @@ need to modify them for your needs.
 import marshmallow
 from webargs import ValidationError, fields, validate
 
-from api import config, responses, utils
+from . import config, responses, utils
 
 
 class ModelName(fields.String):

@@ -19,7 +19,7 @@ from aiohttp.web import HTTPException
 
 import  yolov8_api as aimodel
 
-from  api import config, responses, schemas, utils
+from  yolov8_api.api import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)

@@ -12,9 +12,10 @@ import numpy as np
 from fpdf import FPDF
 import cv2
 from io import BytesIO
-from api import config
+from . import config
 import tempfile
 from PyPDF3 import PdfFileMerger
+import os
 
 
 
@@ -134,12 +135,13 @@ def create_video_in_buffer(frame_arrays, output_format='mp4'):
             out.write(frame)
 
         out.release()
-
-    with open(temp_filename, 'rb') as f:
-        buffer = BytesIO(f.read())
-
-    return buffer
-
+    
+    final_filename = 'output.mp4'
+    os.rename(temp_filename, final_filename)
+    # Open the renamed file for reading
+    message = open(final_filename, 'rb')
+    return message
+    
 def mp4_response(results, **options):
     """Converts the prediction or training results into mp4 return format.
 
@@ -162,8 +164,10 @@ def mp4_response(results, **options):
     for result in results[0]:
              #this will return a numpy array with the labels
             new_results.append(result.plot())
-    buffer=create_video_in_buffer(new_results)  
-    return buffer
+    message=create_video_in_buffer(new_results)  
+    return message
+
+    
     
 
 response_parsers = {
