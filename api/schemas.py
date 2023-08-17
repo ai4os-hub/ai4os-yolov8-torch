@@ -9,7 +9,7 @@ need to modify them for your needs.
 import marshmallow
 from webargs import ValidationError, fields, validate
 
-from yolov8_api.api import config, responses, utils
+from api import config, responses, utils
 
 
 class ModelName(fields.String):

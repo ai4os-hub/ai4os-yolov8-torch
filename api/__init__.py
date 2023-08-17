@@ -19,7 +19,7 @@ from aiohttp.web import HTTPException
 
 import  yolov8_api as aimodel
 
-from  yolov8_api.api import config, responses, schemas, utils
+from  api import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -152,7 +152,7 @@ if __name__=='__main__':
     fields = schemas.PredArgsSchema().fields
     from deepaas.model.v2.wrapper import UploadedFile
     args={}
-    from  yolov8_api.api import  schemas
+    from  api import  schemas
     for key,  value in fields.items():
             print(key, value)
             if value.missing:

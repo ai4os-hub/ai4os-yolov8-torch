@@ -12,8 +12,7 @@ import numpy as np
 from fpdf import FPDF
 import cv2
 from io import BytesIO
-from reportlab.pdfgen import canvas
-from yolov8_api.api import config
+from api import config
 import tempfile
 from PyPDF3 import PdfFileMerger
 
@@ -127,16 +126,20 @@ def create_video_in_buffer(frame_arrays, output_format='mp4'):
     height, width, _ = frame_arrays[0].shape
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Use 'XVID' for AVI format
 
-    buffer = BytesIO()
-    out = cv2.VideoWriter(buffer, fourcc, 20.0, (width, height))
+    with tempfile.NamedTemporaryFile(suffix='.' + output_format, delete=False) as temp_file:
+        temp_filename = temp_file.name
+        out = cv2.VideoWriter(temp_filename, fourcc, 20.0, (width, height))
 
-    for frame in frame_arrays:
-        out.write(frame)
+        for frame in frame_arrays:
+            out.write(frame)
 
-    out.release()
-    buffer.seek(0)
+        out.release()
+
+    with open(temp_filename, 'rb') as f:
+        buffer = BytesIO(f.read())
 
     return buffer
+
 def mp4_response(results, **options):
     """Converts the prediction or training results into mp4 return format.
 
