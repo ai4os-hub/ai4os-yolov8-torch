@@ -17,15 +17,19 @@ from pathlib import Path
 MODEL_NAME = os.getenv("MODEL_NAME", default="yolov8_api")
 
 # Get AI model metadata
-MODEL_METADATA = metadata.metadata(MODEL_NAME)  # .json
+MODEL_METADATA = metadata.metadata(MODEL_NAME)   
 
+
+# Fix metadata for authors from pyproject parsing
+_EMAILS = MODEL_METADATA["Author-email"].split(", ")
+_EMAILS = map(lambda s: s[:-1].split(" <"), _EMAILS)
+MODEL_METADATA["Author-emails"] = dict(_EMAILS)
 
 # Fix metadata for authors from pyproject parsing
 _AUTHORS = MODEL_METADATA.get("Author", "").split(", ")
 _AUTHORS = [] if _AUTHORS == [""] else _AUTHORS
-#_AUTHORS += MODEL_METADATA["Author-emails"].keys()
+_AUTHORS += MODEL_METADATA["Author-emails"].keys()
 MODEL_METADATA["Authors"] = sorted(_AUTHORS)
-
 # DEEPaaS can load more than one installed models. Therefore, in order to
 # avoid conflicts, each default PATH environment variables should lead to
 # a different folder. The current practice is to use the path from where the
