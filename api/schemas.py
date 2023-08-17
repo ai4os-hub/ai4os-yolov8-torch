@@ -66,7 +66,7 @@ class PredArgsSchema(marshmallow.Schema):
                     'The default is "det"',
         required=False,
         missing='det',
-        enum=["det", "seg", "cls"],
+        enum=["det", "seg", "cls", "pose"],
     )
 
     conf= fields.Float(
@@ -145,7 +145,7 @@ class TrainArgsSchema(marshmallow.Schema):
                     'The default is "det"',
         required=False,
         missing='det',
-        enum=["det", "seg", "cls"],
+        enum=["det", "seg", "cls", "pose"],
     )
 
     model = fields.Str(#FIXME
