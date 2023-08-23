@@ -1,9 +1,31 @@
 # This script converts the Pascal VOC dataset into the yolo format.
 #This script is copied from https://blog.paperspace.com/train-yolov5-custom-data/
 import xml.etree.ElementTree as ET
+import argparse
+import json
+import yaml
+from tqdm import tqdm
+import os
 
+parser = argparse.ArgumentParser(description="Convert annotations to YOLO format")
+parser.add_argument("--format", required=True, choices=["json", "xml"], help="Annotation format (json or xml)")
+parser.add_argument("--annotation_path", default="annotations", help="Path to annotation files")
+parser.add_argument("--class_mapping_file", default="class_mapping.yaml", help="Path to the YAML file containing class mapping")
+args = parser.parse_args()
 
-def  extract_info_from_json (coco_annotations):
+ 
+def  extract_info_from_json (json_file):
+    """
+    Extracts information from COCO annotations in JSON format and converts it to an info dictionary.
+
+    Parameters:
+    -  json_file (str): Path to the json annotation file.
+
+    Returns:
+    - info_dict (dict): A dictionary containing extracted information, including filename, image size, and bounding boxes.
+    """
+    with open(ann, 'r') as f:
+        coco_annotations = json.load(f)
     info_dict = {}
     info_dict['bboxes'] = []
     
@@ -25,6 +47,16 @@ def  extract_info_from_json (coco_annotations):
 
 # Function to get the data from XML Annotation
 def extract_info_from_xml(xml_file):
+
+    """
+    Extracts information from an XML annotation file and converts it to an info dictionary.
+
+    Parameters:
+    - xml_file (str): Path to the XML annotation file.
+
+    Returns:
+    - info_dict (dict): A dictionary containing extracted information, including filename, image size, and bounding boxes.
+    """
     root = ET.parse(xml_file).getroot()
     
     # Initialise the info dict 
@@ -100,29 +132,50 @@ def convert_to_yolo_format(info_dict, class_name_to_id_mapping, annotation_path)
     # Save the annotation to disk
     print("\n".join(print_buffer), file= open(save_file_name, "w"))    
 
-def convert_annotations_to_yolo(format="json", annotation_path="annotations", class_name_to_id_mapping=None):
+def main(**args):
+    annotation_path = args["annotation_path"]
+    format = args["format"]
+    class_name_to_id_mapping = yaml.safe_load(open(args["class_mapping_file"]))
     annotations = [os.path.join(annotation_path, x) for x in os.listdir(annotation_path) if x.endswith(format)]
     annotations.sort()
 
     for ann in tqdm(annotations):
         if format == "json":
-            with open(ann, 'r') as f:
-                coco_annotations = json.load(f)
-            info_dict = convert_coco_to_info_dict(coco_annotations)
+            info_dict = extract_info_from_json(ann)
         elif format == "xml":
             info_dict = extract_info_from_xml(ann)
         convert_to_yolo_format(info_dict, class_name_to_id_mapping, annotation_path)
 
     
         
+def plot_random_bounding_box(annotations_path):
+    annotations = [os.path.join(annotations_path, x) for x in os.listdir(annotations_path) if x.endswith(".txt")]
+    
+    annotation_file = random.choice(annotations)
+    with open(annotation_file, "r") as file:
+        annotation_list = file.read().split("\n")[:-1]
+        annotation_list = [x.split(" ") for x in annotation_list]
+        annotation_list = [[float(y) for y in x] for x in annotation_list]
+
+    image_file = annotation_file.replace("annotations", "images").replace("txt", "png")
+    assert os.path.exists(image_file)
+
+    image = Image.open(image_file)
+
+    plt.imshow(image)
+    ax = plt.gca()
+
+    for annotation in annotation_list:
+        class_id, center_x, center_y, width, height = annotation
+        x = (center_x - width / 2) * image.width
+        y = (center_y - height / 2) * image.height
+        rect = plt.Rectangle((x, y), width * image.width, height * image.height,
+                             fill=False, edgecolor='red', linewidth=2)
+        ax.add_patch(rect)
+    
+    plt.show()
 
 if __name__ == "__main__":
-    # Get the annotations
-    annotations = [os.path.join('annotations', x) for x in os.listdir('annotations') if x[-3:] == "xml"]
-    annotations.sort()
 
-    # Convert and save the annotations
-    for ann in tqdm(annotations):
-        info_dict = extract_info_from_xml(ann)
-        convert_to_yolo_format(info_dict)
-    annotations = [os.path.join('annotations', x) for x in os.listdir('annotations') if x[-3:] == "txt"]    
+ 
+    main(**args)
