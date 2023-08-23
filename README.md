@@ -124,14 +124,15 @@ The `config.yaml` file contains the following information about the data:
 
 ```yaml
 # Images and labels directory should be insade 'fasterrcnn_pytorch_api/data' directory.
-TRAIN_DIR_IMAGES: 'my_dataset/train_imgs'
+train: 'my_dataset/train_imgs'
 TRAIN_DIR_LABELS: 'my_dataset/train_labels'
-VALID_DIR_IMAGES: 'my_dataset/valid_imgs'
+val: 'my_dataset/valid_imgs'
 VALID_DIR_LABELS: 'my_dataset/valid_labels'
 # Class names.
-CLASSES: [
+names: [
     class1, class2, ...
 ]
+
 # Number of classes.
 NC: n
 ```
@@ -158,4 +159,26 @@ for each task, you can select the model arguments among the following options:
 `yolov8X.yaml` bulid a model from scratch and
 `yolov8X.pt` load a pretrained model (recommended for training).
 
- 
+## Launching the API
+
+To train the model, run:
+```
+deepaas-run --listen-ip 0.0.0.0
+```
+Then, open the Swagger interface, change the hyperparameters in the train section, and click on train.
+
+><span style="color:Blue">**Note:**</span>  Please note that the model training process may take some time depending on the size of your dataset and the complexity of your custom backbone. Once the model is trained, you can use the API to perform inference on new images.
+## Inference Methods
+
+You can utilize the Swagger interface to upload your images or videos and obtain the following outputs:
+
+- For images:
+
+    - An annotated image highlighting the object of interest with a bounding box.
+    - A JSON string providing the coordinates of the bounding box, the object's name within the box, and the confidence score of the object detection.
+
+- For videos:
+
+    - A video with bounding boxes delineating objects of interest throughout.
+    - A JSON string accompanying each frame, supplying bounding box coordinates, object names within the boxes, and confidence scores for the detected objects.
+
