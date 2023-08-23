@@ -6,12 +6,13 @@ import json
 import yaml
 from tqdm import tqdm
 import os
-
-parser = argparse.ArgumentParser(description="Convert annotations to YOLO format")
-parser.add_argument("--format", required=True, choices=["json", "xml"], help="Annotation format (json or xml)")
-parser.add_argument("--annotation_path", default="annotations", help="Path to annotation files")
-parser.add_argument("--class_mapping_file", default="class_mapping.yaml", help="Path to the YAML file containing class mapping")
-args = parser.parse_args()
+def parse_opt():
+    parser = argparse.ArgumentParser(description="Convert annotations to YOLO format")
+    parser.add_argument( "-f","--format", required=True, choices=["json", "xml"], help="Annotation format (json or xml)")
+    parser.add_argument("-ann", "--annotation_path", default="annotations", help="Path to annotation files")
+    parser.add_argument("-m", "--class_mapping_file", default="class_mapping.yaml", help="Path to the YAML file containing class mapping")
+    args =  parser.parse_args()
+    return args
 
  
 def  extract_info_from_json (json_file):
@@ -127,7 +128,8 @@ def convert_to_yolo_format(info_dict, class_name_to_id_mapping, annotation_path)
         print_buffer.append("{} {:.3f} {:.3f} {:.3f} {:.3f}".format(class_id, b_center_x, b_center_y, b_width, b_height))
         
     # Name of the file which we have to save 
-    save_file_name = os.path.join(annotation_path, info_dict["filename"].replace("png", "txt"))
+    base_filename, _ = os.path.splitext(info_dict["filename"])
+    save_file_name = os.path.join(annotation_path, base_filename+".txt")
     
     # Save the annotation to disk
     print("\n".join(print_buffer), file= open(save_file_name, "w"))    
@@ -176,6 +178,8 @@ def plot_random_bounding_box(annotations_path):
     plt.show()
 
 if __name__ == "__main__":
-
- 
+   # args = parse_opt()
+    args={"format": "json",
+    "annotation_path": "/srv/yolov8_api/tests/data/processed/_annotations.coco.json",
+    "class_mapping_file": "/srv/yolov8_api/tests/data/processed/class_map.yaml"}
     main(**args)
