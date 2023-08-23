@@ -11,12 +11,10 @@ from your_module import your_function as training
 """
 # TODO: add your imports here
 import logging
-from pathlib import Path
+from tqdm import tqdm
 import yolov8_api.config as cfg
 from ultralytics import YOLO
-import json
 import yolov8_api.utils as utils
- 
 
 
 
@@ -27,34 +25,34 @@ logger.setLevel(cfg.LOG_LEVEL)
 # TODO: warm (Start Up)
 # = HAVE TO MODIFY FOR YOUR NEEDS =
 def warm(**kwargs):
-    """Main/public method to start up the model
-    """
+    """Main/public method to start up the model"""
     # if necessary, start the model
     pass
 
 
 # TODO: predict
-# = HAVE TO MODIFY FOR YOUR NEEDS =
-def predict( **args):
-    """Main/public method to perform prediction
-    """
+
+
+def predict(**args):
+    """Main/public method to perform prediction"""
     # if necessary, preprocess data
-    
+
     # choose AI model, load weights
-    
+
     # return results of prediction
     # Load a pretrained YOLOv8n model
-    
-    model = YOLO(args['model'])
-    test_image_path = args['input']  
+
+    model = YOLO(args["model"])
+    test_image_path = args["input"]
     results = []
     for image_path in test_image_path:
-        print('Evaluating:', image_path)
-       # results = model(image_path)  # results list
-        utils.remove_keys_from_dict(args, ['input', 'accept', 'task_type'])
-        result= model.predict(image_path, **args)
+        print("Evaluating:", image_path)
+        utils.remove_keys_from_dict(
+            args, ["input", "accept", "task_type"]
+        )
+        result = model.predict(image_path, **args)
         logger.debug(f"[predict()]: {result}")
         results.append(result)
     return results
- 
 
+ 

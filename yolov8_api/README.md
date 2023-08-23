@@ -14,13 +14,6 @@ epochs to train for. WIth DEEPaaS, you can define those arguments in the API
 as Schemas and then use the `deepaas-cli` or `deepaas-server` to execute the
 operations.
 
-The straightforward way to use DEEPaaS is to open the `__init__.py` file in
-the root of the package and complete the `TODO` sections.
-
-Once you have your functions ready, you can customize your model API and CLI
-arguments and responses by editing the `api.schemas` and`api.responses`
-modules.
-
 ## If you need more API/CLI methods than the ones provided by DEEPaaS
 
 Although DEEPaaS provides a way to define generic operations, you might still

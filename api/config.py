@@ -12,12 +12,23 @@ import logging
 from importlib import metadata
 from pathlib import Path
 
-
+MODEL_LIST= [
+            "yolov8n.yaml",
+            "yolov8n.pt",
+            "yolov8s.yaml",
+            "yolov8s.pt",
+            "yolov8m.yaml",
+            "yolov8m.pt",
+            "yolov8l.yaml",
+            "yolov8l.pt",
+            "yolov8x.yaml",
+            "yolov8x.pt",
+        ]
 # Default AI model
 MODEL_NAME = os.getenv("MODEL_NAME", default="yolov8_api")
 
 # Get AI model metadata
-MODEL_METADATA = metadata.metadata(MODEL_NAME)   
+MODEL_METADATA = metadata.metadata(MODEL_NAME)
 
 
 # Fix metadata for authors from pyproject parsing
@@ -47,3 +58,15 @@ MODELS_PATH = Path(MODELS_PATH)
 # options: DEBUG, INFO(default), WARNING, ERROR, CRITICAL
 ENV_LOG_LEVEL = os.getenv("API_LOG_LEVEL", default="INFO")
 LOG_LEVEL = getattr(logging, ENV_LOG_LEVEL.upper())
+
+
+
+try:
+    MODEL_LIST = os.getenv("MODEL_LIST",  default=MODEL_LIST)
+    if isinstance(MODEL_LIST, str):
+        # Parse the string as a list of strings
+        MODEL_LIST = ast.literal_eval(MODEL_LIST)
+except KeyError as err:
+    raise RuntimeError(
+        "Undefined configuration for MODEL_LIST. "
+    ) from err

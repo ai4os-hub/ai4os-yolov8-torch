@@ -11,7 +11,7 @@ import subprocess
 import sys
 import os
 from subprocess import TimeoutExpired
-import  ultralytics
+import ultralytics
 from . import config
 
 logger = logging.getLogger(__name__)
@@ -69,15 +69,20 @@ def copy_remote(frompath, topath, timeout=600):
         try:
             outs, errs = process.communicate(None, timeout)
         except TimeoutExpired:
-            logger.error("Timeout when copying from/to remote directory.")
+            logger.error(
+                "Timeout when copying from/to remote directory."
+            )
             process.kill()
             outs, errs = process.communicate()
         except Exception as exc:  # pylint: disable=broad-except
-            logger.error("Error copying from/to remote directory\n %s", exc)
+            logger.error(
+                "Error copying from/to remote directory\n %s", exc
+            )
             process.kill()
             outs, errs = process.communicate()
     return outs, errs
- 
+
+
 def modify_model_name(model_name, task_type):
     """
     Modify the model name based on the task type.
@@ -126,25 +131,33 @@ def train_arguments(schema):
         return func  # Decorator that returns same function
     return inject_function_schema
 
+
 import yaml
 from types import SimpleNamespace
 
+
 def load_config(default_cfg_path):
     try:
-        with open(default_cfg_path, 'r') as yaml_file:
-            default_cfg_dict = yaml.load(yaml_file, Loader=yaml.Loader)
-            
+        with open(default_cfg_path, "r") as yaml_file:
+            default_cfg_dict = yaml.load(
+                yaml_file, Loader=yaml.Loader
+            )
+
         for k, v in default_cfg_dict.items():
-            if isinstance(v, str) and v.lower() == 'none':
+            if isinstance(v, str) and v.lower() == "none":
                 default_cfg_dict[k] = None
-                
+
         default_cfg_keys = default_cfg_dict.keys()
-        default_cfg =  ultralytics.utils.IterableSimpleNamespace(**default_cfg_dict)
-        
+        default_cfg = ultralytics.utils.IterableSimpleNamespace(
+            **default_cfg_dict
+        )
+
         return default_cfg, default_cfg_keys
-    
+
     except Exception as err:
         raise Exception(f"Error loading default config: {err}")
+
+
 class DotDict:
     def __init__(self, dictionary):
         for key, value in dictionary.items():
@@ -152,4 +165,3 @@ class DotDict:
                 setattr(self, key, DotDict(value))
             else:
                 setattr(self, key, value)
-    

@@ -1,8 +1,20 @@
-# yolov8_api
+# yolov8 
 
 [![Build Status](https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code/DEEP-OC-org/yolov8_api/master)](https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/yolov8_api/job/master)
 
-add api to yolov8
+Ultralytics YOLOv8 represents the forefront of object detection models, incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, tracking, instance segmentation, image classification, and pose estimation. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
+
+# Adding DeepaaS API into the existing codebase
+In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv8, enabling the seamless utilization of this pipeline. The inclusion of the DeepaaS API enhances the functionality and accessibility of the code, making it easier for users to leverage and interact with the pipeline efficiently.
+
+# Install the API and the external submodule requirement
+To launch the API, first, install the package, and then run DeepaaS:
+``` 
+git clone --depth 1 https://git.scc.kit.edu/m-team/ai/yolov8_api.git
+cd  yolov8_api
+git submodule init
+pip install -e .
+```
 
 To launch it, first install the package then run [deepaas](https://github.com/indigo-dc/DEEPaaS):
 
@@ -13,7 +25,15 @@ pip install -e .
 deepaas-run --listen-ip 0.0.0.0
 ```
 
-The associated Docker container for this module can be found in https://git.scc.kit.edu/m-team/ai/DEEP-OC-yolov8_api.
+><span style="color:Blue">**Note:**</span> Before installing the API and submodule requirements, please make sure to install the following system packages: `gcc`, `unzip`, and `libgl1` as well. These packages are essential for a smooth installation process and proper functioning of the framework.
+```
+apt update
+apt install -y unzip
+apt install -y gcc
+apt install -y libgl1
+```
+
+><span style="color:Blue">**Note:**</span>  The associated Docker container for this module can be found at: https://git.scc.kit.edu/m-team/ai/DEEP-OC-yolov8_api.git
 
 ## Project structure
 
@@ -74,68 +94,68 @@ The associated Docker container for this module can be found in https://git.scc.
 └── tox.ini                <- tox file with settings for running tox; see tox.testrun.org
 ```
 
-## Integrating your model with DEEPaaS
+## Dataset Preparation
+To train the yolov8 model, your annotations should be saved as yolo formats (.txt). Please organize your data in the following structure:
+```
+data
+│
+└── my_dataset
+    ├── train_imgs
+    │   ├── img1.jpg
+    │   ├── img2.jpg
+    │   ├── ...
+    ├── train_labels
+    │   ├── img1.txt
+    │   ├── img2.txt
+    │   ├── ...
+    ├── valid_imgs
+    │   ├── img_1.jpg
+    │   ├── img_2.jpg
+    │   ├── ...
+    ├── valid_labels
+    │   ├── img_1.txt
+    │   ├── img_2.txt
+    │   ├── ...
+    └── config.yaml
 
-After executing the cookiecutter template, you will have a folder structure
-ready to be integrated with DEEPaaS. The you can decide between starting the
-project from scratch or integrating your existing model with DEEPaaS.
-
-The folder `yolov8_api` is designed to contain the source
-code of your model. You can add your model files there or replace it by another
-repository by using [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
-The only requirement is that the folder `yolov8_api` contains
-an `__init__.py` file conserving the already defined methods. You can edit the
-template functions already defined inside or import your own functions from
-another file. See the [README.md](./yolov8_api/README.md)
-in the `yolov8_api` folder for more information.
-
-Those methods, are used by the subpackage `api` to define the API interface.
-See the project structure section for more information about the `api` folder.
-You are allowed to customize your model API and CLI arguments and responses by
-editing `api.schemas` and`api.responses` modules. See documentation inside those
-files for more information.
-
-## Documentation
-
-TODO: Add instructions on how to build documentation
-
-## Testing
-
-Testing process is automated by tox library. You can check the environments
-configured to be tested by running `tox --listenvs`. If you are missing one
-of the python environments configured to be tested (e.g. py310, py39) and
-you are using `conda` for managing your virtual environments, consider using
-`tox-conda` to automatically manage all python installation on your testing
-virtual environment.
-
-Tests are implemented following [pytest](https://docs.pytest.org) framework.
-Fixtures and parametrization are placed inside `conftest.py` files meanwhile
-assertion tests are located on `test_*.py` files. As developer, you can edit
-any of the existing files or add new ones as needed. However, the project is
-designed so you only have to edit the files inside:
-
-    - tests/data: To add your testing data (small datasets, etc.).
-    - tests/models: To add your testing models (small models, etc.).
-    - tests/test_metadata: To fix and test your metadata requirements.
-    - tests/test_predictions: To fix and test your predictions requirements.
-    - tests/test_training: To fix and test your training requirements.
-
-The folder `tests/data` should contain minimalistic but representative
-datasets to be used for testing. In a similar way, `tests/models` should
-contain simple models for testing that can fit on your code repository. This
-is important to avoid large files on your repository and to speed up the
-testing process.
-
-Running the tests with tox:
-
-```bash
-$ pip install -r requirements-dev.txt
-$ tox
 ```
 
-Running the tests with pytest:
+The `config.yaml` file contains the following information about the data:
 
-```bash
-$ pip install -r requirements-test.txt
-$ python -m pytest --numprocesses=auto --dist=loadscope tests
+```yaml
+# Images and labels directory should be insade 'fasterrcnn_pytorch_api/data' directory.
+TRAIN_DIR_IMAGES: 'my_dataset/train_imgs'
+TRAIN_DIR_LABELS: 'my_dataset/train_labels'
+VALID_DIR_IMAGES: 'my_dataset/valid_imgs'
+VALID_DIR_LABELS: 'my_dataset/valid_labels'
+# Class names.
+CLASSES: [
+    class1, class2, ...
+]
+# Number of classes.
+NC: n
 ```
+><span style="color:Blue">**Note:**</span>  If you have annotations files in Coco json format or Pascal VOC xml format, you can use the following script to convert them to the proper format for yolo. 
+
+## Available Models
+
+The Ultralytics YOLOv8 model can be used to train multiple tasks including classification, detection, segmentation and pose detection.
+To train the model based on your project, you can select on of the task_type option in the training arguments and the corresponding model will be loaded and trained.
+for each task, you can select the model arguments among the following options:
+
+``` 
+"yolov8n.yaml",
+"yolov8n.pt",
+"yolov8s.yaml",
+"yolov8s.pt",
+"yolov8m.yaml",
+"yolov8m.pt",
+"yolov8l.yaml",
+"yolov8l.pt",
+"yolov8x.yaml",
+"yolov8x.pt",
+```
+`yolov8X.yaml` bulid a model from scratch and
+`yolov8X.pt` load a pretrained model (recommended for training).
+
+ 
