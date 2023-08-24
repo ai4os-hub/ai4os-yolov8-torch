@@ -1,5 +1,5 @@
 # This script converts the Pascal VOC dataset into the yolo format.
-#This script is copied from https://blog.paperspace.com/train-yolov5-custom-data/
+#This script is copied from https://blog.paperspace.com/train-yolov5-custom-data/ AND https://haobin-tan.netlify.app/ai/computer-vision/object-detection/coco-json-to-yolo-txt/
 import xml.etree.ElementTree as ET
 import argparse
 import json
@@ -15,36 +15,80 @@ def parse_opt():
     return args
 
  
-def  extract_info_from_json (json_file):
-    """
-    Extracts information from COCO annotations in JSON format and converts it to an info dictionary.
+import json
 
-    Parameters:
-    -  json_file (str): Path to the json annotation file.
-
-    Returns:
-    - info_dict (dict): A dictionary containing extracted information, including filename, image size, and bounding boxes.
+def convert_bbox_coco2yolo(img_width, img_height, bbox):
     """
-    with open(ann, 'r') as f:
-        coco_annotations = json.load(f)
-    info_dict = {}
-    info_dict['bboxes'] = []
+    Convert bounding box from COCO  format to YOLO format
+
+    Parameters
+    ----------
+    img_width : int
+        width of image
+    img_height : int
+        height of image
+    bbox : list[int]
+        bounding box annotation in COCO format: 
+        [top left x position, top left y position, width, height]
+
+    Returns
+    -------
+    list[float]
+        bounding box annotation in YOLO format: 
+        [x_center_rel, y_center_rel, width_rel, height_rel]
+    """
     
-    # Extract relevant information from COCO annotations
-    info_dict['filename'] = coco_annotations['images'][0]['file_name']
-    info_dict['image_size'] = (coco_annotations['images'][0]['width'], coco_annotations['images'][0]['height'])
-    
-    for annotation in coco_annotations['annotations']:
-        bbox = {}
-        bbox['class'] = annotation['category_id']  # Assuming category_id corresponds to class name/index
-        bbox['xmin'] = annotation['bbox'][0]
-        bbox['ymin'] = annotation['bbox'][1]
-        bbox['width'] = annotation['bbox'][2]
-        bbox['height'] = annotation['bbox'][3]
-        
-        info_dict['bboxes'].append(bbox)
-    
-    return info_dict
+    # YOLO bounding box format: [x_center, y_center, width, height]
+    # (float values relative to width and height of image)
+    x_tl, y_tl, w, h = bbox
+
+    dw = 1.0 / img_width
+    dh = 1.0 / img_height
+
+    x_center = x_tl + w / 2.0
+    y_center = y_tl + h / 2.0
+
+    x = x_center * dw
+    y = y_center * dh
+    w = w * dw
+    h = h * dh
+
+    return [x, y, w, h]
+
+def convert_coco_json_to_yolo_txt(json_file, output_path):
+
+
+    with open(json_file) as f:
+        json_data = json.load(f)
+    category_names = []
+    # write _darknet.labels, which holds names of all classes (one class per line)
+    for category in tqdm(json_data["categories"], desc="Categories"):
+        category_name = category["name"]
+        category_names.append(category_name)
+
+    # Define the path for the YAML file
+    yaml_file = os.path.join(output_path, "COCO_label.yaml")
+
+    # Write category names to the YAML file
+    with open(yaml_file, "w") as f:
+        yaml.dump(category_names, f)
+
+    for image in tqdm(json_data["images"], desc="Annotation txt for each image"):
+        img_id = image["id"]
+        img_name = image["file_name"]
+        img_width = image["width"]
+        img_height = image["height"]
+
+        anno_in_image = [anno for anno in json_data["annotations"] if anno["image_id"] == img_id]
+        anno_txt = os.path.join(output_path, img_name.split(".")[0] + ".txt")
+        with open(anno_txt, "w") as f:
+            for anno in anno_in_image:
+                category = anno["category_id"]
+                bbox_COCO = anno["bbox"]
+                x, y, w, h = convert_bbox_coco2yolo(img_width, img_height, bbox_COCO)
+                f.write(f"{category} {x:.6f} {y:.6f} {w:.6f} {h:.6f}\n")
+
+    print("Converting COCO Json to YOLO txt finished!")
 
 # Function to get the data from XML Annotation
 def extract_info_from_xml(xml_file):
@@ -140,13 +184,13 @@ def main(**args):
     class_name_to_id_mapping = yaml.safe_load(open(args["class_mapping_file"]))
     annotations = [os.path.join(annotation_path, x) for x in os.listdir(annotation_path) if x.endswith(format)]
     annotations.sort()
-
-    for ann in tqdm(annotations):
-        if format == "json":
-            info_dict = extract_info_from_json(ann)
-        elif format == "xml":
-            info_dict = extract_info_from_xml(ann)
-        convert_to_yolo_format(info_dict, class_name_to_id_mapping, annotation_path)
+    if format == "json":
+            convert_coco_json_to_yolo_txt(annotations[0], annotation_path)
+            
+    elif format == "xml":
+        for ann in tqdm(annotations):
+                info_dict = extract_info_from_xml(ann)
+                convert_to_yolo_format(info_dict, class_name_to_id_mapping, annotation_path)
 
     
         
@@ -180,6 +224,6 @@ def plot_random_bounding_box(annotations_path):
 if __name__ == "__main__":
    # args = parse_opt()
     args={"format": "json",
-    "annotation_path": "/srv/yolov8_api/tests/data/processed/_annotations.coco.json",
+    "annotation_path": "/srv/yolov8_api/tests/data/processed",
     "class_mapping_file": "/srv/yolov8_api/tests/data/processed/class_map.yaml"}
     main(**args)
