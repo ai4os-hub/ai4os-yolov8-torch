@@ -100,7 +100,7 @@ To train the yolov8 model, your annotations should be saved as yolo formats (.tx
 
 │
 └── my_dataset
-    └── train
+    ├──  train
     │    ├── imgs
     │    │   ├── img1.jpg
     │    │   ├── img2.jpg
@@ -110,7 +110,7 @@ To train the yolov8 model, your annotations should be saved as yolo formats (.tx
     │    │   ├── img2.txt
     │    │   ├── ...
     │    
-    └── val    
+    ├── val    
     │    ├── imgs
     │    │   ├── img_1.jpg
     │    │   ├── img_2.jpg
@@ -120,7 +120,7 @@ To train the yolov8 model, your annotations should be saved as yolo formats (.tx
     │    │   ├── img_2.txt
     │    │   ├── ...
     │    
-    └── test    
+    ├── test    
     │    ├── imgs
     │    │   ├── img_1.jpg
     │    │   ├── img_2.jpg
@@ -130,7 +130,7 @@ To train the yolov8 model, your annotations should be saved as yolo formats (.tx
     │    │   ├── img_2.txt
     │    │   ├── ...
     │    
-    ├── config.yaml
+    └── config.yaml
 ```
 
 The `config.yaml` file contains the following information about the data:
