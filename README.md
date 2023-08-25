@@ -125,17 +125,21 @@ The `config.yaml` file contains the following information about the data:
 ```yaml
 # Images and labels directory should be insade 'fasterrcnn_pytorch_api/data' directory.
 train: 'my_dataset/train_imgs'
-TRAIN_DIR_LABELS: 'my_dataset/train_labels'
 val: 'my_dataset/valid_imgs'
-VALID_DIR_LABELS: 'my_dataset/valid_labels'
+test: 'my_dataset/test_imgs' #optional
 # Class names.
-names: [
-    class1, class2, ...
-]
+names: 
+    0: class1, 
+    1: class2,
+     ...
 
 # Number of classes.
 NC: n
 ```
+The `train` and `val` fields specify the paths to the directories containing the training and validation images, respectively.
+`names` is a dictionary of class names. The order of the names should match the order of the object class indices in the YOLO dataset files.
+
+
 ><span style="color:Blue">**Note:**</span>  If you have annotations files in Coco json format or Pascal VOC xml format, you can use the following script to convert them to the proper format for yolo. 
 
 ## Available Models
