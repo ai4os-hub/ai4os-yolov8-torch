@@ -44,34 +44,139 @@ from deepaas.model.v2.wrapper import UploadedFile
 import api
 
 
-@pytest.fixture(scope="module", params=["t100-images.npy"])
-def input_file(request):
-    """Fixture to provide the input_file argument to api.predict."""
-    filepath = f"{api.config.DATA_PATH}/external"
-    return UploadedFile("", filename=f"{filepath}/{request.param}")
+import pytest
+from your_module import PredArgsSchema  # Replace with the actual module name
+from marshmallow.fields import  Float, Boolean, Int, String
+from marshmallow import validate
+from deepaas.model.v2.wrapper import UploadedFile
+
+# Fixture for the 'input' parameter
+def input(request):
+    file = os.path.join(
+        configs.DATA_PATH, "test_data/validation/img", request.param
+    )
+    content_type = "application/octet-stream"
+    return UploadedFile("input", file, content_type, request.param)
 
 
-@pytest.fixture(scope="module", params=["test_simplemodel"])
-def model_name(request):
-    """Fixture to provide the model_name argument to api.predict."""
+# Fixture for the 'model' parameter
+@pytest.fixture(scope="module", params=["time_stamp1"])
+def model_param(request):
     return request.param
 
-
-@pytest.fixture(scope="module", params=["application/json"])
-def accept(request):
-    """Fixture to provide the accept argument to api.predict."""
+# Fixture for the 'task_type' parameter
+@pytest.fixture(scope="module", params=["det", "seg", "cls", "pose"])
+def task_type_param(request):
     return request.param
 
+# Fixture for the 'conf' parameter
+@pytest.fixture(scope="module", params=[0.25, 0.5])
+def conf_param(request):
+    return request.param
 
-# Example of fixture for a batch_size parametrization
-# @pytest.fixture(scope="module", params=[None, 20])
-# def batch_size(request):
-#     """Fixture to provide the batch_size option to api.predict."""
-#     return request.param
+# Fixture for the 'iou' parameter
+@pytest.fixture(scope="module", params=[0.5, 0.75])
+def iou_param(request):
+    return request.param
+
+# Fixture for the 'show_labels' parameter
+@pytest.fixture(scope="module", params=[True, False])
+def show_labels_param(request):
+    return request.param
+
+# Fixture for the 'show_conf' parameter
+@pytest.fixture(scope="module", params=[True, False])
+def show_conf_param(request):
+    return request.param
+
+# Fixture for the 'line_width' parameter
+@pytest.fixture(scope="module", params=[None, 1, 2])
+def line_width_param(request):
+    return request.param
+
+# Fixture for the 'visualize' parameter
+@pytest.fixture(scope="module", params=[True, False])
+def visualize_param(request):
+    return request.param
+
+# Fixture for the 'augment' parameter
+@pytest.fixture(scope="module", params=[True, False])
+def augment_param(request):
+    return request.param
+
+# Fixture for the 'agnostic_nms' parameter
+@pytest.fixture(scope="module", params=[True, False])
+def agnostic_nms_param(request):
+    return request.param
+
+# Fixture for the 'classes' parameter
+@pytest.fixture(scope="module", params=[None, [0, 2, 3]])
+def classes_param(request):
+    return request.param
+
+# Fixture for the 'retina_masks' parameter
+@pytest.fixture(scope="module", params=[True, False])
+def retina_masks_param(request):
+    return request.param
+
+# Fixture for the 'boxes' parameter
+@pytest.fixture(scope="module", params=[True, False])
+def boxes_param(request):
+    return request.param
+
+# Fixture for the 'accept' parameter
+@pytest.fixture(scope="module", params=["application/json", "application/xml"])
+def accept_param(request):
+    return request.param
+
+# Fixture for the PredArgsSchema instance
+@pytest.fixture(scope="module")
+def pred_args_schema():
+    return PredArgsSchema()
+
+@pytest.fixture(scope="module")
+def pred_kwds( input, 
+    model_param, 
+    task_type_param,
+    conf_param, 
+    iou_param, 
+    show_conf_param, 
+    show_labels_param, 
+    line_width_param, 
+    visualize_param, 
+    augment_param, 
+    agnostic_nms_param,
+    classes_param,
+    retina_masks_param,
+    boxes_param,
+    accept_param,
+    pred_args_schema):
+
+    """Fixture to return arbitrary keyword arguments for predictions."""
+    pred_kwds = {"input": input, 
+                "model": model_param, 
+                "task_type": task_type_param,
+                "conf": conf_param, 
+                "iou": iou_param, 
+                "show_conf": show_conf_param,
+                "show_labels": show_labels_param, 
+                "line_width": line_width_param, 
+                "visualize": visualize_param, 
+                "augment": augment_param, 
+                "agnostic_nms": agnostic_nms_param,
+                "classes": classes_param,
+                "retina_masks": retina_masks_param,
+                "boxes": boxes_param,
+                "accept": accept_param,
+                "pred_args_schema": pred_args_schema}
+    return {k: v for k, v in pred_kwds.items()}
+
+    
+@pytest.fixture(scope="module")
+def test_predict(pred_kwds):
+    """Test the predict function."""
+    result = api.predict(**pred_kwds)
+    return result, pred_kwds["accept"]
 
 
-# Example of fixture for a steps parametrization
-# @pytest.fixture(scope="module", params=[None, 2])
-# def steps(request):
-#     """Fixture to provide the steps option to api.predict."""
-#     return request.param
+
