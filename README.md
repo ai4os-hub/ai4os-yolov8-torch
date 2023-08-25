@@ -97,36 +97,49 @@ apt install -y libgl1
 ## Dataset Preparation
 To train the yolov8 model, your annotations should be saved as yolo formats (.txt). Please organize your data in the following structure:
 ```
-data
+
 │
 └── my_dataset
-    ├── train_imgs
-    │   ├── img1.jpg
-    │   ├── img2.jpg
-    │   ├── ...
-    ├── train_labels
-    │   ├── img1.txt
-    │   ├── img2.txt
-    │   ├── ...
-    ├── valid_imgs
-    │   ├── img_1.jpg
-    │   ├── img_2.jpg
-    │   ├── ...
-    ├── valid_labels
-    │   ├── img_1.txt
-    │   ├── img_2.txt
-    │   ├── ...
-    └── config.yaml
-
+    └── train
+    │    ├── imgs
+    │    │   ├── img1.jpg
+    │    │   ├── img2.jpg
+    │    │   ├── ...
+    │    ├── labels
+    │    │   ├── img1.txt
+    │    │   ├── img2.txt
+    │    │   ├── ...
+    │    
+    └── val    
+    │    ├── imgs
+    │    │   ├── img_1.jpg
+    │    │   ├── img_2.jpg
+    │    │   ├── ...
+    │    ├── labels
+    │    │   ├── img_1.txt
+    │    │   ├── img_2.txt
+    │    │   ├── ...
+    │    
+    └── test    
+    │    ├── imgs
+    │    │   ├── img_1.jpg
+    │    │   ├── img_2.jpg
+    │    │   ├── ...
+    │    ├── labels
+    │    │   ├── img_1.txt
+    │    │   ├── img_2.txt
+    │    │   ├── ...
+    │    
+    ├── config.yaml
 ```
 
 The `config.yaml` file contains the following information about the data:
 
 ```yaml
 # Images and labels directory should be insade 'fasterrcnn_pytorch_api/data' directory.
-train: 'my_dataset/train_imgs'
-val: 'my_dataset/valid_imgs'
-test: 'my_dataset/test_imgs' #optional
+train: 'my_dataset/train/imgs'
+val: 'my_dataset/val/imgs'
+test: 'my_dataset/test/imgs' #optional
 # Class names.
 names: 
     0: class1, 
