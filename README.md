@@ -95,6 +95,7 @@ apt install -y libgl1
 ```
 
 ## Dataset Preparation
+- Detection and Segmentation Task
 To train the yolov8 model, your annotations should be saved as yolo formats (.txt). Please organize your data in the following structure:
 ```
 

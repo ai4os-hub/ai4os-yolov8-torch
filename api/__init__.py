@@ -167,11 +167,11 @@ if __name__ == "__main__":
     args[
         "data"
     ] = "/srv/yolov8_api/data/raw/PlantDoc.v1-resize-416x416.yolov8/data.yaml"
-
+    args["task_type"] = "seg"
     args["epochs"] = 5
     args["resume"] = False  # FIXME
 
-    # train(**args)
+    train(**args)
     fields = schemas.PredArgsSchema().fields
     from deepaas.model.v2.wrapper import UploadedFile
 
@@ -190,4 +190,4 @@ if __name__ == "__main__":
     args["model"] = None
     args["accept"] = "video/mp4"
     args["task_type"] = "seg"
-    predict(**args)
+ #   predict(**args)
