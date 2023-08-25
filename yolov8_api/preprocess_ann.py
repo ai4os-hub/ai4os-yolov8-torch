@@ -1,4 +1,5 @@
-# This script converts the Pascal VOC dataset into the yolo format.
+# This script converts the either Pascal VOC dataset or COCO json annotation 
+# format pascal voc xml and coco jsoninto the yolo format.
 #This script is copied from https://blog.paperspace.com/train-yolov5-custom-data/ AND https://haobin-tan.netlify.app/ai/computer-vision/object-detection/coco-json-to-yolo-txt/
 import xml.etree.ElementTree as ET
 import argparse
@@ -10,7 +11,6 @@ def parse_opt():
     parser = argparse.ArgumentParser(description="Convert annotations to YOLO format")
     parser.add_argument( "-f","--format", required=True, choices=["json", "xml"], help="Annotation format (json or xml)")
     parser.add_argument("-ann", "--annotation_path", default="annotations", help="Path to annotation files")
-    parser.add_argument("-m", "--class_mapping_file", default="class_mapping.yaml", help="Path to the YAML file containing class mapping")
     args =  parser.parse_args()
     return args
 
@@ -90,14 +90,30 @@ def convert_coco_json_to_yolo_txt(json_file, output_path):
 
     print("Converting COCO Json to YOLO txt finished!")
 
+def create_class_mapping(xml_file, class_name_to_id_mapping, current_class_id):
+    root = ET.parse(xml_file).getroot()
+    for elem in root:
+        if elem.tag == "object":
+            for subelem in elem:
+                if subelem.tag == "name":
+                    class_name = subelem.text
+                    if class_name not in class_name_to_id_mapping.keys():
+                        class_name_to_id_mapping[class_name] = current_class_id
+                        current_class_id += 1
+                     
+
+
+
 # Function to get the data from XML Annotation
-def extract_info_from_xml(xml_file):
+def extract_info_from_xml(xml_file, class_name_to_id_mapping, current_class_id):
 
     """
     Extracts information from an XML annotation file and converts it to an info dictionary.
 
     Parameters:
     - xml_file (str): Path to the XML annotation file.
+    - class_name_to_id_mapping (dict): A dictionary mapping from class name to class id: example
+    -current_id (int): The current class id.
 
     Returns:
     - info_dict (dict): A dictionary containing extracted information, including filename, image size, and bounding boxes.
@@ -127,14 +143,18 @@ def extract_info_from_xml(xml_file):
             bbox = {}
             for subelem in elem:
                 if subelem.tag == "name":
-                    bbox["class"] = subelem.text
+                    class_name= subelem.text
+                    bbox["class"] = class_name
+                    if class_name not in class_name_to_id_mapping.keys():
+                        class_name_to_id_mapping[class_name] = current_class_id
+                        current_class_id += 1
                     
                 elif subelem.tag == "bndbox":
                     for subsubelem in subelem:
                         bbox[subsubelem.tag] = int(subsubelem.text)            
             info_dict['bboxes'].append(bbox)
     
-    return info_dict
+    return info_dict, class_name_to_id_mapping, current_class_id
 
 
 # Convert the info dict to the required yolo format and write it to disk
@@ -181,15 +201,18 @@ def convert_to_yolo_format(info_dict, class_name_to_id_mapping, annotation_path)
 def main(**args):
     annotation_path = args["annotation_path"]
     format = args["format"]
-    class_name_to_id_mapping = yaml.safe_load(open(args["class_mapping_file"]))
     annotations = [os.path.join(annotation_path, x) for x in os.listdir(annotation_path) if x.endswith(format)]
     annotations.sort()
     if format == "json":
             convert_coco_json_to_yolo_txt(annotations[0], annotation_path)
             
     elif format == "xml":
+        class_name_to_id_mapping={}
+        current_class_id = 0
+        
         for ann in tqdm(annotations):
-                info_dict = extract_info_from_xml(ann)
+                info_dict, class_name_to_id_mapping, current_class_id =\
+                    extract_info_from_xml(ann, class_name_to_id_mapping, current_class_id)
                 convert_to_yolo_format(info_dict, class_name_to_id_mapping, annotation_path)
 
     
@@ -222,8 +245,5 @@ def plot_random_bounding_box(annotations_path):
     plt.show()
 
 if __name__ == "__main__":
-   # args = parse_opt()
-    args={"format": "json",
-    "annotation_path": "/srv/yolov8_api/tests/data/processed",
-    "class_mapping_file": "/srv/yolov8_api/tests/data/processed/class_map.yaml"}
+    args = parse_opt()
     main(**args)
