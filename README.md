@@ -153,6 +153,26 @@ NC: n
 The `train` and `val` fields specify the paths to the directories containing the training and validation images, respectively.
 `names` is a dictionary of class names. The order of the names should match the order of the object class indices in the YOLO dataset files.
 
+For the classification task, the dataset format should be as follows:
+```
+data/
+|-- class1/
+|   |-- img1.jpg
+|   |-- img2.jpg
+|   |-- ...
+|
+|-- class2/
+|   |-- img1.jpg
+|   |-- img2.jpg
+|   |-- ...
+|
+|-- class3/
+|   |-- img1.jpg
+|   |-- img2.jpg
+|   |-- ...
+|
+|-- ...
+```
 
 ><span style="color:Blue">**Note:**</span>  If you have annotations files in Coco json format or Pascal VOC xml format, you can use the following script to convert them to the proper format for yolo. 
 
