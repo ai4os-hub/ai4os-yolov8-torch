@@ -174,12 +174,13 @@ if __name__ == "__main__":
     args["model"] = "yolov8s.pt"
     args[
         "data"
-    ] = "/srv/yolov8_api/data/raw/PlantDoc.v1-resize-416x416.yolov8/data.yaml"
+    ] = "/srv/yolov8_api/data/raw/seg/label.yaml"
     args["task_type"] = "seg"
-    args["epochs"] = 5
-    args["resume"] = False  # FIXME
+    args["epochs"] = 10
+    args["resume"] = True  # FIXME
+    args['weights'] = '/srv/yolov8_api/models/20230830_141818/weights/best.pt'
 
-   # train(**args)
+    train(**args)
     fields = schemas.PredArgsSchema().fields
     from deepaas.model.v2.wrapper import UploadedFile
 
@@ -199,4 +200,4 @@ if __name__ == "__main__":
     args["accept"] = "application/pdf"
     args["task_type"] = "seg"
     
-    predict(**args)
+    #predict(**args)
