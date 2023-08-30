@@ -219,3 +219,6 @@ class DotDict:
                 setattr(self, key, DotDict(value))
             else:
                 setattr(self, key, value)
+def pop_keys_from_dict(dictionary, keys_to_pop):
+    for key in keys_to_pop:
+        dictionary.pop(key, None)                
