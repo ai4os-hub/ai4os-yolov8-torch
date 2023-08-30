@@ -50,7 +50,7 @@ def predict(**args):
         utils.remove_keys_from_dict(
             args, ["input", "accept", "task_type"]
         )
-        result = model.predict(image_path, **args)
+        result = model.predict(image_path,  **args)
         logger.debug(f"[predict()]: {result}")
         results.append(result)
     return results

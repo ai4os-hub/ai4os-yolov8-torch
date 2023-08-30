@@ -68,21 +68,22 @@ def warm():
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
 def predict(**args):
-    """Performs model prediction from given input data and parameters.
+        """Performs model prediction from given input data and parameters.
 
-    Arguments:
-        model_name -- Model name from registry to use for prediction values.
-        input_file -- File with data to perform predictions from model.
-        accept -- Response parser type, default is json.
-        **args -- Arbitrary keyword arguments from PredArgsSchema.
+        Arguments:
+            model_name -- Model name from registry to use for prediction values.
+            input_file -- File with data to perform predictions from model.
+            accept -- Response parser type, default is json.
+            **args -- Arbitrary keyword arguments from PredArgsSchema.
 
-    Raises:
-        HTTPException: Unexpected errors aim to return 50X
+        Raises:
+            HTTPException: Unexpected errors aim to return 50X
 
-    Returns:
-        The predicted model values (dict or str) or files.
+        Returns:
+            The predicted model values (dict or str) or files.
     """
-    try:  # Call your AI model predict() method
+   # try:  # Call your AI model predict() method
+       
         logger.debug("Predict with args: %s", args)
 
         if args["model"] is None:
@@ -112,8 +113,8 @@ def predict(**args):
                 result, **args
             )
 
-    except Exception as err:
-        raise HTTPException(reason=err) from err
+  #  except Exception as err:
+   #     raise HTTPException(reason=err) from err
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
@@ -171,7 +172,7 @@ if __name__ == "__main__":
     args["epochs"] = 5
     args["resume"] = False  # FIXME
 
-    train(**args)
+   # train(**args)
     fields = schemas.PredArgsSchema().fields
     from deepaas.model.v2.wrapper import UploadedFile
 
@@ -183,11 +184,12 @@ if __name__ == "__main__":
         if value.missing:
             args[key] = value.missing
 
-    input = "/srv/yolov8_api/data/mixkit-white-cat-lying-among-the-grasses-seen-up-close-22732-large.mp4"
+    input = "/srv/yolov8_api/data/raw/PlantDoc.v1-resize-416x416.yolov8/train/images/02_-Rust-2017-207u24s_jpg.rf.cb22459400f68cb6d111d18db2f7d834.jpg"
     args["input"] = UploadedFile(
-        "input", input, "application/octet-stream", "input.mp4"
+        "input", input, "application/octet-stream", "input.jpg"
     )
     args["model"] = None
-    args["accept"] = "video/mp4"
+    args["accept"] = "application/pdf"
     args["task_type"] = "seg"
- #   predict(**args)
+    
+    predict(**args)

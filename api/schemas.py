@@ -39,7 +39,7 @@ class Dataset(fields.String):
 
 
 class PredArgsSchema(marshmallow.Schema):
-    class Meta:  # Keep order of the parameters as they are defined.
+    class Meta: 
         # pylint: disable=missing-class-docstring
         # pylint: disable=too-few-public-methods
         ordered = True
@@ -85,7 +85,8 @@ class PredArgsSchema(marshmallow.Schema):
         description="Show object labels in plots", missing=True
     )
     show_conf = fields.Boolean(
-        description="Show object confidence scores in plots",
+        description="Show object confidence scores in plots."
+        "if show_labels is False, show_conf is also False",
         missing=True,
     )
     #  vid_stride = fields.Int(
@@ -97,25 +98,25 @@ class PredArgsSchema(marshmallow.Schema):
         required=False,
         missing=None,
     )
-    visualize = fields.Boolean(
-        description="Visualize model features", missing=False
-    )
+#    visualize = fields.Boolean(
+#        description="Visualize model features", missing=False
+#    )
     augment = fields.Boolean(
         description="Apply image augmentation to prediction sources",
         missing=False,
     )
-    agnostic_nms = fields.Boolean(
-        description="Class-agnostic NMS", missing=False
-    )
+#    agnostic_nms = fields.Boolean(
+#        description="Class-agnostic NMS", missing=False
+#    )
     classes = fields.Field(
         description="Filter results by class, i.e. class=0, or class=[0,2,3]",
         required=False,
         missing=None,
     )
-    retina_masks = fields.Boolean(
-        description="Use high-resolution segmentation masks",
-        missing=False,
-    )
+#    retina_masks = fields.Boolean(
+#        description="Use high-resolution segmentation masks",
+#        missing=False,
+#    )
     boxes = fields.Boolean(
         description="Show boxes in segmentation predictions",
         missing=True,

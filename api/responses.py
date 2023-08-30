@@ -84,9 +84,12 @@ def pdf_response(results, **options):
     try:
         merger = PdfFileMerger()
         for element in results[0]:
-            #  result.append(element.plot())
-            # im = Image.fromarray(element.plot())
-            # im  = im.convert('RGB')
+            
+            print(element)
+            
+           #result.append(element.plot())
+            im = Image.fromarray(element.plot(labels= options['show_labels'], conf=options['show_conf']))
+            im  = im.convert('RGB')
             buffer = BytesIO()
             buffer.name = "output.pdf"
             im.save(buffer)
@@ -109,7 +112,7 @@ def png_response(results, **options):
     try:
         for result in results[0]:
             # this will return a numpy array with the labels
-            result = result.plot()
+            result = result.plot(labels= options['show_labels'], conf=options['show_conf'])
             success, buffer = cv2.imencode(".png", result)
             if not success:
                 return "Error encoding image", 500
@@ -170,7 +173,7 @@ def mp4_response(results, **options):
     new_results = []
     for result in results[0]:
         # this will return a numpy array with the labels
-        new_results.append(result.plot())
+        new_results.append(result.plot(labels= options['show_labels'], conf=options['show_conf']))
     message = create_video_in_buffer(new_results)
     return message
 
