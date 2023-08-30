@@ -94,8 +94,9 @@ apt install -y libgl1
 ```
 
 ## Dataset Preparation
-- Detection and Segmentation Task
-To train the yolov8 model, your annotations should be saved as yolo formats (.txt). Please organize your data in the following structure:
+- Detection and Segmentation Tasks:
+
+    - To train the yolov8 model, your annotations should be saved as yolo formats (.txt). Please organize your data in the following structure:
 ```
 
 │
@@ -151,7 +152,7 @@ NC: n
 ```
 The `train` and `val` fields specify the paths to the directories containing the training and validation images, respectively.
 `names` is a dictionary of class names. The order of the names should match the order of the object class indices in the YOLO dataset files.
-
+-  Classification Task:
 For the classification task, the dataset format should be as follows:
 ```
 data/
