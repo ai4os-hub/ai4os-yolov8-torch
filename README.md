@@ -12,7 +12,6 @@ To launch the API, first, install the package, and then run DeepaaS:
 ``` 
 git clone --depth 1 https://git.scc.kit.edu/m-team/ai/yolov8_api.git
 cd  yolov8_api
-git submodule init
 pip install -e .
 ```
 
