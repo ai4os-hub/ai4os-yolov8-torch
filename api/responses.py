@@ -88,7 +88,8 @@ def pdf_response(results, **options):
             print(element)
             
            #result.append(element.plot())
-            im = Image.fromarray(element.plot(labels= options['show_labels'], conf=options['show_conf']))
+            im = Image.fromarray(element.plot(labels= options['show_labels'],
+             conf=options['show_conf'], boxes= options['boxes']))
             im  = im.convert('RGB')
             buffer = BytesIO()
             buffer.name = "output.pdf"
@@ -112,7 +113,8 @@ def png_response(results, **options):
     try:
         for result in results[0]:
             # this will return a numpy array with the labels
-            result = result.plot(labels= options['show_labels'], conf=options['show_conf'])
+            result = result.plot(labels= options['show_labels'], conf=options['show_conf']
+            , boxes= options['boxes'])
             success, buffer = cv2.imencode(".png", result)
             if not success:
                 return "Error encoding image", 500
@@ -173,7 +175,8 @@ def mp4_response(results, **options):
     new_results = []
     for result in results[0]:
         # this will return a numpy array with the labels
-        new_results.append(result.plot(labels= options['show_labels'], conf=options['show_conf']))
+        new_results.append(result.plot(labels= options['show_labels'],
+         conf=options['show_conf'], boxes= options['boxes']))
     message = create_video_in_buffer(new_results)
     return message
 

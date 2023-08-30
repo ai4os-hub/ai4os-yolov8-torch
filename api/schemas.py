@@ -93,11 +93,11 @@ class PredArgsSchema(marshmallow.Schema):
     #      description='Video frame-rate stride',
     #     missing=1
     # )
-    line_width = fields.Int(
-        description="Line width of the bounding boxes",
-        required=False,
-        missing=None,
-    )
+    #line_width = fields.Int(
+   #     description="Line width of the bounding boxes",
+    #    required=False,
+   #     missing=None,
+   # )
 #    visualize = fields.Boolean(
 #        description="Visualize model features", missing=False
 #    )
