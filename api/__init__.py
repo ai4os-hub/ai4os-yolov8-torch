@@ -137,15 +137,22 @@ def train(**args):
             config.DATA_PATH, "raw", args["data"]
         )
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        # should  the project name
         args["project"] = config.MODEL_NAME
         # point to the model directory without root directory
         args["name"] = os.path.join("models", timestamp)
-        model = YOLO(args["model"])
+        if args["weights"] is not None:
+            if os.path.isfile(args["weights"]):
+                path=args["weights"]
+            else:    
+                path= os.path.join(
+                config.MODELS_PATH, args["weights"]
+            )
+            model=YOLO(path)
+        else:
+            model = YOLO(args["model"])  
+    
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
-        args.pop("disable_wandb", None)
-        args.pop("task_type", None)
+        utils.pop_keys_from_dict(args, ["task_type", "disable_wandb", "weights"])
 
         model.train(**args)
         return {

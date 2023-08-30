@@ -147,7 +147,7 @@ class TrainArgsSchema(marshmallow.Schema):
         'The default is "det"',
         required=False,
         missing="det",
-        enum=["det", "seg", "cls", "pose"],
+        enum=["det", "seg", "cls"],
     )
 
     model = fields.Str(  # FIXME
@@ -207,12 +207,23 @@ class TrainArgsSchema(marshmallow.Schema):
         description="Number of worker threads for data loading (per RANK if DDP)",
         missing=4,
     )
-
+    
+    weights = fields.Str(
+        description='If you want to initialize weights for training from a checkpoint, '
+                    'add the path to the checkpoint, '
+                    'for example: "timestamp/last.pt" where timestamp is '
+                    'in the model directory, or a complete path to a checkpoint.'
+                    ' If you want to resume training, set the "resume" field to True '
+                    'to resume training from the last checkpoint.',
+        missing=None,
+    )
+    
+    
     resume = fields.Bool(
         description="Resume training from the last checkpoint",
         required=False,
         missing=False,
-        enum=[True, False],
+        enum=[True, False],  # Use a list for the enum
     )
     pretrained = fields.Str(
         description="Whether to use a pretrained model (bool) or a model to load weights from (str)",
