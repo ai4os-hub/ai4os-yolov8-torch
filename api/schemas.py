@@ -34,14 +34,8 @@ class Dataset(fields.String):
         return str(config.DATA_PATH / "processed" / value)
 
 
-# EXAMPLE of Prediction Args description
-# = HAVE TO MODIFY FOR YOUR NEEDS =
-
-
 class PredArgsSchema(marshmallow.Schema):
     class Meta:
-        # pylint: disable=missing-class-docstring
-        # pylint: disable=too-few-public-methods
         ordered = True
 
     input = fields.Field(
@@ -51,13 +45,14 @@ class PredArgsSchema(marshmallow.Schema):
         description="Input an image or Video.\n"
         "accepted image formats: .bmo, .dng, .jpg, .jpeg, "
         ".mpo, .png, .tif, .tiff, .pfm, and.webp. \n"
-        "accepted video formats: .asf, .avi, .gif, .m4v, .mkv, .mov,.mpv4, .mpeg, "
-        ".mpeg, .mpg, .ts, .wmv, webm",
+        "accepted video formats: .asf, .avi, .gif, .m4v, .mkv,"
+        ".mov,.mpv4, .mpeg, .mpeg, .mpg, .ts, .wmv, webm",
     )
 
     model = fields.Str(
-        description="The timestamp when you saved your trained model, if not provided,"
-        "the pre-trained YOLOv8n model will be loaded based on the selected task_type.",
+        description="The timestamp when you saved your trained model,"
+        " if not provided, the pre-trained YOLOv8n model will be"
+        " loaded based on the selected task_type.",
         missing=None,
     )
     task_type = fields.Str(
@@ -90,12 +85,6 @@ class PredArgsSchema(marshmallow.Schema):
         missing=True,
     )
 
-    # = fields.Int(
-    #     description="Line width of the bounding boxes",
-    #    required=False,
-    #     missing=None,
-    # )
-
     augment = fields.Boolean(
         description="Apply image augmentation to prediction sources",
         missing=False,
@@ -123,9 +112,7 @@ class PredArgsSchema(marshmallow.Schema):
 class TrainArgsSchema(marshmallow.Schema):
     """Training arguments schema for api.train function."""
 
-    class Meta:  # Keep order of the parameters as they are defined.
-        # pylint: disable=missing-class-docstring
-        # pylint: disable=too-few-public-methods
+    class Meta:
         ordered = True
 
     task_type = fields.Str(
@@ -158,7 +145,8 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=100,
     )
     patience = fields.Int(
-        description="Epochs to wait for no observable improvement for early stopping of training",
+        description="Epochs to wait for no observable improvement for"
+        " early stopping of training",
         required=False,
         missing=10,
     )
@@ -168,21 +156,23 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=2,
     )
     imgsz = fields.Int(
-        description="Input images size as int for train and val modes, or list [w, h] for predict and export modes",
+        description="Input images size as int for train and val modes,"
+        " or list [w, h] for predict and export modes",
         required=False,
         missing=640,
     )
     weights = fields.Str(
-        description="If you want to initialize weights for training from a checkpoint, "
-        "add the path to the checkpoint, "
+        description="If you want to initialize weights for training"
+        "from a checkpoint,add the path to the checkpoint, "
         'for example: "timestamp/last.pt" where timestamp is '
         "in the model directory, or a complete path to a checkpoint.",
         missing=None,
     )
 
     resume = fields.Bool(
-        description="If the training was stopped before completing all epochs, "
-        "you can resume training by setting resume=True to continue from the last checkpoint.",
+        description="If the training was stopped before completing all"
+        " epochs, you can resume training by setting resume=True"
+        " to continue from the last checkpoint.",
         required=False,
         missing=False,
         enum=[True, False],  # Use a list for the enum
@@ -198,12 +188,14 @@ class TrainArgsSchema(marshmallow.Schema):
         missing="cuda:0",
     )
     workers = fields.Int(
-        description="Number of worker threads for data loading (per RANK if DDP)",
+        description="Number of worker threads for data loading"
+        " (per RANK if DDP)",
         missing=4,
     )
 
     optimizer = fields.Str(
-        description="Optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]",
+        description="Optimizer to use, choices="
+        "[SGD, Adam, Adamax,AdamW, NAdam, RAdam, RMSProp, auto]",
         missing="auto",
         required=False,
         enum=[
@@ -232,13 +224,15 @@ class TrainArgsSchema(marshmallow.Schema):
         enum=[True, False],
     )
     rect = fields.Bool(
-        description="Rectangular training (mode='train') or rectangular validation (mode='val')",
+        description="Rectangular training (mode='train') or rectangular"
+        " validation (mode='val')",
         missing=False,
         enum=[True, False],
     )
 
     fraction = fields.Float(
-        description="Dataset fraction to train on (default is 1.0, all images in train set)",
+        description="Dataset fraction to train on (default is 1.0,"
+        " all images in train set)",
         required=False,
         missing=1.0,
     )
@@ -253,7 +247,8 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=0.0,
     )
     amp = fields.Bool(
-        description="Automatic Mixed Precision (AMP) training, choices=[True, False], True runs AMP check",
+        description="Automatic Mixed Precision (AMP) training,"
+        " choices=[True, False], True runs AMP check",
         required=False,
         missing=False,
         enum=[True, False],

@@ -35,7 +35,8 @@ def convert_coco(
     use_keypoints=False,
     **args,
 ):
-    """Converts COCO dataset annotations to a format suitable for training YOLOv5 models.
+    """Converts COCO dataset annotations to a format suitable for
+    training YOLOv5 models.
 
     Args:
         labels_dir (str, optional): Path to directory containing COCO
@@ -83,7 +84,8 @@ def convert_coco(
         with open(json_file) as f:
             data = json.load(f)
 
-        # write _darknet.labels, which holds names of all classes (one class per line)
+        # write _darknet.labels, which holds names of all classes
+        # (one class per line)
         for category in tqdm(
             data["categories"],
             desc="Categories",
@@ -123,7 +125,8 @@ def convert_coco(
             for ann in anns:
                 if ann["iscrowd"]:
                     continue
-                # The COCO box format is [top left x, top left y, width, height]
+                # The COCO box format is [top left x, top left y,
+                # width, height]
                 box = np.array(
                     ann["bbox"],
                     dtype=np.float64,
@@ -259,14 +262,18 @@ def min_index(
     arr2,
 ):
     """
-    Find a pair of indexes with the shortest distance between two arrays of 2D points.
+    Find a pair of indexes with the shortest distance between two
+    arrays of 2D points.
 
     Args:
-        arr1 (np.array): A NumPy array of shape (N, 2) representing N 2D points.
-        arr2 (np.array): A NumPy array of shape (M, 2) representing M 2D points.
+        arr1 (np.array): A NumPy array of shape (N, 2) representing
+        N 2D points.
+        arr2 (np.array): A NumPy array of shape (M, 2) representing
+         M 2D points.
 
     Returns:
-        (tuple): A tuple containing the indexes of the points with the shortest distance in arr1 and arr2 respectively.
+        (tuple): A tuple containing the indexes of the points with
+        the shortest distance in arr1 and arr2 respectively.
     """
     dis = (
         (
@@ -296,15 +303,19 @@ def merge_multi_segment(
     segments,
 ):
     """
-    Merge multiple segments into one list by connecting the coordinates with the minimum distance between each segment.
-    This function connects these coordinates with a thin line to merge all segments into one.
+    Merge multiple segments into one list by connecting the coordinates
+     with the minimum distance between each segment.
+    This function connects these coordinates with a thin line to
+     merge all segments into one.
 
     Args:
         segments (List[List]): Original segmentations in COCO's JSON file.
-                               Each element is a list of coordinates, like [segmentation1, segmentation2,...].
+        Each element is a list of coordinates, like [segmentation1,
+         segmentation2,...].
 
     Returns:
-        s (List[np.ndarray]): A list of connected segments represented as NumPy arrays.
+        s (List[np.ndarray]): A list of connected segments
+        represented as NumPy arrays.
     """
     s = []
     segments = [
@@ -370,7 +381,7 @@ def merge_multi_segment(
                         0,
                         idx[1] - idx[0],
                     ]
-                    s.append(segments[i][idx[0] : idx[1] + 1])
+                    s.append(segments[i][idx[0]: idx[1] + 1])
 
         else:
             for i in range(

@@ -39,24 +39,16 @@ number of tests generated can grow exponentially.
 """
 # pylint: disable=redefined-outer-name
 import pytest
+import os
 from deepaas.model.v2.wrapper import UploadedFile
-
 import api
-
-
-import pytest
-from your_module import (
-    PredArgsSchema,
-)  # Replace with the actual module name
-from marshmallow.fields import Float, Boolean, Int, String
-from marshmallow import validate
-from deepaas.model.v2.wrapper import UploadedFile
+from yolov8_api.api import config
 
 
 # Fixture for the 'input' parameter
 def input(request):
     file = os.path.join(
-        configs.DATA_PATH, "test_data/validation/img", request.param
+        config.DATA_PATH, "test_data/validation/img", request.param
     )
     content_type = "application/octet-stream"
     return UploadedFile("input", file, content_type, request.param)

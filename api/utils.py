@@ -3,8 +3,8 @@ This module is used to define API utilities and helper functions. You can
 use and edit any of the defined functions to improve or add methods to
 your API.
 
-The module shows simple but efficient example utilities. However, you may
-need to modify them for your needs.
+The module shows simple but efficient example utilities. However,
+you may need to modify them for your needs.
 """
 import logging
 import subprocess
@@ -13,7 +13,6 @@ import os
 from subprocess import TimeoutExpired
 import ultralytics
 import yaml
-from types import SimpleNamespace
 from . import config
 import yolov8_api as aimodel
 
@@ -161,9 +160,10 @@ def check_annotations_format(data):
     """Check if annotations are in the correct format.
     Check and preprocess annotation files in specified directories.
 
-    This function takes YAML data containing directory paths for annotation files.
-    It checks if the specified directories exist and contain valid annotation files,
-    and then preprocesses the annotation files based on their format.
+    This function takes YAML data containing directory paths for
+    annotation files. It checks if the specified directories exist
+    and contain valid annotation files,and then preprocesses the
+    annotation files based on their format.
 
     Args:
         data (str): YAML-formatted string containing directory paths.

@@ -1,11 +1,8 @@
-"""Module for defining custom API response parsers and content types.
-This module is used by the API server to convert the output of the requested
-method into the desired format. 
-
-The module shows simple but efficient example functions. However, you may
-need to modify them for your needs.
 """
-
+Module for defining custom API response parsers and content types.
+This module is used by the API server to convert the output of the
+requested method into the desired format.
+"""
 import logging
 from PIL import Image
 import numpy as np
@@ -16,19 +13,16 @@ import tempfile
 from PyPDF3 import PdfFileMerger
 import os
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
 
 
-# EXAMPLE of json_response parser function
-# = HAVE TO MODIFY FOR YOUR NEEDS =
 def json_response(results, **options):
-    """Converts the prediction or training results into json return format.
+    """Converts the prediction or training results into json return
+    format.
 
     Arguments:
-        result -- Result value from call, expected either dict or str
-          (see https://docs.deep-hybrid-datacloud.eu/projects/deepaas/en/stable/user/v2-api.html).
+        result -- Result value from call, expected dict
         options -- Not used, added for illustration purpose.
 
     Raises:
@@ -56,18 +50,11 @@ def json_response(results, **options):
         raise RuntimeError("Unsupported response type") from err
 
 
-# EXAMPLE of pdf_response parser function
-# = HAVE TO MODIFY FOR YOUR NEEDS =
-import matplotlib.pyplot as plt
-from PIL import Image
-
-
 def pdf_response(results, **options):
     """Converts the prediction or training results into pdf return format.
 
     Arguments:
-        result -- Result value from call, expected either dict or str
-          (see https://docs.deep-hybrid-datacloud.eu/projects/deepaas/en/stable/user/v2-api.html).
+        result -- Result value from call, expected dict
         options -- Not used, added for illustration purpose.
 
     Raises:
@@ -136,9 +123,7 @@ def png_response(results, **options):
 
 def create_video_in_buffer(frame_arrays, output_format="mp4"):
     height, width, _ = frame_arrays[0].shape
-    fourcc = cv2.VideoWriter_fourcc(
-        *"mp4v"
-    )  # Use 'XVID' for AVI format
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 
     with tempfile.NamedTemporaryFile(
         suffix="." + output_format, delete=False
@@ -161,11 +146,11 @@ def create_video_in_buffer(frame_arrays, output_format="mp4"):
 
 
 def mp4_response(results, **options):
-    """Converts the prediction or training results into mp4 return format.
+    """Converts the prediction or training results into
+    mp4 return format.
 
     Arguments:
         result -- Result value from call, expected either dict or str
-          (see https://docs.deep-hybrid-datacloud.eu/projects/deepaas/en/stable/user/v2-api.html).
         options -- Not used, added for illustration purpose.
 
     Raises:
