@@ -183,11 +183,24 @@ class TrainArgsSchema(marshmallow.Schema):
         required=False,
         missing=640,
     )
-    save = fields.Bool(
-        description="Save train checkpoints and predict results",
-        missing=True,
-        enum=[True, False],
+    weights = fields.Str(
+        description='If you want to initialize weights for training from a checkpoint, '
+                    'add the path to the checkpoint, '
+                    'for example: "timestamp/last.pt" where timestamp is '
+                    'in the model directory, or a complete path to a checkpoint.'
+                    ,
+        missing=None,
     )
+    
+    
+    resume = fields.Bool(
+        description="If the training was stopped before completing all epochs, "
+      "you can resume training by setting resume=True to continue from the last checkpoint.",
+        required=False,
+        missing=False,
+        enum=[True, False],  # Use a list for the enum
+    )
+
 
     save_period = fields.Int(
         description="Save checkpoint every x epochs (disabled if < 1)",
@@ -208,23 +221,7 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=4,
     )
     
-    weights = fields.Str(
-        description='If you want to initialize weights for training from a checkpoint, '
-                    'add the path to the checkpoint, '
-                    'for example: "timestamp/last.pt" where timestamp is '
-                    'in the model directory, or a complete path to a checkpoint.'
-                    ' If you want to resume training, set the "resume" field to True '
-                    'to resume training from the last checkpoint.',
-        missing=None,
-    )
-    
-    
-    resume = fields.Bool(
-        description="Resume training from the last checkpoint",
-        required=False,
-        missing=False,
-        enum=[True, False],  # Use a list for the enum
-    )
+
     pretrained = fields.Str(
         description="Whether to use a pretrained model (bool) or a model to load weights from (str)",
         missing=True,
@@ -442,19 +439,13 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=0.0,
     )
 
-    exist_ok = fields.Bool(
-        description="Whether to overwrite existing experiment",
-        missing=False,
-        required=False,
-        enum=[True, False],
-    )
+   # exist_ok = fields.Bool(
+    #    description="Whether to overwrite existing experiment",
+    #    missing=False,
+    #    required=False,
+    #    enum=[True, False],
+    #)
 
-    exist_ok = fields.Bool(
-        description="Whether to overwrite existing experiment",
-        missing=False,
-        required=False,
-        enum=[True, False],
-    )
     disable_wandb = fields.Bool(
         description="Whether disables wandb logging",
         missing=True,

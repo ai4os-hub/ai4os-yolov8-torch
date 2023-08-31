@@ -118,18 +118,11 @@ def predict(**args):
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
+
 def train(**args):
-    """Performs model training from given input data and parameters.
-
-    Arguments:
-
-    Returns:
-        Parsed history/summary of the training process.
-    """
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
-        # modified model name for seqmentation and classification tasks
         args["model"] = utils.modify_model_name(
             args["model"], args["task_type"]
         )
@@ -138,30 +131,30 @@ def train(**args):
         )
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         args["project"] = config.MODEL_NAME
-        # point to the model directory without root directory
         args["name"] = os.path.join("models", timestamp)
+
         if args["weights"] is not None:
             if os.path.isfile(args["weights"]):
-                path=args["weights"]
-            else:    
-                path= os.path.join(
-                config.MODELS_PATH, args["weights"]
-            )
-            model=YOLO(path)
+                path = args["weights"]
+            else:
+                path = os.path.join(config.MODELS_PATH, args["weights"])
+
+            model = YOLO(path)
+
         else:
-            model = YOLO(args["model"])  
-    
+            model = YOLO(args["model"])
+
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
         utils.pop_keys_from_dict(args, ["task_type", "disable_wandb", "weights"])
 
         model.train(**args)
+
         return {
             f'The model was trained successfully and was saved to: {os.path.join(args["project"], args["name"])}'
         }
 
     except Exception as err:
         raise HTTPException(reason=err) from err
-
 
 if __name__ == "__main__":
     fields = schemas.TrainArgsSchema().fields
@@ -176,16 +169,16 @@ if __name__ == "__main__":
         "data"
     ] = "/srv/yolov8_api/data/raw/seg/label.yaml"
     args["task_type"] = "seg"
-    args["epochs"] = 10
-    args["resume"] = True  # FIXME
-    args['weights'] = '/srv/yolov8_api/models/20230830_141818/weights/best.pt'
+    args["epochs"] = 3
+   # args["resume"] = True # FIXME
+    args['weights'] = None#'/srv/yolov8_api/models/20230831_065054/weights/last.pt'
 
     train(**args)
     fields = schemas.PredArgsSchema().fields
     from deepaas.model.v2.wrapper import UploadedFile
 
     args = {}
-    from api import schemas
+    #from api import schemas
 
     for key, value in fields.items():
         print(key, value)
@@ -200,4 +193,4 @@ if __name__ == "__main__":
     args["accept"] = "application/pdf"
     args["task_type"] = "seg"
     
-    #predict(**args)
+    
