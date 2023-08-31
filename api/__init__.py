@@ -129,15 +129,18 @@ def train(**args):
                 config.DATA_PATH, "raw", args["data"]
             )
             assert os.path.isfile(args["data"]), \
-                'The data file does not exist. Please provide a valid path.'
-        
+                'The data file does not exist. Please provide a '\
+                'valid path.'
+       
+        # Check and update data paths of val and training in data.yaml
         assert utils.check_paths_in_yaml(args["data"]),\
                 'The path to the either train or validation '\
-                'data does not exist. Please provide a valid path.'   
+                'data does not exist. Please provide a valid path.'
+                   
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        #The project should be the name of the project
-        #should be just one directory not the full path
+        #The project should correspond to the name of your project
+        #and should only include the project directory, not the full path.
         args["project"] = config.MODEL_NAME
 
         # The directory where the model will be saved after training 
@@ -163,8 +166,8 @@ def train(**args):
         utils.pop_keys_from_dict(
             args, ["task_type", "disable_wandb", "weights"]
         )
-        #exist_ok=True ensures that the model will be saved on the same path
-        # if resume=True.
+        #The use of exist_ok=True ensures that the model will 
+        # be saved in the same path if resume=True.
         model.train(exist_ok=True, **args)
 
         return {
