@@ -389,11 +389,6 @@ class TrainArgsSchema(marshmallow.Schema):
         required=False,
         missing=0.0,
     )
-    copy_paste = fields.Float(
-        description="Segment copy-paste (probability)",
-        required=False,
-        missing=0.0,
-    )
 
     disable_wandb = fields.Bool(
         description="Whether disables wandb logging",

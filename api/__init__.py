@@ -165,6 +165,8 @@ def train(**args):
 def main():
     """
     Runs above-described methods from CLI
+    uses: python3 path/to/api/__init__.py method --arg1 ARG1_VALUE
+     --arg2 ARG2_VALUE 
     """
     method_dispatch = {
         "get_metadata": get_metadata,
@@ -188,6 +190,7 @@ def main():
         return results
     else:
         print("Invalid method specified.")
+
 
 if __name__ == "__main__":
     
@@ -233,7 +236,7 @@ if __name__ == "__main__":
             args[key] = value.missing
     args["model"] = "yolov8s.pt"
     args["data"] = "/srv/yolov8_api/data/raw/seg/label.yaml"
-    args["task_type"] = "seg"
+    args["task_type"] = ""
     args["epochs"] = 3
     args["resume"] = False
     args["weights"] = None
