@@ -135,9 +135,6 @@ def train_arguments(schema):
     return inject_function_schema
 
 
-
-
-
 def load_config(default_cfg_path):
     try:
         with open(default_cfg_path, "r") as yaml_file:
@@ -158,6 +155,8 @@ def load_config(default_cfg_path):
 
     except Exception as err:
         raise Exception(f"Error loading default config: {err}")
+
+
 def check_annotations_format(data):
     """Check if annotations are in the correct format.
     Check and preprocess annotation files in specified directories.
@@ -181,37 +180,45 @@ def check_annotations_format(data):
         if os.path.exists(data[key]):
             annotations_path = data.get(key, None)
 
-            if annotations_path is None or not os.path.isdir(annotations_path):
+            if annotations_path is None or not os.path.isdir(
+                annotations_path
+            ):
                 raise ValueError("Invalid annotations directory path")
 
             supported_formats = (".txt", ".json", ".xml")
             annotations = [
                 os.path.join(annotations_path, x)
                 for x in os.listdir(annotations_path)
-                if any(x.endswith(format) for format in supported_formats)
+                if any(
+                    x.endswith(format) for format in supported_formats
+                )
             ]
 
-            json_annotations = [ann for ann in annotations if ann.endswith(".json")]
-            xml_annotations = [ann for ann in annotations if ann.endswith(".xml")]
+            json_annotations = [
+                ann for ann in annotations if ann.endswith(".json")
+            ]
+            xml_annotations = [
+                ann for ann in annotations if ann.endswith(".xml")
+            ]
 
             if json_annotations:
                 format = "json"
                 args = {
                     "format": format,
-                    "annotation_path": annotations_path
+                    "annotation_path": annotations_path,
                 }
                 aimodel.preprocess_ann.main(**args)
             elif xml_annotations:
                 format = "xml"
                 args = {
                     "format": format,
-                    "annotation_path": annotations_path
+                    "annotation_path": annotations_path,
                 }
                 aimodel.preprocess_ann.main(**args)
             else:
                 print("No JSON or XML annotation files found.")
 
-    
+
 class DotDict:
     def __init__(self, dictionary):
         for key, value in dictionary.items():
@@ -219,6 +226,7 @@ class DotDict:
                 setattr(self, key, DotDict(value))
             else:
                 setattr(self, key, value)
+
 
 def pop_keys_from_dict(dictionary, keys_to_pop):
     for key in keys_to_pop:

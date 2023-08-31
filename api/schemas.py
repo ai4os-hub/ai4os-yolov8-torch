@@ -39,7 +39,7 @@ class Dataset(fields.String):
 
 
 class PredArgsSchema(marshmallow.Schema):
-    class Meta: 
+    class Meta:
         # pylint: disable=missing-class-docstring
         # pylint: disable=too-few-public-methods
         ordered = True
@@ -90,11 +90,11 @@ class PredArgsSchema(marshmallow.Schema):
         missing=True,
     )
 
-    #= fields.Int(
-   #     description="Line width of the bounding boxes",
+    # = fields.Int(
+    #     description="Line width of the bounding boxes",
     #    required=False,
-   #     missing=None,
-   # )
+    #     missing=None,
+    # )
 
     augment = fields.Boolean(
         description="Apply image augmentation to prediction sources",
@@ -144,7 +144,7 @@ class TrainArgsSchema(marshmallow.Schema):
         '"yolov8X.yaml" bulid a model from scratch\n'
         '"yolov8X.pt" load a pretrained model (recommended for training)',
         required=True,
-        enum=config.MODEL_LIST
+        enum=config.MODEL_LIST,
     )
 
     data = fields.Str(
@@ -173,17 +173,16 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=640,
     )
     weights = fields.Str(
-        description='If you want to initialize weights for training from a checkpoint, '
-                    'add the path to the checkpoint, '
-                    'for example: "timestamp/last.pt" where timestamp is '
-                    'in the model directory, or a complete path to a checkpoint.'
-                    ,
+        description="If you want to initialize weights for training from a checkpoint, "
+        "add the path to the checkpoint, "
+        'for example: "timestamp/last.pt" where timestamp is '
+        "in the model directory, or a complete path to a checkpoint.",
         missing=None,
     )
-    
+
     resume = fields.Bool(
         description="If the training was stopped before completing all epochs, "
-      "you can resume training by setting resume=True to continue from the last checkpoint.",
+        "you can resume training by setting resume=True to continue from the last checkpoint.",
         required=False,
         missing=False,
         enum=[True, False],  # Use a list for the enum
@@ -202,7 +201,6 @@ class TrainArgsSchema(marshmallow.Schema):
         description="Number of worker threads for data loading (per RANK if DDP)",
         missing=4,
     )
-    
 
     optimizer = fields.Str(
         description="Optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]",
@@ -314,7 +312,9 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=0.5,
     )
     dfl = fields.Float(
-        description=" Distribution Focal Loss gain", required=False, missing=1.5
+        description=" Distribution Focal Loss gain",
+        required=False,
+        missing=1.5,
     )
 
     kobj = fields.Float(

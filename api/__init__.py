@@ -8,7 +8,6 @@ docs [1] and at a canonical exemplar module [2].
 """
 import os
 import logging
-import yaml
 import datetime
 import tempfile
 import shutil
@@ -68,57 +67,55 @@ def warm():
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
 def predict(**args):
-        """Performs model prediction from given input data and parameters.
+    """Performs model prediction from given input data and parameters.
 
-        Arguments:
-            model_name -- Model name from registry to use for prediction values.
-            input_file -- File with data to perform predictions from model.
-            accept -- Response parser type, default is json.
-            **args -- Arbitrary keyword arguments from PredArgsSchema.
+    Arguments:
+        model_name -- Model name from registry to use for prediction values.
+        input_file -- File with data to perform predictions from model.
+        accept -- Response parser type, default is json.
+        **args -- Arbitrary keyword arguments from PredArgsSchema.
 
-        Raises:
-            HTTPException: Unexpected errors aim to return 50X
+    Raises:
+        HTTPException: Unexpected errors aim to return 50X
 
-        Returns:
-            The predicted model values (dict or str) or files.
+    Returns:
+        The predicted model values (dict or str) or files.
     """
-   # try:  # Call your AI model predict() method
-       
-        logger.debug("Predict with args: %s", args)
+    # try:  # Call your AI model predict() method
 
-        if args["model"] is None:
-            args["model"] = utils.modify_model_name(
-                "yolov8n.pt", args["task_type"]
-            )
-        else:
-            args["model"] = os.path.join(
-                config.MODELS_PATH, args["model"], "weights/best.pt"
-            )
+    logger.debug("Predict with args: %s", args)
 
-        with tempfile.TemporaryDirectory() as tmpdir:
-            for f in [args["input"]]:
-                shutil.copy(
-                    f.filename, tmpdir + "/" + f.original_filename
-                )
+    if args["model"] is None:
+        args["model"] = utils.modify_model_name(
+            "yolov8n.pt", args["task_type"]
+        )
+    else:
+        args["model"] = os.path.join(
+            config.MODELS_PATH, args["model"], "weights/best.pt"
+        )
 
-            args["input"] = [
-                os.path.join(tmpdir, t) for t in os.listdir(tmpdir)
-            ]
-            result = aimodel.predict(**args)
-            logger.debug("Predict result: %s", result)
-            logger.info(
-                "Returning content_type for: %s", args["accept"]
-            )
-            return responses.response_parsers[args["accept"]](
-                result, **args
+    with tempfile.TemporaryDirectory() as tmpdir:
+        for f in [args["input"]]:
+            shutil.copy(
+                f.filename, tmpdir + "/" + f.original_filename
             )
 
-  #  except Exception as err:
-   #     raise HTTPException(reason=err) from err
+        args["input"] = [
+            os.path.join(tmpdir, t) for t in os.listdir(tmpdir)
+        ]
+        result = aimodel.predict(**args)
+        logger.debug("Predict result: %s", result)
+        logger.info("Returning content_type for: %s", args["accept"])
+        return responses.response_parsers[args["accept"]](
+            result, **args
+        )
+
+
+#  except Exception as err:
+#     raise HTTPException(reason=err) from err
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
-
 def train(**args):
     try:
         logger.info("Training model...")
@@ -137,7 +134,9 @@ def train(**args):
             if os.path.isfile(args["weights"]):
                 path = args["weights"]
             else:
-                path = os.path.join(config.MODELS_PATH, args["weights"])
+                path = os.path.join(
+                    config.MODELS_PATH, args["weights"]
+                )
 
             model = YOLO(path)
 
@@ -145,16 +144,20 @@ def train(**args):
             model = YOLO(args["model"])
 
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
-        utils.pop_keys_from_dict(args, ["task_type", "disable_wandb", "weights"])
+        utils.pop_keys_from_dict(
+            args, ["task_type", "disable_wandb", "weights"]
+        )
 
         model.train(exist_ok=True, **args)
 
         return {
-            f'The model was trained successfully and was saved to: {os.path.join(args["project"], args["name"])}'
+            f'The model was trained successfully \
+            and was saved to: {os.path.join(args["project"], args["name"])}'
         }
 
     except Exception as err:
         raise HTTPException(reason=err) from err
+
 
 if __name__ == "__main__":
     fields = schemas.TrainArgsSchema().fields
@@ -165,13 +168,13 @@ if __name__ == "__main__":
         if value.missing:
             args[key] = value.missing
     args["model"] = "yolov8s.pt"
-    args[
-        "data"
-    ] = "/srv/yolov8_api/data/raw/seg/label.yaml"
+    args["data"] = "/srv/yolov8_api/data/raw/seg/label.yaml"
     args["task_type"] = "seg"
     args["epochs"] = 5
-    args["resume"] = True  
-    args['weights'] = '/srv/yolov8_api/models/20230831_074708/weights/last.pt'
+    args["resume"] = True
+    args[
+        "weights"
+    ] = "/srv/yolov8_api/models/20230831_074708/weights/last.pt"
 
     train(**args)
     fields = schemas.PredArgsSchema().fields
@@ -179,18 +182,17 @@ if __name__ == "__main__":
 
     args = {}
 
-
     for key, value in fields.items():
         print(key, value)
         if value.missing:
             args[key] = value.missing
 
-    input = "/srv/yolov8_api/data/raw/PlantDoc.v1-resize-416x416.yolov8/train/images/02_-Rust-2017-207u24s_jpg.rf.cb22459400f68cb6d111d18db2f7d834.jpg"
+    input = "/srv/yolov8_api/data/raw/PlantDoc.v1-resize-  \
+        416x416.yolov8/train/images/02_-Rust-2017-207u24s_jpg.\
+            f.cb22459400f68cb6d111d18db2f7d834.jpg"
     args["input"] = UploadedFile(
         "input", input, "application/octet-stream", "input.jpg"
     )
     args["model"] = None
     args["accept"] = "application/pdf"
     args["task_type"] = "seg"
-    
-    

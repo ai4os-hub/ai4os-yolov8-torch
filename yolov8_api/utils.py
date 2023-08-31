@@ -23,7 +23,7 @@ def mkdata(input_filepath, output_filepath):
     logger.info("Making final data set from raw data")
 
     # EXAMPLE for finding various files
-    project_dir = Path(__file__).resolve().parents[2]
+    # project_dir = Path(__file__).resolve().parents[2]
 
 
 # create model

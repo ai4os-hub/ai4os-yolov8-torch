@@ -45,10 +45,13 @@ import api
 
 
 import pytest
-from your_module import PredArgsSchema  # Replace with the actual module name
-from marshmallow.fields import  Float, Boolean, Int, String
+from your_module import (
+    PredArgsSchema,
+)  # Replace with the actual module name
+from marshmallow.fields import Float, Boolean, Int, String
 from marshmallow import validate
 from deepaas.model.v2.wrapper import UploadedFile
+
 
 # Fixture for the 'input' parameter
 def input(request):
@@ -64,40 +67,48 @@ def input(request):
 def model_param(request):
     return request.param
 
+
 # Fixture for the 'task_type' parameter
 @pytest.fixture(scope="module", params=["det"])
 def task_type_param(request):
     return request.param
+
 
 # Fixture for the 'conf' parameter
 @pytest.fixture(scope="module", params=[0.5])
 def conf_param(request):
     return request.param
 
+
 # Fixture for the 'iou' parameter
 @pytest.fixture(scope="module", params=[0.75])
 def iou_param(request):
     return request.param
+
 
 # Fixture for the 'show_labels' parameter
 @pytest.fixture(scope="module", params=[True])
 def show_labels_param(request):
     return request.param
 
+
 # Fixture for the 'show_conf' parameter
 @pytest.fixture(scope="module", params=[True])
 def show_conf_param(request):
     return request.param
+
 
 # Fixture for the 'augment' parameter
 @pytest.fixture(scope="module", params=[True])
 def augment_param(request):
     return request.param
 
+
 # Fixture for the 'agnostic_nms' parameter
 @pytest.fixture(scope="module", params=[True])
 def agnostic_nms_param(request):
     return request.param
+
 
 # Fixture for the 'classes' parameter
 @pytest.fixture(scope="module", params=[None])
@@ -105,11 +116,11 @@ def classes_param(request):
     return request.param
 
 
-
 # Fixture for the 'boxes' parameter
 @pytest.fixture(scope="module", params=[True])
 def boxes_param(request):
     return request.param
+
 
 # Fixture for the 'accept' parameter
 @pytest.fixture(scope="module", params=["application/json"])
@@ -118,41 +129,41 @@ def accept_param(request):
 
 
 @pytest.fixture(scope="module")
-def pred_kwds( input, 
-    model_param, 
+def pred_kwds(
+    input,
+    model_param,
     task_type_param,
-    conf_param, 
-    iou_param, 
-    show_conf_param, 
-    show_labels_param, 
-    augment_param, 
+    conf_param,
+    iou_param,
+    show_conf_param,
+    show_labels_param,
+    augment_param,
     agnostic_nms_param,
     classes_param,
     retina_masks_param,
     boxes_param,
-    accept_param):
-
+    accept_param,
+):
     """Fixture to return arbitrary keyword arguments for predictions."""
-    pred_kwds = {"input": input, 
-                "model": model_param, 
-                "task_type": task_type_param,
-                "conf": conf_param, 
-                "iou": iou_param, 
-                "show_conf": show_conf_param,
-                "show_labels": show_labels_param,
-                "augment": augment_param, 
-                "agnostic_nms": agnostic_nms_param,
-                "classes": classes_param,
-                "boxes": boxes_param,
-                "accept": accept_param}
+    pred_kwds = {
+        "input": input,
+        "model": model_param,
+        "task_type": task_type_param,
+        "conf": conf_param,
+        "iou": iou_param,
+        "show_conf": show_conf_param,
+        "show_labels": show_labels_param,
+        "augment": augment_param,
+        "agnostic_nms": agnostic_nms_param,
+        "classes": classes_param,
+        "boxes": boxes_param,
+        "accept": accept_param,
+    }
     return {k: v for k, v in pred_kwds.items()}
 
-    
+
 @pytest.fixture(scope="module")
 def test_predict(pred_kwds):
     """Test the predict function."""
     result = api.predict(**pred_kwds)
     return result, pred_kwds["accept"]
-
-
-
