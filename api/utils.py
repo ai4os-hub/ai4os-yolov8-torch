@@ -231,3 +231,27 @@ class DotDict:
 def pop_keys_from_dict(dictionary, keys_to_pop):
     for key in keys_to_pop:
         dictionary.pop(key, None)
+
+
+def check_paths_in_yaml(yaml_path):
+    with open(yaml_path, 'r') as yaml_file:
+        data = yaml.safe_load(yaml_file)
+
+    paths_to_check = []
+    if 'train' in data:
+        paths_to_check.append(data['train'])
+    if 'val' in data:
+        paths_to_check.append(data['val'])
+
+    for i, path in enumerate(paths_to_check):
+        if not os.path.exists(path):
+            new_path = os.path.join(config.DATA_PATH, path)
+            if os.path.exists(new_path):
+                data['train' if i == 0 else 'val'] = new_path
+
+                with open(yaml_path, 'w') as yaml_file:
+                    yaml.dump(data, yaml_file)
+            else:
+                return False
+
+    return True

@@ -81,38 +81,37 @@ def predict(**args):
     Returns:
         The predicted model values (dict or str) or files.
     """
-    # try:  # Call your AI model predict() method
+    try:  
 
-    logger.debug("Predict with args: %s", args)
+        logger.debug("Predict with args: %s", args)
 
-    if args["model"] is None:
-        args["model"] = utils.modify_model_name(
-            "yolov8n.pt", args["task_type"]
-        )
-    else:
-        args["model"] = os.path.join(
-            config.MODELS_PATH, args["model"], "weights/best.pt"
-        )
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        for f in [args["input"]]:
-            shutil.copy(
-                f.filename, tmpdir + "/" + f.original_filename
+        if args["model"] is None:
+            args["model"] = utils.modify_model_name(
+                "yolov8n.pt", args["task_type"]
+            )
+        else:
+            args["model"] = os.path.join(
+                config.MODELS_PATH, args["model"], "weights/best.pt"
             )
 
-        args["input"] = [
-            os.path.join(tmpdir, t) for t in os.listdir(tmpdir)
-        ]
-        result = aimodel.predict(**args)
-        logger.debug("Predict result: %s", result)
-        logger.info("Returning content_type for: %s", args["accept"])
-        return responses.response_parsers[args["accept"]](
-            result, **args
-        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            for f in [args["input"]]:
+                shutil.copy(
+                    f.filename, tmpdir + "/" + f.original_filename
+                )
 
+            args["input"] = [
+                os.path.join(tmpdir, t) for t in os.listdir(tmpdir)
+            ]
+            result = aimodel.predict(**args)
+            logger.debug("Predict result: %s", result)
+            logger.info("Returning content_type for: %s", args["accept"])
+            return responses.response_parsers[args["accept"]](
+                result, **args
+            )
 
-#  except Exception as err:
-#     raise HTTPException(reason=err) from err
+    except Exception as err:
+      raise HTTPException(reason=err) from err
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
@@ -123,9 +122,15 @@ def train(**args):
         args["model"] = utils.modify_model_name(
             args["model"], args["task_type"]
         )
-        args["data"] = os.path.join(
-            config.DATA_PATH, "raw", args["data"]
-        )
+        if not os.path.isfile(args["data"]):
+            args["data"] = os.path.join(
+                config.DATA_PATH, "raw", args["data"]
+            )
+            assert os.path.isfile(args["data"]), \
+                'The data file does not exist. Please provide a valid path.'
+            assert utils.check_paths_in_yaml(args["data"]),\
+                'The path to the either train or validation'\
+                'data does not exist. Please provide a valid path.'   
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         args["project"] = config.MODEL_NAME
         args["name"] = os.path.join("models", timestamp)
