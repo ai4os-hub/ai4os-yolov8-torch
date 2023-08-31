@@ -154,7 +154,7 @@ The `train` and `val` fields specify the paths to the directories containing the
 `names` is a dictionary of class names. The order of the names should match the order of the object class indices in the YOLO dataset files.
 
 ><span style="color:Blue">**Note:**</span>The train and val path should be a complete path or relative from
-data directory e.g. `root/pat/to/mydata/train/images` or if it is in the `path/to/yolov8_api/data` just 
+data directory e.g. `root/pat/to/mydata/train/images` or if it is in the `path/to/yolov8_api/data/raw` just 
 `mydata/train/images`
 
 

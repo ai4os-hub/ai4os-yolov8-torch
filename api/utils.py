@@ -245,7 +245,7 @@ def check_paths_in_yaml(yaml_path):
 
     for i, path in enumerate(paths_to_check):
         if not os.path.exists(path):
-            new_path = os.path.join(config.DATA_PATH, path)
+            new_path = os.path.join(config.DATA_PATH, 'raw',path)
             if os.path.exists(new_path):
                 data['train' if i == 0 else 'val'] = new_path
 

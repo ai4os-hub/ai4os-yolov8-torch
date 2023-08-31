@@ -136,8 +136,8 @@ class TrainArgsSchema(marshmallow.Schema):
 
     data = fields.Str(
         description=".pytest_cache/Path to the config data file, e.g.,"
-        " root/pat/to/mydata/data.yaml or if it is in the"
-        "path/to/yolov8_api/data just"
+        " 'root/pat/to/mydata/data.yaml' or if it is in the"
+        " 'path/to/yolov8_api/data/raw' just"
         "mydata/data.yaml",
         required=True,
         allow_none=True,

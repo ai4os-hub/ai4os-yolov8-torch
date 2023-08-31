@@ -130,8 +130,9 @@ def train(**args):
             )
             assert os.path.isfile(args["data"]), \
                 'The data file does not exist. Please provide a valid path.'
-            assert utils.check_paths_in_yaml(args["data"]),\
-                'The path to the either train or validation'\
+        
+        assert utils.check_paths_in_yaml(args["data"]),\
+                'The path to the either train or validation '\
                 'data does not exist. Please provide a valid path.'   
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
