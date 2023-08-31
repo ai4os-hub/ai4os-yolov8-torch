@@ -7,10 +7,10 @@ The module shows simple but efficient example utilities. However,
 you may need to modify them for your needs.
 """
 import logging
-import subprocess
+import subprocess # nosec B404
 import sys
 import os
-from subprocess import TimeoutExpired
+from subprocess import TimeoutExpired # nosec B404
 import ultralytics
 import yaml
 from . import config
@@ -137,7 +137,7 @@ def train_arguments(schema):
 def load_config(default_cfg_path):
     try:
         with open(default_cfg_path, "r") as yaml_file:
-            default_cfg_dict = yaml.load(
+            default_cfg_dict = yaml.safe_load()(
                 yaml_file, Loader=yaml.Loader
             )
 
@@ -255,3 +255,12 @@ def check_paths_in_yaml(yaml_path):
                 return False
 
     return True
+
+def validate_and_modify_path(path, base_path):
+    if not os.path.isfile(path):
+        modified_path = os.path.join(base_path, path)
+        if not os.path.isfile(modified_path):
+            raise ValueError(f'The path {path} does not exist.'
+            'Please provide a valid path.')
+        return modified_path
+    return path

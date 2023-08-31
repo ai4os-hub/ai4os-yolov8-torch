@@ -87,12 +87,10 @@ def predict(**args):
                 "yolov8n.pt", args["task_type"]
             )
         else:
-            args["model"] = os.path.join(
-                config.MODELS_PATH, args["model"], "weights/best.pt"
+            path=os.path.join( args["model"], "weights/best.pt"
             )
-            if not os.path.isfile(args["model"]):
-                raise ValueError('The model file does not exist.'
-                ' Please provide a valid path.')
+            args["model"]= utils.validate_and_modify_path( path, 
+             config.MODELS_PATH)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             for f in [args["input"]]:
@@ -124,13 +122,8 @@ def train(**args):
             args["model"], args["task_type"]
         )
         # Check and update data path if necessary
-        if not os.path.isfile(args["data"]):
-            args["data"] = os.path.join(
-                config.DATA_PATH, "raw", args["data"]
-            )
-            if not os.path.isfile(args["data"]):
-                raise ValueError('The data file does not exist.'
-                ' Please provide a valid path.')
+        base_path = os.path.join(config.DATA_PATH, "raw")
+        args["data"]= utils.validate_and_modify_path(args["data"],base_path)
        
         # Check and update data paths of val and training in data.yaml
         if not utils.check_paths_in_yaml(args["data"]):
@@ -149,13 +142,10 @@ def train(**args):
         
         # Check if there are weights to load from an already trained model
         # Otherwise, load the pretrained model from the model registry
+        
         if args["weights"] is not None:
-            if os.path.isfile(args["weights"]):
-                path = args["weights"]
-            else:
-                path = os.path.join(
-                    config.MODELS_PATH, args["weights"]
-                )
+            path=  utils.validate_and_modify_path(args["weights"], 
+            config.MODELS_PATH)
 
             model = YOLO(path)
 
@@ -190,7 +180,7 @@ if __name__ == "__main__":
     args["model"] = "yolov8s.pt"
     args["data"] = "/srv/yolov8_api/data/raw/seg/label.yaml"
     args["task_type"] = "seg"
-    args["epochs"] = 2
+    args["epochs"] = 3
     args["resume"] = False
     args[
         "weights"
