@@ -7,10 +7,10 @@ The module shows simple but efficient example utilities. However,
 you may need to modify them for your needs.
 """
 import logging
-import subprocess # nosec B404
+import subprocess  # nosec B404
 import sys
 import os
-from subprocess import TimeoutExpired # nosec B404
+from subprocess import TimeoutExpired  # nosec B404
 import ultralytics
 import yaml
 from . import config
@@ -33,6 +33,45 @@ def ls_dirs(path):
     dirscan = (x.name for x in path.iterdir() if x.is_dir())
     return sorted(dirscan)
 
+def list_directories_with_rclone(remote_name, directory_path):
+    """
+    Function to list directories within a given directory in Nextcloud
+    using rclone.
+
+    Args:
+        remote_name (str): Name of the configured Nextcloud remote in rclone.
+        directory_path (str): Path of the parent directory to list the
+            directories from.
+
+    Returns:
+        list: List of directory names within the specified parent directory.
+    """
+    command = ["rclone", "lsf", remote_name + ":" + directory_path]
+    result = subprocess.run(
+        command, capture_output=True, text=True, shell=False
+    )  # nosec B603
+
+    if result.returncode == 0:
+        directory_names = result.stdout.splitlines()
+        directory_names = [
+            d.rstrip("/") for d in directory_names if d[0].isdigit()
+        ]
+        return directory_names
+    else:
+        print("Error executing rclone command:", result.stderr)
+        return []
+
+
+def ls_remote():
+    """
+    Utility to return a list of current backbone models stored in the
+    remote folder configured in the backbone url.
+
+    Returns:
+        A list of strings.
+    """
+    remote_directory = configs.REMOTE_PATH
+    return list_directories_with_rclone("rshare", remote_directory)
 
 def ls_files(path, pattern):
     """Utility to return a list of files available in `path` folder.
@@ -234,33 +273,36 @@ def pop_keys_from_dict(dictionary, keys_to_pop):
 
 
 def check_paths_in_yaml(yaml_path):
-    with open(yaml_path, 'r') as yaml_file:
+    with open(yaml_path, "r") as yaml_file:
         data = yaml.safe_load(yaml_file)
 
     paths_to_check = []
-    if 'train' in data:
-        paths_to_check.append(data['train'])
-    if 'val' in data:
-        paths_to_check.append(data['val'])
+    if "train" in data:
+        paths_to_check.append(data["train"])
+    if "val" in data:
+        paths_to_check.append(data["val"])
 
     for i, path in enumerate(paths_to_check):
         if not os.path.exists(path):
-            new_path = os.path.join(config.DATA_PATH, 'raw',path)
+            new_path = os.path.join(config.DATA_PATH, "raw", path)
             if os.path.exists(new_path):
-                data['train' if i == 0 else 'val'] = new_path
+                data["train" if i == 0 else "val"] = new_path
 
-                with open(yaml_path, 'w') as yaml_file:
+                with open(yaml_path, "w") as yaml_file:
                     yaml.dump(data, yaml_file)
             else:
                 return False
 
     return True
 
+
 def validate_and_modify_path(path, base_path):
     if not os.path.isfile(path):
         modified_path = os.path.join(base_path, path)
         if not os.path.isfile(modified_path):
-            raise ValueError(f'The path {path} does not exist.'
-            'Please provide a valid path.')
+            raise ValueError(
+                f"The path {path} does not exist."
+                "Please provide a valid path."
+            )
         return modified_path
     return path

@@ -17,7 +17,6 @@ from ultralytics import YOLO
 from aiohttp.web import HTTPException
 
 import yolov8_api as aimodel
-
 from yolov8_api.api import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
@@ -44,25 +43,13 @@ def get_metadata():
             "license": config.MODEL_METADATA.get("license"),
             "version": config.MODEL_METADATA.get("version"),
             "datasets": utils.ls_dirs(config.DATA_PATH / "processed"),
-            "models": utils.ls_dirs(config.MODELS_PATH),
+            "models_local": utils.ls_dirs(config.MODELS_PATH),
+            "models_remote": utils_api.ls_remote(),
         }
         logger.debug("Package model metadata: %s", metadata)
         return metadata
     except Exception as err:
         raise HTTPException(reason=err) from err
-
-
-def warm():
-    """Function to run preparation phase before anything else can start.
-
-    Raises:
-        RuntimeError: Unexpected errors aim to stop model loading.
-    """
-    try:  # Call your AI model warm() method
-        logger.info("Warming up the model.api...")
-        aimodel.warm()
-    except Exception as err:
-        raise RuntimeError(reason=err) from err
 
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
@@ -78,8 +65,7 @@ def predict(**args):
     Returns:
         The predicted model values json, png, pdf or mp4 file.
     """
-    try:  
-
+    try:
         logger.debug("Predict with args: %s", args)
 
         if args["model"] is None:
@@ -87,10 +73,10 @@ def predict(**args):
                 "yolov8n.pt", args["task_type"]
             )
         else:
-            path=os.path.join( args["model"], "weights/best.pt"
+            path = os.path.join(args["model"], "weights/best.pt")
+            args["model"] = utils.validate_and_modify_path(
+                path, config.MODELS_PATH
             )
-            args["model"]= utils.validate_and_modify_path( path, 
-             config.MODELS_PATH)
 
         with tempfile.TemporaryDirectory() as tmpdir:
             for f in [args["input"]]:
@@ -103,13 +89,15 @@ def predict(**args):
             ]
             result = aimodel.predict(**args)
             logger.debug("Predict result: %s", result)
-            logger.info("Returning content_type for: %s", args["accept"])
+            logger.info(
+                "Returning content_type for: %s", args["accept"]
+            )
             return responses.response_parsers[args["accept"]](
                 result, **args
             )
 
     except Exception as err:
-      raise HTTPException(reason=err) from err
+        raise HTTPException(reason=err) from err
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
@@ -123,29 +111,34 @@ def train(**args):
         )
         # Check and update data path if necessary
         base_path = os.path.join(config.DATA_PATH, "raw")
-        args["data"]= utils.validate_and_modify_path(args["data"],base_path)
-       
+        args["data"] = utils.validate_and_modify_path(
+            args["data"], base_path
+        )
+
         # Check and update data paths of val and training in data.yaml
         if not utils.check_paths_in_yaml(args["data"]):
-                raise ValueError('The path to the either train or validation '\
-                'data does not exist. Please provide a valid path.')
+            raise ValueError(
+                "The path to the either train or validation "
+                "data does not exist. Please provide a valid path."
+            )
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        #The project should correspond to the name of your project
-        #and should only include the project directory, not the full path.
+        # The project should correspond to the name of your project
+        # and should only include the project directory, not the full path.
         args["project"] = config.MODEL_NAME
 
-        # The directory where the model will be saved after training 
+        # The directory where the model will be saved after training
         # by joining the values of args["project"] and args["name"].
         args["name"] = os.path.join("models", timestamp)
-        
+
         # Check if there are weights to load from an already trained model
         # Otherwise, load the pretrained model from the model registry
-        
+
         if args["weights"] is not None:
-            path=  utils.validate_and_modify_path(args["weights"], 
-            config.MODELS_PATH)
+            path = utils.validate_and_modify_path(
+                args["weights"], config.MODELS_PATH
+            )
 
             model = YOLO(path)
 
@@ -156,7 +149,7 @@ def train(**args):
         utils.pop_keys_from_dict(
             args, ["task_type", "disable_wandb", "weights"]
         )
-        #The use of exist_ok=True ensures that the model will 
+        # The use of exist_ok=True ensures that the model will
         # be saved in the same path if resume=True.
         model.train(exist_ok=True, **args)
 
@@ -182,9 +175,7 @@ if __name__ == "__main__":
     args["task_type"] = "seg"
     args["epochs"] = 3
     args["resume"] = False
-    args[
-        "weights"
-    ] = None
+    args["weights"] = None
 
     train(**args)
     fields = schemas.PredArgsSchema().fields
