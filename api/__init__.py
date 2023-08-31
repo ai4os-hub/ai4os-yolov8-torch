@@ -147,7 +147,7 @@ def train(**args):
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
         utils.pop_keys_from_dict(args, ["task_type", "disable_wandb", "weights"])
 
-        model.train(**args)
+        model.train(exist_ok=True, **args)
 
         return {
             f'The model was trained successfully and was saved to: {os.path.join(args["project"], args["name"])}'
@@ -169,16 +169,16 @@ if __name__ == "__main__":
         "data"
     ] = "/srv/yolov8_api/data/raw/seg/label.yaml"
     args["task_type"] = "seg"
-    args["epochs"] = 3
-   # args["resume"] = True # FIXME
-    args['weights'] = None#'/srv/yolov8_api/models/20230831_065054/weights/last.pt'
+    args["epochs"] = 5
+    args["resume"] = True  
+    args['weights'] = '/srv/yolov8_api/models/20230831_074708/weights/last.pt'
 
     train(**args)
     fields = schemas.PredArgsSchema().fields
     from deepaas.model.v2.wrapper import UploadedFile
 
     args = {}
-    #from api import schemas
+
 
     for key, value in fields.items():
         print(key, value)

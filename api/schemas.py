@@ -192,7 +192,6 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=None,
     )
     
-    
     resume = fields.Bool(
         description="If the training was stopped before completing all epochs, "
       "you can resume training by setting resume=True to continue from the last checkpoint.",
@@ -201,17 +200,11 @@ class TrainArgsSchema(marshmallow.Schema):
         enum=[True, False],  # Use a list for the enum
     )
 
-
     save_period = fields.Int(
         description="Save checkpoint every x epochs (disabled if < 1)",
         missing=-1,
     )
-    cache = fields.Bool(
-        description="True/ram, disk or False. Use cache for data loading",
-        required=False,
-        enum=[True, False],
-        missing=False,
-    )
+
     device = fields.Str(
         description='Device to run on, e.g., "cuda:0" or "cpu"',
         missing="cuda:0",
@@ -221,12 +214,6 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=4,
     )
     
-
-    pretrained = fields.Str(
-        description="Whether to use a pretrained model (bool) or a model to load weights from (str)",
-        missing=True,
-        required=False,
-    )
 
     optimizer = fields.Str(
         description="Optimizer to use, choices=[SGD, Adam, Adamax, AdamW, NAdam, RAdam, RMSProp, auto]",
@@ -243,12 +230,7 @@ class TrainArgsSchema(marshmallow.Schema):
             "auto",
         ],
     )
-    verbose = fields.Bool(
-        description="Whether to print verbose output",
-        required=False,
-        missing=False,
-        enum=[True, False],
-    )
+
     seed = fields.Int(
         description="Random seed for reproducibility", missing=42
     )
@@ -267,17 +249,11 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=False,
         enum=[True, False],
     )
-    cos_lr = fields.Bool(
-        description="Use cosine learning rate scheduler",
-        missing=False,
-        enum=[True, False],
-    )
 
-    overlap_mask = fields.Bool(
-        description="Masks should overlap during training (segment train only)",
+    fraction = fields.Float(
+        description="Dataset fraction to train on (default is 1.0, all images in train set)",
         required=False,
-        missing=False,
-        enum=[True, False],
+        missing=1.0,
     )
     mask_ratio = fields.Int(
         description="Mask downsample ratio (segment train only)",
@@ -288,6 +264,17 @@ class TrainArgsSchema(marshmallow.Schema):
         description="Use dropout regularization (classify train only)",
         required=False,
         missing=0.0,
+    )
+    amp = fields.Bool(
+        description="Automatic Mixed Precision (AMP) training, choices=[True, False], True runs AMP check",
+        required=False,
+        missing=False,
+        enum=[True, False],
+    )
+    cos_lr = fields.Bool(
+        description="Use cosine learning rate scheduler",
+        missing=False,
+        enum=[True, False],
     )
     lr0 = fields.Float(
         description="Initial learning rate (i.e. SGD=1E-2, Adam=1E-3)",
@@ -329,23 +316,6 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=10,
     )
 
-    amp = fields.Bool(
-        description="Automatic Mixed Precision (AMP) training, choices=[True, False], True runs AMP check",
-        required=False,
-        missing=False,
-        enum=[True, False],
-    )
-    fraction = fields.Float(
-        description="Dataset fraction to train on (default is 1.0, all images in train set)",
-        required=False,
-        missing=1.0,
-    )
-    profile = fields.Bool(
-        description="Profile ONNX and TensorRT speeds during training for loggers",
-        required=False,
-        missing=False,
-        enum=[True, False],
-    )
     box = fields.Float(
         description="Box loss gain", required=False, missing=7.5
     )
@@ -355,16 +325,15 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=0.5,
     )
     dfl = fields.Float(
-        description="Dfl loss gain", required=False, missing=1.5
+        description=" Distribution Focal Loss gain", required=False, missing=1.5
     )
-    pose = fields.Float(
-        description="Pose loss gain", required=False, missing=12.0
-    )
+
     kobj = fields.Float(
         description="Keypoint obj loss gain",
         required=False,
         missing=1.0,
     )
+
     label_smoothing = fields.Float(
         description="Label smoothing (fraction)",
         required=False,
@@ -438,13 +407,6 @@ class TrainArgsSchema(marshmallow.Schema):
         required=False,
         missing=0.0,
     )
-
-   # exist_ok = fields.Bool(
-    #    description="Whether to overwrite existing experiment",
-    #    missing=False,
-    #    required=False,
-    #    enum=[True, False],
-    #)
 
     disable_wandb = fields.Bool(
         description="Whether disables wandb logging",
