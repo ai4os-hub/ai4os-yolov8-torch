@@ -162,7 +162,7 @@ def train(**args):
     except Exception as err:
         raise HTTPException(reason=err) from err
 
-def main():
+def main():#FIXME: Remove method before running train and predict
     """
     Runs above-described methods from CLI
     uses: python3 path/to/api/__init__.py method --arg1 ARG1_VALUE
@@ -183,8 +183,8 @@ def main():
             results = method_function()
         else:
             logger.debug("Calling method with args: %s", args)
+            del vars(args)['method'] 
             results = method_function(**vars(args))
-
         print(json.dumps(results))
         logger.debug("Results: %s", results)
         return results

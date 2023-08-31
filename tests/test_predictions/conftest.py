@@ -44,11 +44,10 @@ from deepaas.model.v2.wrapper import UploadedFile
 import api
 from yolov8_api.api import config
 
-
 # Fixture for the 'input' parameter
 def input(request):
     file = os.path.join(
-        config.DATA_PATH, "test_data/validation/img", request.param
+        config.TEST_DATA_PATH, "det/val/img", request.param
     )
     content_type = "application/octet-stream"
     return UploadedFile("input", file, content_type, request.param)

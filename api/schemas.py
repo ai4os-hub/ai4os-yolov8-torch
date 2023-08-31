@@ -214,7 +214,8 @@ class TrainArgsSchema(marshmallow.Schema):
     )
 
     seed = fields.Int(
-        description="Random seed for reproducibility", missing=42
+        description="Random seed for reproducibility", 
+        missing=42
     )
     deterministic = fields.Bool(
         description="Whether to enable deterministic mode",
