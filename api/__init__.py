@@ -70,16 +70,13 @@ def predict(**args):
     """Performs model prediction from given input data and parameters.
 
     Arguments:
-        model_name -- Model name from registry to use for prediction values.
-        input_file -- File with data to perform predictions from model.
-        accept -- Response parser type, default is json.
         **args -- Arbitrary keyword arguments from PredArgsSchema.
 
     Raises:
         HTTPException: Unexpected errors aim to return 50X
 
     Returns:
-        The predicted model values (dict or str) or files.
+        The predicted model values json, png, pdf or mp4 file.
     """
     try:  
 
@@ -93,6 +90,9 @@ def predict(**args):
             args["model"] = os.path.join(
                 config.MODELS_PATH, args["model"], "weights/best.pt"
             )
+            if not os.path.isfile(args["model"]):
+                raise ValueError('The model file does not exist.'
+                ' Please provide a valid path.')
 
         with tempfile.TemporaryDirectory() as tmpdir:
             for f in [args["input"]]:
@@ -128,15 +128,15 @@ def train(**args):
             args["data"] = os.path.join(
                 config.DATA_PATH, "raw", args["data"]
             )
-            assert os.path.isfile(args["data"]), \
-                'The data file does not exist. Please provide a '\
-                'valid path.'
+            if not os.path.isfile(args["data"]):
+                raise ValueError('The data file does not exist.'
+                ' Please provide a valid path.')
        
         # Check and update data paths of val and training in data.yaml
-        assert utils.check_paths_in_yaml(args["data"]),\
-                'The path to the either train or validation '\
-                'data does not exist. Please provide a valid path.'
-                   
+        if not utils.check_paths_in_yaml(args["data"]):
+                raise ValueError('The path to the either train or validation '\
+                'data does not exist. Please provide a valid path.')
+
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
         #The project should correspond to the name of your project
