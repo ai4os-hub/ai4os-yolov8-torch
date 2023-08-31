@@ -39,10 +39,10 @@ number of tests generated can grow exponentially.
 """
 # pylint: disable=redefined-outer-name
 import pytest
-
+import os
 import api
 
-
+script_dir = os.path.dirname(os.path.abspath(__file__))
 # Fixture for the 'task_type' parameter
 @pytest.fixture(scope="module", params=["det"])
 def task_type_param(request):
@@ -341,7 +341,6 @@ def disable_wandb_param(request):
 def train_kwds(
     task_type_param,
     model_param,
-    data_param,
     batch_size_param,
     num_workers_param,
     epochs_param,
@@ -458,6 +457,10 @@ def train_kwds(
 @pytest.fixture(scope="module")
 def trained_model_path(train_kwds):
     """Fixture to return trained model path."""
+    if train_kwds["task_type"]=='seg':
+        train_kwds["data"] = os.path.join(script_dir,'data/det/data.yaml')
+    elif train_kwds["task_type"]=='det':
+        train_kwds["data"] = os.path.join(script_dir,'data/seg/label.yaml')    
     result = api.train(**train_kwds)
     saved_model_path = str(result).split(" ")[-1].rstrip("'}")
     yield saved_model_path
