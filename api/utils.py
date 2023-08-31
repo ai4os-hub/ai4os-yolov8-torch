@@ -10,11 +10,15 @@ import logging
 import subprocess  # nosec B404
 import sys
 import os
+from marshmallow import fields
 from subprocess import TimeoutExpired  # nosec B404
 import ultralytics
 import yaml
 from . import config
 import yolov8_api as aimodel
+
+
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -70,7 +74,7 @@ def ls_remote():
     Returns:
         A list of strings.
     """
-    remote_directory = configs.REMOTE_PATH
+    remote_directory = config.REMOTE_PATH
     return list_directories_with_rclone("rshare", remote_directory)
 
 def ls_files(path, pattern):
@@ -306,3 +310,30 @@ def validate_and_modify_path(path, base_path):
             )
         return modified_path
     return path
+def add_arguments_from_schema(schema, parser):
+    for field_name, field_obj in schema.fields.items():
+        arg_name = f"--{field_name}"
+
+        arg_kwargs = {
+            "type": str,
+            "help": field_name,  # Default help message is the field name
+        }
+
+        if (isinstance(field_obj, fields.Str) or
+                isinstance(field_obj, fields.Field)):
+            arg_kwargs["type"] = str
+        elif isinstance(field_obj, fields.Int):
+            arg_kwargs["type"] = int
+        elif isinstance(field_obj, fields.Bool):
+            arg_kwargs["type"] = bool
+        elif isinstance(field_obj, fields.Float):
+            arg_kwargs["type"] = float
+
+        if field_obj.required:
+            arg_kwargs["required"] = True
+
+        if field_obj.metadata.get("description"):
+            arg_kwargs["help"] = field_obj.metadata["description"]
+
+        parser.add_argument(arg_name, **arg_kwargs)
+

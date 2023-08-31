@@ -55,7 +55,7 @@ DATA_PATH = Path(DATA_PATH)
 MODELS_PATH = os.getenv("MODELS_PATH", default=BASE_PATH / "models")
 MODELS_PATH = Path(MODELS_PATH)
 
-REMOTE_PATH = os.getenv("MODELS_PATH", default= "models_sub")
+REMOTE_PATH = os.getenv("MODELS_PATH", default= "models")
 # logging level across API modules can be setup via API_LOG_LEVEL,
 # options: DEBUG, INFO(default), WARNING, ERROR, CRITICAL
 ENV_LOG_LEVEL = os.getenv("API_LOG_LEVEL", default="INFO")

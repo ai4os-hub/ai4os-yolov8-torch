@@ -11,7 +11,8 @@ import logging
 import datetime
 import tempfile
 import shutil
-
+import argparse
+import json
 
 from ultralytics import YOLO
 from aiohttp.web import HTTPException
@@ -44,7 +45,7 @@ def get_metadata():
             "version": config.MODEL_METADATA.get("version"),
             "datasets": utils.ls_dirs(config.DATA_PATH / "processed"),
             "models_local": utils.ls_dirs(config.MODELS_PATH),
-            "models_remote": utils_api.ls_remote(),
+            "models_remote": utils.ls_remote(),
         }
         logger.debug("Package model metadata: %s", metadata)
         return metadata
@@ -161,8 +162,68 @@ def train(**args):
     except Exception as err:
         raise HTTPException(reason=err) from err
 
+def main():
+    """
+    Runs above-described methods from CLI
+    """
+    method_dispatch = {
+        "get_metadata": get_metadata,
+        "predict": predict,
+        "train": train,
+    }
+
+    chosen_method = args.method
+    logger.debug("Calling method: %s", chosen_method)
+    if chosen_method in method_dispatch:
+        method_function = method_dispatch[chosen_method]
+
+        if chosen_method == "get_metadata":
+            results = method_function()
+        else:
+            logger.debug("Calling method with args: %s", args)
+            results = method_function(**vars(args))
+
+        print(json.dumps(results))
+        logger.debug("Results: %s", results)
+        return results
+    else:
+        print("Invalid method specified.")
 
 if __name__ == "__main__":
+    
+    parser = argparse.ArgumentParser(
+        description="Model parameters", add_help=False
+    )
+    cmd_parser = argparse.ArgumentParser()
+    subparsers = cmd_parser.add_subparsers(
+        help='methods. Use "api.py method --help" to get more info',
+        dest="method",
+    )
+    get_metadata_parser = subparsers.add_parser(
+        "get_metadata", help="get_metadata method", parents=[parser]
+    )
+
+    predict_parser = subparsers.add_parser(
+        "predict", help="commands for prediction", parents=[parser]
+    )
+    
+    utils.add_arguments_from_schema(
+        schemas.PredArgsSchema(), predict_parser
+    )
+
+    train_parser = subparsers.add_parser(
+        "train", help="commands for training", parents=[parser]
+    )
+
+    utils.add_arguments_from_schema(
+        schemas.TrainArgsSchema(), train_parser
+    )
+
+    args = cmd_parser.parse_args()
+
+    main()
+
+    '''
     fields = schemas.TrainArgsSchema().fields
 
     args = {}
@@ -197,3 +258,4 @@ if __name__ == "__main__":
     args["model"] = None
     args["accept"] = "application/pdf"
     args["task_type"] = "seg"
+    '''
