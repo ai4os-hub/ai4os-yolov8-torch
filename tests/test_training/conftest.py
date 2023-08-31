@@ -147,11 +147,6 @@ def rect_param(request):
 def cos_lr_param(request):
     return request.param
 
-# Fixture for the 'overlap_mask' parameter
-@pytest.fixture(scope="module", params=[True, False])
-def overlap_mask_param(request):
-    return request.param
-
 # Fixture for the 'mask_ratio' parameter
 @pytest.fixture(scope="module", params=[4, 8])
 def mask_ratio_param(request):
@@ -212,10 +207,6 @@ def amp_param(request):
 def fraction_param(request):
     return request.param
 
-# Fixture for the 'profile' parameter
-@pytest.fixture(scope="module", params=[True, False])
-def profile_param(request):
-    return request.param
 
 # Fixture for the 'box' parameter
 @pytest.fixture(scope="module", params=[7.5, 5.0])
@@ -231,12 +222,7 @@ def cls_param(request):
 @pytest.fixture(scope="module", params=[1.5, 2.0])
 def dfl_param(request):
     return request.param
-
-# Fixture for the 'pose' parameter
-@pytest.fixture(scope="module", params=[12.0, 15.0])
-def pose_param(request):
-    return request.param
-
+ 
 # Fixture for the 'kobj' parameter
 @pytest.fixture(scope="module", params=[1.0, 0.8])
 def kobj_param(request):
@@ -312,16 +298,6 @@ def mosaic_param(request):
 def mixup_param(request):
     return request.param
 
-# Fixture for the 'copy_paste' parameter
-@pytest.fixture(scope="module", params=[0.0, 0.2])
-def copy_paste_param(request):
-    return request.param
-
-# Fixture for the 'exist_ok' parameter
-@pytest.fixture(scope="module", params=[True, False])
-def exist_ok_param(request):
-    return request.param
-
 # Fixture for the 'disable_wandb' parameter
 @pytest.fixture(scope="module", params=[True, False])
 def disable_wandb_param(request):
@@ -358,7 +334,6 @@ def train_kwds(task_type_param,
                 box_param,
                 cls_param,
                 dfl_param,
-                pose_param,
                 kobj_param,
                 label_smoothing_param,
                 nbs_param,
@@ -374,7 +349,6 @@ def train_kwds(task_type_param,
                 fliplr_param,
                 mosaic_param,
                 mixup_param,
-                copy_paste_param,
                 exist_ok_param,
                 disable_wandb_param  ):
     """Fixture to return arbitrary keyword arguments for predictions."""
@@ -404,11 +378,9 @@ def train_kwds(task_type_param,
                   "close_mosaic" : close_mosaic_param,
                   "amp" : amp_param,
                   "fraction" : fraction_param,
-                  "profile" : profile_param,
                   "box" : box_param,
                   "cls" : cls_param,
                   "dfl" : dfl_param,
-                  "pose" : pose_param,
                   "kobj" : kobj_param,
                   "label_smoothing" : label_smoothing_param,
                   "nbs" : nbs_param,
@@ -424,7 +396,6 @@ def train_kwds(task_type_param,
                   "fliplr" : fliplr_param,
                   "mosaic" : mosaic_param,
                   "mixup" : mixup_param,
-                  "copy_paste" : copy_paste_param,
                   "exist_ok" : exist_ok_param,
                   "disable_wandb" : disable_wandb_param
     }
