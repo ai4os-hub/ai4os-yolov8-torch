@@ -89,34 +89,23 @@ class PredArgsSchema(marshmallow.Schema):
         "if show_labels is False, show_conf is also False",
         missing=True,
     )
-    #  vid_stride = fields.Int(
-    #      description='Video frame-rate stride',
-    #     missing=1
-    # )
-    #line_width = fields.Int(
+
+    #= fields.Int(
    #     description="Line width of the bounding boxes",
     #    required=False,
    #     missing=None,
    # )
-#    visualize = fields.Boolean(
-#        description="Visualize model features", missing=False
-#    )
+
     augment = fields.Boolean(
         description="Apply image augmentation to prediction sources",
         missing=False,
     )
-#    agnostic_nms = fields.Boolean(
-#        description="Class-agnostic NMS", missing=False
-#    )
     classes = fields.Field(
         description="Filter results by class, i.e. class=0, or class=[0,2,3]",
         required=False,
         missing=None,
     )
-#    retina_masks = fields.Boolean(
-#        description="Use high-resolution segmentation masks",
-#        missing=False,
-#    )
+
     boxes = fields.Boolean(
         description="Show boxes in segmentation predictions",
         missing=True,

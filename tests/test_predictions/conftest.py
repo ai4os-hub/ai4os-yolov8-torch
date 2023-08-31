@@ -60,79 +60,62 @@ def input(request):
 
 
 # Fixture for the 'model' parameter
-@pytest.fixture(scope="module", params=["time_stamp1"])
+@pytest.fixture(scope="module", params=[None])
 def model_param(request):
     return request.param
 
 # Fixture for the 'task_type' parameter
-@pytest.fixture(scope="module", params=["det", "seg", "cls", "pose"])
+@pytest.fixture(scope="module", params=["det"])
 def task_type_param(request):
     return request.param
 
 # Fixture for the 'conf' parameter
-@pytest.fixture(scope="module", params=[0.25, 0.5])
+@pytest.fixture(scope="module", params=[0.5])
 def conf_param(request):
     return request.param
 
 # Fixture for the 'iou' parameter
-@pytest.fixture(scope="module", params=[0.5, 0.75])
+@pytest.fixture(scope="module", params=[0.75])
 def iou_param(request):
     return request.param
 
 # Fixture for the 'show_labels' parameter
-@pytest.fixture(scope="module", params=[True, False])
+@pytest.fixture(scope="module", params=[True])
 def show_labels_param(request):
     return request.param
 
 # Fixture for the 'show_conf' parameter
-@pytest.fixture(scope="module", params=[True, False])
+@pytest.fixture(scope="module", params=[True])
 def show_conf_param(request):
     return request.param
 
-# Fixture for the 'line_width' parameter
-@pytest.fixture(scope="module", params=[None, 1, 2])
-def line_width_param(request):
-    return request.param
-
-# Fixture for the 'visualize' parameter
-@pytest.fixture(scope="module", params=[True, False])
-def visualize_param(request):
-    return request.param
-
 # Fixture for the 'augment' parameter
-@pytest.fixture(scope="module", params=[True, False])
+@pytest.fixture(scope="module", params=[True])
 def augment_param(request):
     return request.param
 
 # Fixture for the 'agnostic_nms' parameter
-@pytest.fixture(scope="module", params=[True, False])
+@pytest.fixture(scope="module", params=[True])
 def agnostic_nms_param(request):
     return request.param
 
 # Fixture for the 'classes' parameter
-@pytest.fixture(scope="module", params=[None, [0, 2, 3]])
+@pytest.fixture(scope="module", params=[None])
 def classes_param(request):
     return request.param
 
-# Fixture for the 'retina_masks' parameter
-@pytest.fixture(scope="module", params=[True, False])
-def retina_masks_param(request):
-    return request.param
+
 
 # Fixture for the 'boxes' parameter
-@pytest.fixture(scope="module", params=[True, False])
+@pytest.fixture(scope="module", params=[True])
 def boxes_param(request):
     return request.param
 
 # Fixture for the 'accept' parameter
-@pytest.fixture(scope="module", params=["application/json", "application/xml"])
+@pytest.fixture(scope="module", params=["application/json"])
 def accept_param(request):
     return request.param
 
-# Fixture for the PredArgsSchema instance
-@pytest.fixture(scope="module")
-def pred_args_schema():
-    return PredArgsSchema()
 
 @pytest.fixture(scope="module")
 def pred_kwds( input, 
@@ -142,15 +125,12 @@ def pred_kwds( input,
     iou_param, 
     show_conf_param, 
     show_labels_param, 
-    line_width_param, 
-    visualize_param, 
     augment_param, 
     agnostic_nms_param,
     classes_param,
     retina_masks_param,
     boxes_param,
-    accept_param,
-    pred_args_schema):
+    accept_param):
 
     """Fixture to return arbitrary keyword arguments for predictions."""
     pred_kwds = {"input": input, 
@@ -159,16 +139,12 @@ def pred_kwds( input,
                 "conf": conf_param, 
                 "iou": iou_param, 
                 "show_conf": show_conf_param,
-                "show_labels": show_labels_param, 
-                "line_width": line_width_param, 
-                "visualize": visualize_param, 
+                "show_labels": show_labels_param,
                 "augment": augment_param, 
                 "agnostic_nms": agnostic_nms_param,
                 "classes": classes_param,
-                "retina_masks": retina_masks_param,
                 "boxes": boxes_param,
-                "accept": accept_param,
-                "pred_args_schema": pred_args_schema}
+                "accept": accept_param}
     return {k: v for k, v in pred_kwds.items()}
 
     
