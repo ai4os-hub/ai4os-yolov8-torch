@@ -1,0 +1,10 @@
+ 
+ 
+ 
+ 
+train: /srv/yolov8_api/tests/data/seg/train/images
+val:/srv/yolov8_api/tests/data/seg/val/images
+nc: 7
+names: ['food','Oil', 'jam', 'pasta', 'rice', 'soda', 'tomato sauce']
+
+ 
