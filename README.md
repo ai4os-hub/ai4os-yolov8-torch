@@ -138,9 +138,9 @@ The `config.yaml` file contains the following information about the data:
 
 ```yaml
 # Images and labels directory should be insade 'fasterrcnn_pytorch_api/data' directory.
-train: 'my_dataset/train/imgs'
-val: 'my_dataset/val/imgs'
-test: 'my_dataset/test/imgs' #optional
+train: 'path/to/my_dataset/train/imgs'
+val: 'path/to/my_dataset/val/imgs'
+test: 'path/to/my_dataset/test/imgs' #optional
 # Class names.
 names: 
     0: class1, 
