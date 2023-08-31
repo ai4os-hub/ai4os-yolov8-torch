@@ -119,9 +119,11 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
+        # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
             args["model"], args["task_type"]
         )
+        # Check and update data path if necessary
         if not os.path.isfile(args["data"]):
             args["data"] = os.path.join(
                 config.DATA_PATH, "raw", args["data"]
@@ -132,9 +134,17 @@ def train(**args):
                 'The path to the either train or validation'\
                 'data does not exist. Please provide a valid path.'   
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        args["project"] = config.MODEL_NAME
-        args["name"] = os.path.join("models", timestamp)
 
+        #The project should be the name of the project
+        #should be just one directory not the full path
+        args["project"] = config.MODEL_NAME
+
+        # The directory where the model will be saved after training 
+        # by joining the values of args["project"] and args["name"].
+        args["name"] = os.path.join("models", timestamp)
+        
+        # Check if there are weights to load from an already trained model
+        # Otherwise, load the pretrained model from the model registry
         if args["weights"] is not None:
             if os.path.isfile(args["weights"]):
                 path = args["weights"]
@@ -152,7 +162,8 @@ def train(**args):
         utils.pop_keys_from_dict(
             args, ["task_type", "disable_wandb", "weights"]
         )
-
+        #exist_ok=True ensures that the model will be saved on the same path
+        # if resume=True.
         model.train(exist_ok=True, **args)
 
         return {
@@ -175,11 +186,11 @@ if __name__ == "__main__":
     args["model"] = "yolov8s.pt"
     args["data"] = "/srv/yolov8_api/data/raw/seg/label.yaml"
     args["task_type"] = "seg"
-    args["epochs"] = 5
-    args["resume"] = True
+    args["epochs"] = 2
+    args["resume"] = False
     args[
         "weights"
-    ] = "/srv/yolov8_api/models/20230831_074708/weights/last.pt"
+    ] = None
 
     train(**args)
     fields = schemas.PredArgsSchema().fields
