@@ -161,7 +161,7 @@ def generate_arguments(schema):
 
 def predict_arguments(schema):
     """Decorator to inject schema as arguments to call predictions."""
-    def inject_function_schema(func):  # fmt: skip
+    def inject_function_schema(func):
         get_args = generate_arguments(schema)
         sys.modules[func.__module__].get_predict_args = get_args
         return func  # Decorator that returns same function
@@ -178,6 +178,19 @@ def train_arguments(schema):
 
 
 def load_config(default_cfg_path):
+    """
+    Load and parse a YAML configuration file into a Python object.
+
+    Args:
+        default_cfg_path (str): The path to the YAML configuration file.
+
+    Returns:
+        Tuple[ultralytics.utils.IterableSimpleNamespace, dict_keys]: 
+        A tuple containing two elements:
+            1. A Python object representing the configuration.
+            2. A dictionary_keys object containing the keys in 
+            the loaded configuration.
+    """
     try:
         with open(default_cfg_path, "r") as yaml_file:
             default_cfg_dict = yaml.safe_load()(
@@ -202,11 +215,6 @@ def load_config(default_cfg_path):
 def check_annotations_format(data):
     """Check if annotations are in the correct format.
     Check and preprocess annotation files in specified directories.
-
-    This function takes YAML data containing directory paths for
-    annotation files. It checks if the specified directories exist
-    and contain valid annotation files,and then preprocesses the
-    annotation files based on their format.
 
     Args:
         data (str): YAML-formatted string containing directory paths.
@@ -243,24 +251,19 @@ def check_annotations_format(data):
             xml_annotations = [
                 ann for ann in annotations if ann.endswith(".xml")
             ]
+            txt_annotations = [
+                ann for ann in annotations if ann.endswith(".txt")
+            ]
 
-            if json_annotations:
-                format = "json"
-                args = {
-                    "format": format,
-                    "annotation_path": annotations_path,
-                }
-                aimodel.preprocess_ann.main(**args)
-            elif xml_annotations:
-                format = "xml"
-                args = {
-                    "format": format,
-                    "annotation_path": annotations_path,
-                }
-                aimodel.preprocess_ann.main(**args)
-            else:
-                print("No JSON or XML annotation files found.")
-
+            if json_annotations or xml_annotations:
+               raise ValueError("Invalid annotations format (json, xml): "
+                 "please convert the annotations format into .txt. "
+                 "You can use either 'yolov8_api/preprocess_ann.py' (for a detection task) "
+                 "or 'yolov8_api/seg_coco_json_to_yolo.py' (for segmentation).")
+    
+            elif not txt_annotations:
+                 raise ValueError(f"No valid .txt annotations found in "
+                         "'{key}' directory: Please use .txt format")
 
 class DotDict:
     def __init__(self, dictionary):
@@ -277,6 +280,19 @@ def pop_keys_from_dict(dictionary, keys_to_pop):
 
 
 def check_paths_in_yaml(yaml_path, base_path):
+    """
+    Check and potentially update file paths specified in a YAML 
+    configuration file.
+
+    Args:
+        yaml_path (str): The path to the YAML configuration file.
+        base_path (str): The base directory to prepend to relative 
+        file paths.
+
+    Returns:
+        bool: True if all paths exist or have been successfully updated, 
+        False otherwise.
+    """
     with open(yaml_path, "r") as yaml_file:
         data = yaml.safe_load(yaml_file)
 
@@ -301,6 +317,17 @@ def check_paths_in_yaml(yaml_path, base_path):
 
 
 def validate_and_modify_path(path, base_path):
+    """
+    Validate and modify a file path, ensuring it exists
+
+    Args:
+        path (str): The input file path to validate.
+        base_path (str): The base path to join with 'path' if it
+        doesn't exist as-is.
+
+    Returns:
+        str: The validated and possibly modified file path.
+    """    
     if not os.path.isfile(path):
         modified_path = os.path.join(base_path, path)
         if not os.path.isfile(modified_path):
@@ -312,7 +339,20 @@ def validate_and_modify_path(path, base_path):
     return path
 
 def add_arguments_from_schema(schema, parser):
-   
+    """
+    Iterates through the fields defined in a schema and adds 
+    corresponding commandline arguments to the provided 
+    ArgumentParser object.
+
+    Args:
+        schema (marshmallow.Schema): The schema object containing field
+        definitions.
+        parser (argparse.ArgumentParser): The ArgumentParser object
+        to which arguments will be added.
+
+    Returns:
+        None
+    """
     for field_name, field_obj in schema.fields.items():
         arg_name = f"--{field_name}"
 
@@ -323,7 +363,6 @@ def add_arguments_from_schema(schema, parser):
         if type(field_obj)==  fields.Int:
             arg_kwargs["type"] = int
         elif type(field_obj)==  fields.Bool:
-           # arg_kwargs["type"] = bool
             arg_kwargs["action"]= 'store_true'
         elif type(field_obj)==  fields.Float:
             arg_kwargs["type"] = float

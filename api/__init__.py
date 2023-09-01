@@ -107,6 +107,8 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
+        #check if annotations are in the correct format .txt
+        utils.check_annotations_format(args['data'])
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
             args["model"], args["task_type"]

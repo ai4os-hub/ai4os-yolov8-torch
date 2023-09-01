@@ -1,4 +1,10 @@
 # Ultralytics YOLO 🚀, AGPL-3.0 license
+# This script is used to convert a custom dataset with COCO JSON 
+# annotation format into YOLOv8 annotation format (.txt).
+# It is based on the modified version of Ultralytics YOLO, 
+# tailored for converting   COCO dataset JSON annotations
+#to .txt format.
+
 
 import json
 from collections import (
