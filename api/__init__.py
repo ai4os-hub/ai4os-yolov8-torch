@@ -16,6 +16,7 @@ import json
 
 from ultralytics import YOLO
 from aiohttp.web import HTTPException
+from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
 from yolov8_api.api import config, responses, schemas, utils
@@ -184,6 +185,10 @@ def main():#FIXME: Remove method before running train and predict
         else:
             logger.debug("Calling method with args: %s", args)
             del vars(args)['method'] 
+            if args.input:
+                file_extension = os.path.splitext(args.input)[1] 
+                args.input=  UploadedFile(
+        "input", args.input, "application/octet-stream", f"input{file_extension}")
             results = method_function(**vars(args))
         print(json.dumps(results))
         logger.debug("Results: %s", results)
@@ -236,7 +241,7 @@ if __name__ == "__main__":
             args[key] = value.missing
     args["model"] = "yolov8s.pt"
     args["data"] = "/srv/yolov8_api/data/raw/seg/label.yaml"
-    args["task_type"] = ""
+    args["task_type"] = "seg"
     args["epochs"] = 3
     args["resume"] = False
     args["weights"] = None
@@ -256,9 +261,9 @@ if __name__ == "__main__":
         416x416.yolov8/train/images/02_-Rust-2017-207u24s_jpg.\
             f.cb22459400f68cb6d111d18db2f7d834.jpg"
     args["input"] = UploadedFile(
-        "input", input, "application/octet-stream", "input.jpg"
-    )
+        "input", input, "application/octet-stream", "input.jpg")
     args["model"] = None
     args["accept"] = "application/pdf"
     args["task_type"] = "seg"
+    python3 api/__init__.py  predict  --input /srv/yolov8_api/tests/data/det/train/images/02_-Rust-2017-207u24s_jpg.rf.cb22459400f68cb6d111d18db2f7d834.jpg --accept application/json
     '''
