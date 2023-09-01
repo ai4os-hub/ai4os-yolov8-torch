@@ -43,11 +43,19 @@ import os
 from deepaas.model.v2.wrapper import UploadedFile
 import api
 from api import config
+import fnmatch
 
-# Fixture for the 'input' parameter
+DATA_FILES=os.path.join(
+        config.TEST_DATA_PATH, "det/val/img")
+# Fixture for the 'input' parameter@pytest.fixture(
+@pytest.fixture(
+    scope="module",
+    params=fnmatch.filter(DATA_FILES, "*.jpg")
+    + fnmatch.filter(DATA_FILES, "*.png"),
+)
 def input(request):
     file = os.path.join(
-        config.TEST_DATA_PATH, "det/val/img", request.param
+        DATA_FILES, request.param
     )
     content_type = "application/octet-stream"
     return UploadedFile("input", file, content_type, request.param)
