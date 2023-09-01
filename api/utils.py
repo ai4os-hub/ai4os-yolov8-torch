@@ -210,7 +210,7 @@ def load_config(default_cfg_path):
         raise Exception(f"Error loading default config: {err}")
 
 
-def check_annotations_format(data):
+def check_annotations_format(path):
     """Check if annotations are in the correct format.
     Check and preprocess annotation files in specified directories.
 
@@ -223,7 +223,8 @@ def check_annotations_format(data):
     Returns:
         None
     """
-    data = yaml.safe_load(data)
+    with open(path, 'r') as file:
+         data = yaml.safe_load(file)
     data_keys = data.keys()
     for key in data_keys:
         if os.path.exists(data[key]):

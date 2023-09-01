@@ -25,7 +25,6 @@ import shutil
 #check if the chkp is saved in the chkp directory.
 def test_train_function(training):
     """test if the chkp is saved in the chkp directory"""
-    trained_model_path = next(training)
     checkpoint_file = os.path.join(
         trained_model_path, "weights/last.pt"
     )

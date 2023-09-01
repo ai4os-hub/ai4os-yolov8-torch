@@ -140,5 +140,7 @@ GTAGS
 *.pkl
 *.npz
 
-# Things specific to this project #
+# Directoris #
 ###################################
+data/raw/train 
+data/raw/val 

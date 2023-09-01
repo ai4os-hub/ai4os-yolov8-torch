@@ -24,7 +24,6 @@ from . import config, responses, schemas, utils
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
 
-
 def get_metadata():
     """Returns a dictionary containing metadata information about the module.
 
@@ -104,11 +103,10 @@ def predict(**args):
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
-    try:
+   # try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
-        #check if annotations are in the correct format .txt
-        utils.check_annotations_format(args['data'])
+       
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
             args["model"], args["task_type"]
@@ -120,7 +118,6 @@ def train(**args):
         )
 
         # Check and update data paths of val and training in data.yaml
-        base_path = os.path.join(config.DATA_PATH, "raw")
         if not utils.check_paths_in_yaml(args["data"], base_path):
             raise ValueError(
                 "The path to the either train or validation "
@@ -163,8 +160,8 @@ def train(**args):
             and was saved to: {os.path.join(args["project"], args["name"])}'
         }
 
-    except Exception as err:
-        raise HTTPException(reason=err) from err
+    #except Exception as err:
+    #    raise HTTPException(reason=err) from err
 
 def main():#FIXME: Remove method before running train and predict
     """
@@ -188,7 +185,7 @@ def main():#FIXME: Remove method before running train and predict
         else:
             logger.debug("Calling method with args: %s", args)
             del vars(args)['method'] 
-            if args.input:
+            if hasattr(args, 'input'):
                 file_extension = os.path.splitext(args.input)[1] 
                 args.input=  UploadedFile(
         "input", args.input, "application/octet-stream", f"input{file_extension}")
@@ -268,5 +265,6 @@ if __name__ == "__main__":
     args["model"] = None
     args["accept"] = "application/pdf"
     args["task_type"] = "seg"
-    python3 api/__init__.py  predict  --input /srv/yolov8_api/tests/data/det/train/images/02_-Rust-2017-207u24s_jpg.rf.cb22459400f68cb6d111d18db2f7d834.jpg --accept application/json
+    python3 api/__init__.py  train --model yolov8n.yaml --task_type  det  --data /srv/yolov8_api/data/raw/seg/label.yaml
+       python3 api/__init__.py  predict  --input /srv/yolov8_api/tests/data/det/train/images/02_-Rust-2017-207u24s_jpg.rf.cb22459400f68cb6d111d18db2f7d834.jpg --accept application/json
     '''

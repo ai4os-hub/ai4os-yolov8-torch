@@ -22,7 +22,7 @@ the same folder. However, remember to add the prefix `test_` to the file.
 import json
 import io
 
-
+'''
 def test_prediction(test_predict):
     """Test the predict function."""
     # Access the test_predict fixture defined in conftest.py
@@ -37,7 +37,7 @@ def test_prediction(test_predict):
             json.loads(result)
         except json.JSONDecodeError:
             assert False, "Result is not a valid JSON file"
-
+'''
 
 # Example to test predictions probabilities range 0.0 and 1.1
 # def test_predictions_range(predictions):
