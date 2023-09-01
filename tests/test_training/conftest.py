@@ -456,7 +456,7 @@ def train_kwds(
 
 
 @pytest.fixture(scope="module")
-def trained_model_path(train_kwds):
+def training(train_kwds):
     """Fixture to return trained model path."""
     if train_kwds["task_type"]=='seg':
         train_kwds["data"] = os.path.join(TEST_DATA_PATH,'det/data.yaml')
@@ -467,4 +467,4 @@ def trained_model_path(train_kwds):
                 "test data does not exist. Please provide a valid path."      
     result = api.train(**train_kwds)
     saved_model_path = str(result).split(" ")[-1].rstrip("'}")
-    yield saved_model_path, result
+    yield saved_model_path
