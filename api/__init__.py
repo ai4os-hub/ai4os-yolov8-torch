@@ -118,7 +118,8 @@ def train(**args):
         )
 
         # Check and update data paths of val and training in data.yaml
-        if not utils.check_paths_in_yaml(args["data"]):
+        base_path = os.path.join(config.DATA_PATH, "raw")
+        if not utils.check_paths_in_yaml(args["data"], base_path):
             raise ValueError(
                 "The path to the either train or validation "
                 "data does not exist. Please provide a valid path."

@@ -43,6 +43,7 @@ import os
 import api
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
+TEST_DATA_PATH = api.config.TEST_DATA_PATH
 # Fixture for the 'task_type' parameter
 @pytest.fixture(scope="module", params=["det"])
 def task_type_param(request):
@@ -458,9 +459,12 @@ def train_kwds(
 def trained_model_path(train_kwds):
     """Fixture to return trained model path."""
     if train_kwds["task_type"]=='seg':
-        train_kwds["data"] = os.path.join(script_dir,'data/det/data.yaml')
+        train_kwds["data"] = os.path.join(TEST_DATA_PATH,'det/data.yaml')
     elif train_kwds["task_type"]=='det':
-        train_kwds["data"] = os.path.join(script_dir,'data/seg/label.yaml')    
+        train_kwds["data"] = os.path.join(TEST_DATA_PATH,'seg/label.yaml')
+    path=api.utils.check_paths_in_yaml(train_kwds["data"], TEST_DATA_PATH)
+    assert path, "The path to the either train or validation "\
+                "test data does not exist. Please provide a valid path."      
     result = api.train(**train_kwds)
     saved_model_path = str(result).split(" ")[-1].rstrip("'}")
-    yield saved_model_path
+    yield saved_model_path, result

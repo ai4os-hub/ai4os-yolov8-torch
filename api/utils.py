@@ -276,7 +276,7 @@ def pop_keys_from_dict(dictionary, keys_to_pop):
         dictionary.pop(key, None)
 
 
-def check_paths_in_yaml(yaml_path):
+def check_paths_in_yaml(yaml_path, base_path):
     with open(yaml_path, "r") as yaml_file:
         data = yaml.safe_load(yaml_file)
 
@@ -288,7 +288,7 @@ def check_paths_in_yaml(yaml_path):
 
     for i, path in enumerate(paths_to_check):
         if not os.path.exists(path):
-            new_path = os.path.join(config.DATA_PATH, "raw", path)
+            new_path = os.path.join(base_path, path)
             if os.path.exists(new_path):
                 data["train" if i == 0 else "val"] = new_path
 
@@ -310,6 +310,7 @@ def validate_and_modify_path(path, base_path):
             )
         return modified_path
     return path
+
 def add_arguments_from_schema(schema, parser):
    
     for field_name, field_obj in schema.fields.items():
