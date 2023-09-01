@@ -51,7 +51,7 @@ BASE_PATH = Path(__file__).resolve(strict=True).parents[1]
 # Path definition for data folder
 DATA_PATH = os.getenv("DATA_PATH", default=BASE_PATH /"data" )
 DATA_PATH = Path(DATA_PATH)
-TEST_DATA_PATH = os.getenv("TEST_DATA_PATH", default=BASE_PATH / "tests/data")
+TEST_DATA_PATH = os.getenv("TEST_DATA_PATH", default=BASE_PATH / "tests/datasets")
 TEST_DATA_PATH = Path(TEST_DATA_PATH)
 # Path definition for the pre-trained models
 MODELS_PATH = os.getenv("MODELS_PATH", default=BASE_PATH / "models")

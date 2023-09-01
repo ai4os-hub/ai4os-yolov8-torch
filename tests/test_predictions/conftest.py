@@ -42,7 +42,7 @@ import pytest
 import os
 from deepaas.model.v2.wrapper import UploadedFile
 import api
-from yolov8_api.api import config
+from api import config
 
 # Fixture for the 'input' parameter
 def input(request):

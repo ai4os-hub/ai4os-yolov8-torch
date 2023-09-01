@@ -39,23 +39,8 @@ def test_prediction(test_predict):
             assert False, "Result is not a valid JSON file"
 
 
-# Example to test predictions probabilities output shapes
-# def test_predictions_len(predictions):
-#     """Tests that predictions have length of 10."""
-#     for prediction in predictions[0:10]:
-#         assert isinstance(prediction, list)
-#         assert len(prediction) == 10
-
-
 # Example to test predictions probabilities range 0.0 and 1.1
 # def test_predictions_range(predictions):
 #     """Tests that predictions are between 0 and 1."""
 #     for prediction in predictions[0:10]:
 #         assert all(0.0 <= x <= 1.1 for x in prediction)
-
-
-# Example to test predictions probabilities total =~ 1.0
-# def test_predictions_sum(predictions):
-#     """Tests that sum of ind predictions totals ~1.0."""
-#     for prediction in predictions[0:10]:
-#         assert 0.99 < sum(prediction) < 1.01

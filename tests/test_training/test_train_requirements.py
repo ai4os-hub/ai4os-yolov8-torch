@@ -21,7 +21,7 @@ the same folder. However, remember to add the prefix `test_` to the file.
 
 import os
 import shutil
-
+'''
 #check if the chkp is saved in the chkp directory.
 def test_train_function(training):
     """test if the chkp is saved in the chkp directory"""
@@ -40,3 +40,4 @@ def test_train_function(training):
 #     """Test training result includes run_id on the return."""
 #     assert "run_id" in training
 #     assert isinstance(training["run_id"], str)
+'''

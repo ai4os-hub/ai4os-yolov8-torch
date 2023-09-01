@@ -28,7 +28,7 @@ def test_authors(metadata):
 def test_emails(metadata):
     """Tests that metadata provides authors information."""
     assert "author-email" in metadata
-    assert metadata["Author-email"] == {
+    assert metadata["author-email"] == {
         "Fahimeh": "khadijeh.alibabaei@kit.edu"
     }
 
@@ -36,13 +36,13 @@ def test_emails(metadata):
 def test_description(metadata):
     """Tests that metadata provides description information."""
     assert "description" in metadata
-    assert metadata["Description"] == "add api to yolov8"
+    assert metadata["description"] == "add api to yolov8"
 
 
 def test_license(metadata):
     """Tests that metadata provides license information."""
     assert "license" in metadata
-    assert metadata["License"] == "MIT"
+    assert metadata["license"] == "MIT"
 
 
 def test_version(metadata):
