@@ -27,7 +27,8 @@ authors = [{name= "Fahimeh", email= "khadijeh.alibabaei@kit.edu"} ]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-env = ["DATA_PATH=tests/datasets", "MODELS_PATH=tests/models"]
+env = ["DATA_PATH=tests/data", "MODELS_PATH=tests/models"]
+addopts = "--import-mode=importlib"
 
 [tool.setuptools]
 packages = ["yolov8_api", "yolov8_api.api"]
