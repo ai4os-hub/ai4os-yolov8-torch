@@ -44,9 +44,9 @@ def get_metadata():
             "description": config.MODEL_METADATA.get("summary"),
             "license": config.MODEL_METADATA.get("license"),
             "version": config.MODEL_METADATA.get("version"),
-            "datasets": utils.ls_dirs(config.DATA_PATH / "processed"),
             "models_local": utils.ls_dirs(config.MODELS_PATH),
             "models_remote": utils.ls_remote(),
+            "datasets": utils.generate_directory_tree(config.DATA_PATH),
         }
         logger.debug("Package model metadata: %s", metadata)
         return metadata

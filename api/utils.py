@@ -18,8 +18,6 @@ from . import config
 import yolov8_api as aimodel
 
 
-
-
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
 
@@ -380,4 +378,23 @@ def add_arguments_from_schema(schema, parser):
             arg_kwargs["help"] = field_obj.metadata["description"]
 
         parser.add_argument(arg_name, **arg_kwargs)
+
+import os
+
+
+ 
+def generate_directory_tree(path):
+    tree = {"name": os.path.basename(path), "type": "directory", "children": []}
+    
+    if os.path.exists(path) and os.path.isdir(path):
+        subdirectories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
+        subdirectories.sort()
+        
+        for subdir in subdirectories:
+            subdir_path = os.path.join(path, subdir)
+            tree["children"].append(generate_directory_tree(subdir_path))
+    
+    return tree
+
+
 
