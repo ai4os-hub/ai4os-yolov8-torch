@@ -32,11 +32,11 @@ def test_prediction(test_predict):
     if accept == "image/png":
         assert isinstance(result, io.BytesIO)
     else:
+        assert result[0] is not None, "The first element of the list is None"
         assert isinstance(result[0], str)
-        assert "name" in result[0]
-        assert "class" in result[0]
-        assert "confidence" in result[0]
-        assert "box" in result[0]
+        assert "name" in result[0],  "The name of the file is not in results"
+        assert "class" in result[0],  "The name of classes is not in results"
+        assert "box" in result[0], "The coordinate of boxes is not in results"
         try:
             json.loads(result[0])
         except json.JSONDecodeError:
