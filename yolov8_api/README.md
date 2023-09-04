@@ -18,9 +18,13 @@ project-directory/
 │
 └── utils.py                      # Utility functions script (update sty)
 ```
+# Convert COCO JSON and Pascal XML annotations to YOLO format
+If you want to convert coco JSON and Pascal XML annotations for detection purposes, you can use the following command:
+```bash
+$ python -m yolov8_api.preprocess_ann.py -f {xml or json} -ann {PATH/To/ANNOTATION/FILES} 
+```
+For converting COCO JSON segmetation format to YOLO format, you can use the following command:
 
 ```bash
-$ python -m yolov8_api.dataset.make_dataset {your_arguments}
-$ python -m yolov8_api.models..make_model {your_arguments}
-$ python -m yolov8_api.visualization.compare_models {your_arguments}
+$ python -m yolov8_api.seg_coco_json_to_yolo.py  -ann {PATH/To/ANNOTATION/FILES} 
 ```
