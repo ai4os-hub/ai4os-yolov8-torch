@@ -32,7 +32,7 @@ def test_prediction(test_predict):
     if accept == "image/png":
         assert isinstance(result, io.BytesIO)
     else:
-        assert isinstance(result, str)
+        assert isinstance(result, list)
         try:
             json.loads(result)
         except json.JSONDecodeError:

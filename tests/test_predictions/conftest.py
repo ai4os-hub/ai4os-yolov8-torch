@@ -45,9 +45,8 @@ import api
 from api import config
 import fnmatch
 
-DATA_FILES = os.path.join(config.TEST_DATA_PATH, "det/val/img")
-
-
+DATA_FILES = os.listdir(os.path.join(config.TEST_DATA_PATH, "det/test"))
+ 
 # Fixture for the 'input' parameter@pytest.fixture(
 @pytest.fixture(
     scope="module",
@@ -55,7 +54,10 @@ DATA_FILES = os.path.join(config.TEST_DATA_PATH, "det/val/img")
     + fnmatch.filter(DATA_FILES, "*.png"),
 )
 def input(request):
-    file = os.path.join(DATA_FILES, request.param)
+    file = os.path.join(
+       os.path.join(config.TEST_DATA_PATH, "det/test"), request.param
+    )
+
     content_type = "application/octet-stream"
     return UploadedFile("input", file, content_type, request.param)
 
@@ -67,7 +69,7 @@ def model_param(request):
 
 
 # Fixture for the 'task_type' parameter
-@pytest.fixture(scope="module", params=["det"])
+@pytest.fixture(scope="module", params=["det", "seg"])
 def task_type_param(request):
     return request.param
 
@@ -138,7 +140,6 @@ def pred_kwds(
     augment_param,
     agnostic_nms_param,
     classes_param,
-    retina_masks_param,
     boxes_param,
     accept_param,
 ):
@@ -157,6 +158,7 @@ def pred_kwds(
         "boxes": boxes_param,
         "accept": accept_param,
     }
+    print(f"the args for detections are {pred_kwds}")
     return {k: v for k, v in pred_kwds.items()}
 
 

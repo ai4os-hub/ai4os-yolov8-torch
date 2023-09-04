@@ -320,12 +320,16 @@ def add_arguments_from_schema(schema, parser):
         if field_obj.required:
             arg_kwargs["required"] = True
 
-        if hasattr(field_obj, "missing"):
+        if field_obj.missing:
             arg_kwargs["default"] = field_obj.missing
-
+           
+        
+            arg_kwargs["default"] = field_obj.metadata.get("load_default")
+          
+            
         if field_obj.metadata.get("description"):
             arg_kwargs["help"] = field_obj.metadata["description"]
-
+        # Debug print statements
         parser.add_argument(arg_name, **arg_kwargs)
 
 

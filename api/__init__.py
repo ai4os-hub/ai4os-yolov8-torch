@@ -106,29 +106,29 @@ def predict(**args):
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
-    """
-    Trains a yolov8 model using the specified arguments.
+        """
+        Trains a yolov8 model using the specified arguments.
 
-    Args:
-        **args (dict): A dictionary of arguments for training the model
-        defined in the schema.
+        Args:
+            **args (dict): A dictionary of arguments for training the model
+            defined in the schema.
 
-    Returns:
-        dict: A dictionary containing a success message and the path
-        where the trained model was saved.
+        Returns:
+            dict: A dictionary containing a success message and the path
+            where the trained model was saved.
 
-    Raises:
-        HTTPException: If an error occurs during training.
-    Note:
-        - The `project` argument should correspond to the name of
-        your project and should only include the project directory,
-         not the full path.
-        - The `name` argument specifies the subdirectory where the
-        model will be saved within the project directory.
-        - The `weights` argument can be used to load pre-trained
-         weights from a file.
-    """
-    try:
+        Raises:
+            HTTPException: If an error occurs during training.
+        Note:
+            - The `project` argument should correspond to the name of
+            your project and should only include the project directory,
+            not the full path.
+            - The `name` argument specifies the subdirectory where the
+            model will be saved within the project directory.
+            - The `weights` argument can be used to load pre-trained
+            weights from a file.
+        """
+   # try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
 
@@ -185,11 +185,11 @@ def train(**args):
              {os.path.join(args["project"], args["name"])}'
         }
 
-    except Exception as err:
-        raise HTTPException(reason=err) from err
+   # except Exception as err:
+       # raise HTTPException(reason=err) from err
 
 
-def main():  # FIXME: Remove method before running train and predict
+def main():
     """
     Runs above-described methods from CLI
     uses: python3 path/to/api/__init__.py method --arg1 ARG1_VALUE
