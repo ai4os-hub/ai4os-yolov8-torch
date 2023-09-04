@@ -106,66 +106,86 @@ def predict(**args):
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
-    # try:
-    logger.info("Training model...")
-    logger.debug("Train with args: %s", args)
+    """
+    Trains a yolov8 model using the specified arguments.
 
-    # Modify the model name based on task type
-    args["model"] = utils.modify_model_name(
-        args["model"], args["task_type"]
-    )
-    # Check and update data path if necessary
-    base_path = os.path.join(config.DATA_PATH, "raw")
-    args["data"] = utils.validate_and_modify_path(
-        args["data"], base_path
-    )
+    Args:
+        **args (dict): A dictionary of arguments for training the model.
 
-    # Check and update data paths of val and training in data.yaml
-    if not utils.check_paths_in_yaml(args["data"], base_path):
-        raise ValueError(
-            "The path to the either train or validation "
-            "data does not exist. Please provide a valid path."
+    Returns:
+        dict: A dictionary containing a success message and the path
+        where the trained model was saved.
+
+    Raises:
+        HTTPException: If an error occurs during training.
+    Note:
+        - The `project` argument should correspond to the name of
+        your project and should only include the project directory,
+         not the full path.
+        - The `name` argument specifies the subdirectory where the
+        model will be saved within the project directory.
+        - The `weights` argument can be used to load pre-trained
+         weights from a file.
+    """
+    try:
+        logger.info("Training model...")
+        logger.debug("Train with args: %s", args)
+
+        # Modify the model name based on task type
+        args["model"] = utils.modify_model_name(
+            args["model"], args["task_type"]
+        )
+        # Check and update data path if necessary
+        base_path = os.path.join(config.DATA_PATH, "raw")
+        args["data"] = utils.validate_and_modify_path(
+            args["data"], base_path
         )
 
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        # Check and update data paths of val and training in config.yaml
+        if not utils.check_paths_in_yaml(args["data"], base_path):
+            raise ValueError(
+                "The path to the either train or validation "
+                "data does not exist. Please provide a valid path."
+            )
 
-    # The project should correspond to the name of your project
-    # and should only include the project directory, not the full path.
-    args["project"] = config.MODEL_NAME
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # The directory where the model will be saved after training
-    # by joining the values of args["project"] and args["name"].
-    args["name"] = os.path.join("models", timestamp)
+        # The project should correspond to the name of the project
+        # and should only include the project directory, not the full path.
+        args["project"] = config.MODEL_NAME
 
-    # Check if there are weights to load from an already trained model
-    # Otherwise, load the pretrained model from the model registry
+        # The directory where the model will be saved after training
+        # by joining the values of args["project"] and args["name"].
+        args["name"] = os.path.join("models", timestamp)
 
-    if args["weights"] is not None:
-        path = utils.validate_and_modify_path(
-            args["weights"], config.MODELS_PATH
+        # Check if there are weights to load from an already trained model
+        # Otherwise, load the pretrained model from the model registry
+
+        if args["weights"] is not None:
+            path = utils.validate_and_modify_path(
+                args["weights"], config.MODELS_PATH
+            )
+
+            model = YOLO(path)
+
+        else:
+            model = YOLO(args["model"])
+
+        os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
+        utils.pop_keys_from_dict(
+            args, ["task_type", "disable_wandb", "weights"]
         )
+        # The use of exist_ok=True ensures that the model will
+        # be saved in the same path if resume=True.
+        model.train(exist_ok=True, **args)
 
-        model = YOLO(path)
+        return {
+            f'The model was trained successfully and was saved to: \
+             {os.path.join(args["project"], args["name"])}'
+        }
 
-    else:
-        model = YOLO(args["model"])
-
-    os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
-    utils.pop_keys_from_dict(
-        args, ["task_type", "disable_wandb", "weights"]
-    )
-    # The use of exist_ok=True ensures that the model will
-    # be saved in the same path if resume=True.
-    model.train(exist_ok=True, **args)
-
-    return {
-        f'The model was trained successfully \
-            and was saved to: {os.path.join(args["project"], args["name"])}'
-    }
-
-
-# except Exception as err:
-#    raise HTTPException(reason=err) from err
+    except Exception as err:
+        raise HTTPException(reason=err) from err
 
 
 def main():  # FIXME: Remove method before running train and predict

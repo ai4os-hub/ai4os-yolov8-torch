@@ -166,8 +166,9 @@ class TrainArgsSchema(marshmallow.Schema):
     )
     weights = fields.Str(
         description="If you want to initialize weights for training"
-        "from a checkpoint,add the path to the checkpoint, "
+        "from a custom checkpoint, add the path to the checkpoint, "
         'for example: "timestamp/last.pt" where timestamp is '
+        "or a complete path to a checkpoint like 'path/to/ckpt_dir/last.pt'"
         "in the model directory, or a complete path to a checkpoint.",
         missing=None,
     )
