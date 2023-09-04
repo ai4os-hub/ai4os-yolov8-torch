@@ -32,12 +32,17 @@ def test_prediction(test_predict):
     if accept == "image/png":
         assert isinstance(result, io.BytesIO)
     else:
-        assert isinstance(result, list)
+        assert isinstance(result[0], str)
+        assert "name" in result[0]
+        assert "class" in result[0]
+        assert "confidence" in result[0]
+        assert "box" in result[0]
         try:
-            json.loads(result)
+            json.loads(result[0])
         except json.JSONDecodeError:
             assert False, "Result is not a valid JSON file"
-
+    
+  #  pylint
 
 # Example to test predictions probabilities range 0.0 and 1.1
 # def test_predictions_range(predictions):

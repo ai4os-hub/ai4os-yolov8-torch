@@ -106,7 +106,7 @@ def predict(**args):
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
-        """
+    """
         Trains a yolov8 model using the specified arguments.
 
         Args:
@@ -127,8 +127,8 @@ def train(**args):
             model will be saved within the project directory.
             - The `weights` argument can be used to load pre-trained
             weights from a file.
-        """
-   # try:
+    """
+    try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
 
@@ -185,8 +185,8 @@ def train(**args):
              {os.path.join(args["project"], args["name"])}'
         }
 
-   # except Exception as err:
-       # raise HTTPException(reason=err) from err
+    except Exception as err:
+        raise HTTPException(reason=err) from err
 
 
 def main():

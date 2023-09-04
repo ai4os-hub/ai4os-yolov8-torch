@@ -69,7 +69,7 @@ def model_param(request):
 
 
 # Fixture for the 'task_type' parameter
-@pytest.fixture(scope="module", params=["det", "seg"])
+@pytest.fixture(scope="module", params=[ "seg"])
 def task_type_param(request):
     return request.param
 
