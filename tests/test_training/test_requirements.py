@@ -26,12 +26,12 @@ import shutil
 def test_train_function(training):
     """test if the chkp is saved in the chkp directory"""
     checkpoint_file = os.path.join(
-        trained_model_path, "weights/last.pt"
+        training, "weights/last.pt"
     )
     assert os.path.isfile(checkpoint_file),\
         "No checkpoint was saved"
     # Remove the saved model directory and its contents
-    shutil.rmtree(trained_model_path)
+    shutil.rmtree(training)
 
 
 # Example to test training return includes 'run_id'

@@ -232,39 +232,6 @@ if __name__ == "__main__":
     main()
 
     '''
-    fields = schemas.TrainArgsSchema().fields
-
-    args = {}
-    for key, value in fields.items():
-        print(key, value)
-        if value.missing:
-            args[key] = value.missing
-    args["model"] = "yolov8s.pt"
-    args["data"] = "/srv/yolov8_api/data/raw/seg/label.yaml"
-    args["task_type"] = "seg"
-    args["epochs"] = 3
-    args["resume"] = False
-    args["weights"] = None
-
-    train(**args)
-    fields = schemas.PredArgsSchema().fields
-    from deepaas.model.v2.wrapper import UploadedFile
-
-    args = {}
-
-    for key, value in fields.items():
-        print(key, value)
-        if value.missing:
-            args[key] = value.missing
-
-    input = "/srv/yolov8_api/data/raw/PlantDoc.v1-resize-  \
-        416x416.yolov8/train/images/02_-Rust-2017-207u24s_jpg.\
-            f.cb22459400f68cb6d111d18db2f7d834.jpg"
-    args["input"] = UploadedFile(
-        "input", input, "application/octet-stream", "input.jpg")
-    args["model"] = None
-    args["accept"] = "application/pdf"
-    args["task_type"] = "seg"
     python3 api/__init__.py  train --model yolov8n.yaml --task_type  det  --data /srv/yolov8_api/data/raw/seg/label.yaml
        python3 api/__init__.py  predict  --input /srv/yolov8_api/tests/data/det/train/images/02_-Rust-2017-207u24s_jpg.rf.cb22459400f68cb6d111d18db2f7d834.jpg --accept application/json
     '''

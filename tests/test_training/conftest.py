@@ -57,9 +57,9 @@ def model_param(request):
 
 
 # Fixture for the 'data' parameter
-@pytest.fixture(scope="module", params=["coco128.yaml"])
-def data_param(request):
-    return request.param
+#@pytest.fixture(scope="module", params=["coco128.yaml"])
+#def data_param(request):
+#    return request.param
 # Fixture for the 'pretrained' parameter
 @pytest.fixture(scope="module", params=[None])
 def weights_param(request):
@@ -459,9 +459,9 @@ def train_kwds(
 @pytest.fixture(scope="module")
 def training(train_kwds):
     """Fixture to return trained model path."""
-    if train_kwds["task_type"]=='seg':
+    if train_kwds["task_type"]=='det':
         train_kwds["data"] = os.path.join(TEST_DATA_PATH,'det/data.yaml')
-    elif train_kwds["task_type"]=='det':
+    elif train_kwds["task_type"]=='seg':
         train_kwds["data"] = os.path.join(TEST_DATA_PATH,'seg/label.yaml')
     path=api.utils.check_paths_in_yaml(train_kwds["data"], TEST_DATA_PATH)
     assert path, "The path to the either train or validation "\
