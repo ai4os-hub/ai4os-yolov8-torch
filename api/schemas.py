@@ -214,8 +214,7 @@ class TrainArgsSchema(marshmallow.Schema):
     )
 
     seed = fields.Int(
-        description="Random seed for reproducibility", 
-        missing=42
+        description="Random seed for reproducibility", missing=42
     )
     deterministic = fields.Bool(
         description="Whether to enable deterministic mode",
@@ -396,3 +395,19 @@ class TrainArgsSchema(marshmallow.Schema):
         missing=True,
         enum=[True, False],
     )
+
+
+if __name__ == "__main__":
+    from marshmallow import fields
+
+    schema = TrainArgsSchema()
+    for field_name, field_obj in schema.fields.items():
+        arg_name = f"--{field_name}"
+
+        arg_kwargs = {
+            "help": field_name,
+        }
+
+        if isinstance(field_obj, fields.Bool):
+            arg_kwargs["type"] = int
+            print(f"field_object is {field_name}")

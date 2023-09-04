@@ -44,6 +44,8 @@ import api
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 TEST_DATA_PATH = api.config.TEST_DATA_PATH
+
+
 # Fixture for the 'task_type' parameter
 @pytest.fixture(scope="module", params=["det", "seg"])
 def task_type_param(request):
@@ -57,8 +59,8 @@ def model_param(request):
 
 
 # Fixture for the 'data' parameter
-#@pytest.fixture(scope="module", params=["coco128.yaml"])
-#def data_param(request):
+# @pytest.fixture(scope="module", params=["coco128.yaml"])
+# def data_param(request):
 #    return request.param
 # Fixture for the 'pretrained' parameter
 @pytest.fixture(scope="module", params=[None])
@@ -70,7 +72,9 @@ def weights_param(request):
 @pytest.fixture(scope="module", params=[True])
 def disable_wandb_param(request):
     return request.param
-'''
+
+
+"""
 # Fixture for the 'weight_decay' parameter
 @pytest.fixture(scope="module", params=[0.001])
 def weight_decay_param(request):
@@ -338,64 +342,64 @@ def mixup_param(request):
 
 
 
-'''
+"""
+
+
 @pytest.fixture(scope="module")
 def train_kwds(
     task_type_param,
     model_param,
     disable_wandb_param,
     weights_param,
-    
-#    batch_size_param,
-#    num_workers_param,
-#    epochs_param,
-#    optimizer_param,
-#    loss_param,
-#    seed_param,
-#    deterministic_param,
-#    single_cls_param,
-#    rect_param,
-#    cos_lr_param,
-#    overlap_mask_param,
-#    mask_ratio_param,
-#    dropout_param,
-#    lr0_param,
-#    lrf_param,
-#    momentum_param,
-#    weight_decay_param,
-#    warmup_epochs_param,
-#    warmup_momentum_param,
-#    warmup_bias_lr_param,
-#    close_mosaic_param,
-#    amp_param,
-#    fraction_param,
-#    profile_param,
-#    box_param,
-#    cls_param,
-#    dfl_param,
-#    kobj_param,
-#    label_smoothing_param,
-#    nbs_param,
-#    hsv_h_param,
-#    hsv_s_param,
-#    hsv_v_param,
-#    degrees_param,
-#    translate_param,
-#    scale_param,
-#    shear_param,
-#    perspective_param,
-#    flipud_param,
-#    fliplr_param,
-#    mosaic_param,
-#    mixup_param,
-
-#    resume_param,
-#    workers_param,
-#    device_param,
-#    save_period_param,
-#    imgsz_param,
-#    batch_param,
-#    patience_param,
+    #    batch_size_param,
+    #    num_workers_param,
+    #    epochs_param,
+    #    optimizer_param,
+    #    loss_param,
+    #    seed_param,
+    #    deterministic_param,
+    #    single_cls_param,
+    #    rect_param,
+    #    cos_lr_param,
+    #    overlap_mask_param,
+    #    mask_ratio_param,
+    #    dropout_param,
+    #    lr0_param,
+    #    lrf_param,
+    #    momentum_param,
+    #    weight_decay_param,
+    #    warmup_epochs_param,
+    #    warmup_momentum_param,
+    #    warmup_bias_lr_param,
+    #    close_mosaic_param,
+    #    amp_param,
+    #    fraction_param,
+    #    profile_param,
+    #    box_param,
+    #    cls_param,
+    #    dfl_param,
+    #    kobj_param,
+    #    label_smoothing_param,
+    #    nbs_param,
+    #    hsv_h_param,
+    #    hsv_s_param,
+    #    hsv_v_param,
+    #    degrees_param,
+    #    translate_param,
+    #    scale_param,
+    #    shear_param,
+    #    perspective_param,
+    #    flipud_param,
+    #    fliplr_param,
+    #    mosaic_param,
+    #    mixup_param,
+    #    resume_param,
+    #    workers_param,
+    #    device_param,
+    #    save_period_param,
+    #    imgsz_param,
+    #    batch_param,
+    #    patience_param,
 ):
     """Fixture to return arbitrary keyword arguments for predictions."""
     train_kwds = {
@@ -403,55 +407,55 @@ def train_kwds(
         "model": model_param,
         "disable_wandb": disable_wandb_param,
         "weights": weights_param,
-       # "data": data_param,
-       # "batch_size": batch_size_param,
-       # "num_workers": num_workers_param,
-       # "epochs": epochs_param,
-       # "optimizer": optimizer_param,
-       # "loss": loss_param,
-       # "seed_param": seed_param,
-       # "deterministic": deterministic_param,
-       # "single_cls": single_cls_param,
-       # "rect": rect_param,
-       # "cos_lr": cos_lr_param,
-       # "overlap": overlap_mask_param,
-       # "mask_ratio": mask_ratio_param,
-       # "dropout": dropout_param,
-       # "lr0": lr0_param,
-       # "lrf": lrf_param,
-       # "momentum": momentum_param,
-       # "weight_decay": weight_decay_param,
-       # "warmup_epochs": warmup_epochs_param,
-       # "warmup_momentum": warmup_momentum_param,
-       # "warmup_bias_lr": warmup_bias_lr_param,
-       # "close_mosaic": close_mosaic_param,
-       # "amp": amp_param,
-       # "fraction": fraction_param,
-       # "box": box_param,
-       # "cls": cls_param,
-       # "dfl": dfl_param,
-        #"kobj": kobj_param,
-        #"label_smoothing": label_smoothing_param,
-        #"nbs": nbs_param,
-        #"hsv_h": hsv_h_param,
-        #"hsv_s": hsv_s_param,
-        #"hsv_v": hsv_v_param,
-        #"degrees": degrees_param,
-        #"translate": translate_param,
-        #"scale": scale_param,
-        #"shear": shear_param,
-        #"perspective": perspective_param,
-        #"flipud": flipud_param,
-        #"fliplr": fliplr_param,
-        #"mosaic": mosaic_param,
-        #"mixup": mixup_param,
-        #"resume": resume_param,
-        #"workers": workers_param,
-        #"device": device_param,
-        #"save_period": save_period_param,
-        #"imgsz": imgsz_param,
-        #"batch": batch_param,
-        #"patience": patience_param,
+        # "data": data_param,
+        # "batch_size": batch_size_param,
+        # "num_workers": num_workers_param,
+        # "epochs": epochs_param,
+        # "optimizer": optimizer_param,
+        # "loss": loss_param,
+        # "seed_param": seed_param,
+        # "deterministic": deterministic_param,
+        # "single_cls": single_cls_param,
+        # "rect": rect_param,
+        # "cos_lr": cos_lr_param,
+        # "overlap": overlap_mask_param,
+        # "mask_ratio": mask_ratio_param,
+        # "dropout": dropout_param,
+        # "lr0": lr0_param,
+        # "lrf": lrf_param,
+        # "momentum": momentum_param,
+        # "weight_decay": weight_decay_param,
+        # "warmup_epochs": warmup_epochs_param,
+        # "warmup_momentum": warmup_momentum_param,
+        # "warmup_bias_lr": warmup_bias_lr_param,
+        # "close_mosaic": close_mosaic_param,
+        # "amp": amp_param,
+        # "fraction": fraction_param,
+        # "box": box_param,
+        # "cls": cls_param,
+        # "dfl": dfl_param,
+        # "kobj": kobj_param,
+        # "label_smoothing": label_smoothing_param,
+        # "nbs": nbs_param,
+        # "hsv_h": hsv_h_param,
+        # "hsv_s": hsv_s_param,
+        # "hsv_v": hsv_v_param,
+        # "degrees": degrees_param,
+        # "translate": translate_param,
+        # "scale": scale_param,
+        # "shear": shear_param,
+        # "perspective": perspective_param,
+        # "flipud": flipud_param,
+        # "fliplr": fliplr_param,
+        # "mosaic": mosaic_param,
+        # "mixup": mixup_param,
+        # "resume": resume_param,
+        # "workers": workers_param,
+        # "device": device_param,
+        # "save_period": save_period_param,
+        # "imgsz": imgsz_param,
+        # "batch": batch_param,
+        # "patience": patience_param,
     }
     return {k: v for k, v in train_kwds.items()}
 
@@ -459,13 +463,21 @@ def train_kwds(
 @pytest.fixture(scope="module")
 def training(train_kwds):
     """Fixture to return trained model path."""
-    if train_kwds["task_type"]=='det':
-        train_kwds["data"] = os.path.join(TEST_DATA_PATH,'det/data.yaml')
-    elif train_kwds["task_type"]=='seg':
-        train_kwds["data"] = os.path.join(TEST_DATA_PATH,'seg/label.yaml')
-    path=api.utils.check_paths_in_yaml(train_kwds["data"], TEST_DATA_PATH)
-    assert path, "The path to the either train or validation "\
-                "test data does not exist. Please provide a valid path."      
+    if train_kwds["task_type"] == "det":
+        train_kwds["data"] = os.path.join(
+            TEST_DATA_PATH, "det/data.yaml"
+        )
+    elif train_kwds["task_type"] == "seg":
+        train_kwds["data"] = os.path.join(
+            TEST_DATA_PATH, "seg/label.yaml"
+        )
+    path = api.utils.check_paths_in_yaml(
+        train_kwds["data"], TEST_DATA_PATH
+    )
+    assert path, (
+        "The path to the either train or validation "
+        "test data does not exist. Please provide a valid path."
+    )
     result = api.train(**train_kwds)
     saved_model_path = str(result).split(" ")[-1].rstrip("'}")
     yield saved_model_path

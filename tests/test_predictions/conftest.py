@@ -45,8 +45,9 @@ import api
 from api import config
 import fnmatch
 
-DATA_FILES=os.path.join(
-        config.TEST_DATA_PATH, "det/val/img")
+DATA_FILES = os.path.join(config.TEST_DATA_PATH, "det/val/img")
+
+
 # Fixture for the 'input' parameter@pytest.fixture(
 @pytest.fixture(
     scope="module",
@@ -54,9 +55,7 @@ DATA_FILES=os.path.join(
     + fnmatch.filter(DATA_FILES, "*.png"),
 )
 def input(request):
-    file = os.path.join(
-        DATA_FILES, request.param
-    )
+    file = os.path.join(DATA_FILES, request.param)
     content_type = "application/octet-stream"
     return UploadedFile("input", file, content_type, request.param)
 

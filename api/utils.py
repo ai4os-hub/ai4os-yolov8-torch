@@ -15,8 +15,6 @@ from subprocess import TimeoutExpired  # nosec B404
 import ultralytics
 import yaml
 from . import config
-import yolov8_api as aimodel
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -34,6 +32,7 @@ def ls_dirs(path):
     logger.debug("Scanning directories at: %s", path)
     dirscan = (x.name for x in path.iterdir() if x.is_dir())
     return sorted(dirscan)
+
 
 def list_directories_with_rclone(remote_name, directory_path):
     """
@@ -74,6 +73,7 @@ def ls_remote():
     """
     remote_directory = config.REMOTE_PATH
     return list_directories_with_rclone("rshare", remote_directory)
+
 
 def ls_files(path, pattern):
     """Utility to return a list of files available in `path` folder.
@@ -159,10 +159,12 @@ def generate_arguments(schema):
 
 def predict_arguments(schema):
     """Decorator to inject schema as arguments to call predictions."""
+
     def inject_function_schema(func):
         get_args = generate_arguments(schema)
         sys.modules[func.__module__].get_predict_args = get_args
         return func  # Decorator that returns same function
+
     return inject_function_schema
 
 
@@ -183,10 +185,10 @@ def load_config(default_cfg_path):
         default_cfg_path (str): The path to the YAML configuration file.
 
     Returns:
-        Tuple[ultralytics.utils.IterableSimpleNamespace, dict_keys]: 
+        Tuple[ultralytics.utils.IterableSimpleNamespace, dict_keys]:
         A tuple containing two elements:
             1. A Python object representing the configuration.
-            2. A dictionary_keys object containing the keys in 
+            2. A dictionary_keys object containing the keys in
             the loaded configuration.
     """
     try:
@@ -210,60 +212,6 @@ def load_config(default_cfg_path):
         raise Exception(f"Error loading default config: {err}")
 
 
-def check_annotations_format(path):
-    """Check if annotations are in the correct format.
-    Check and preprocess annotation files in specified directories.
-
-    Args:
-        data (str): YAML-formatted string containing directory paths.
-
-    Raises:
-        ValueError: If an annotations directory path is invalid.
-
-    Returns:
-        None
-    """
-    with open(path, 'r') as file:
-         data = yaml.safe_load(file)
-    data_keys = data.keys()
-    for key in data_keys:
-        if os.path.exists(data[key]):
-            annotations_path = data.get(key, None)
-
-            if annotations_path is None or not os.path.isdir(
-                annotations_path
-            ):
-                raise ValueError("Invalid annotations directory path")
-
-            supported_formats = (".txt", ".json", ".xml")
-            annotations = [
-                os.path.join(annotations_path, x)
-                for x in os.listdir(annotations_path)
-                if any(
-                    x.endswith(format) for format in supported_formats
-                )
-            ]
-
-            json_annotations = [
-                ann for ann in annotations if ann.endswith(".json")
-            ]
-            xml_annotations = [
-                ann for ann in annotations if ann.endswith(".xml")
-            ]
-            txt_annotations = [
-                ann for ann in annotations if ann.endswith(".txt")
-            ]
-
-            if json_annotations or xml_annotations:
-               raise ValueError("Invalid annotations format (json, xml): "
-                 "please convert the annotations format into .txt. "
-                 "You can use either 'yolov8_api/preprocess_ann.py' (for a detection task) "
-                 "or 'yolov8_api/seg_coco_json_to_yolo.py' (for segmentation).")
-    
-            elif not txt_annotations:
-                 raise ValueError(f"No valid .txt annotations found in "
-                         "'{key}' directory: Please use .txt format")
-
 class DotDict:
     def __init__(self, dictionary):
         for key, value in dictionary.items():
@@ -280,16 +228,16 @@ def pop_keys_from_dict(dictionary, keys_to_pop):
 
 def check_paths_in_yaml(yaml_path, base_path):
     """
-    Check and potentially update file paths specified in a YAML 
+    Check and potentially update file paths specified in a YAML
     configuration file.
 
     Args:
         yaml_path (str): The path to the YAML configuration file.
-        base_path (str): The base directory to prepend to relative 
+        base_path (str): The base directory to prepend to relative
         file paths.
 
     Returns:
-        bool: True if all paths exist or have been successfully updated, 
+        bool: True if all paths exist or have been successfully updated,
         False otherwise.
     """
     with open(yaml_path, "r") as yaml_file:
@@ -326,7 +274,7 @@ def validate_and_modify_path(path, base_path):
 
     Returns:
         str: The validated and possibly modified file path.
-    """    
+    """
     if not os.path.isfile(path):
         modified_path = os.path.join(base_path, path)
         if not os.path.isfile(modified_path):
@@ -337,10 +285,11 @@ def validate_and_modify_path(path, base_path):
         return modified_path
     return path
 
+
 def add_arguments_from_schema(schema, parser):
     """
-    Iterates through the fields defined in a schema and adds 
-    corresponding commandline arguments to the provided 
+    Iterates through the fields defined in a schema and adds
+    corresponding commandline arguments to the provided
     ArgumentParser object.
 
     Args:
@@ -356,46 +305,49 @@ def add_arguments_from_schema(schema, parser):
         arg_name = f"--{field_name}"
 
         arg_kwargs = {
-            "help": field_name, 
+            "help": field_name,
         }
 
-        if type(field_obj)==  fields.Int:
+        if isinstance(field_obj, fields.Int):
             arg_kwargs["type"] = int
-        elif type(field_obj)==  fields.Bool:
-            arg_kwargs["action"]= 'store_true'
-        elif type(field_obj)==  fields.Float:
+        elif isinstance(field_obj, fields.Bool):
+            arg_kwargs["action"] = "store_true"
+        elif isinstance(field_obj, fields.Float):
             arg_kwargs["type"] = float
         else:
-            arg_kwargs["type"] = str     
-
+            arg_kwargs["type"] = str
 
         if field_obj.required:
             arg_kwargs["required"] = True
 
         if hasattr(field_obj, "missing"):
-            arg_kwargs["default"] = field_obj.missing  
+            arg_kwargs["default"] = field_obj.missing
 
         if field_obj.metadata.get("description"):
             arg_kwargs["help"] = field_obj.metadata["description"]
 
         parser.add_argument(arg_name, **arg_kwargs)
 
-import os
 
-
- 
 def generate_directory_tree(path):
-    tree = {"name": os.path.basename(path), "type": "directory", "children": []}
-    
+    tree = {
+        "name": os.path.basename(path),
+        "type": "directory",
+        "children": [],
+    }
+
     if os.path.exists(path) and os.path.isdir(path):
-        subdirectories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
+        subdirectories = [
+            d
+            for d in os.listdir(path)
+            if os.path.isdir(os.path.join(path, d))
+        ]
         subdirectories.sort()
-        
+
         for subdir in subdirectories:
             subdir_path = os.path.join(path, subdir)
-            tree["children"].append(generate_directory_tree(subdir_path))
-    
+            tree["children"].append(
+                generate_directory_tree(subdir_path)
+            )
+
     return tree
-
-
-

@@ -24,6 +24,7 @@ from . import config, responses, schemas, utils
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
 
+
 def get_metadata():
     """Returns a dictionary containing metadata information about the module.
 
@@ -45,7 +46,9 @@ def get_metadata():
             "version": config.MODEL_METADATA.get("version"),
             "models_local": utils.ls_dirs(config.MODELS_PATH),
             "models_remote": utils.ls_remote(),
-            "datasets": utils.generate_directory_tree(config.DATA_PATH),
+            "datasets": utils.generate_directory_tree(
+                config.DATA_PATH
+            ),
         }
         logger.debug("Package model metadata: %s", metadata)
         return metadata
@@ -103,71 +106,73 @@ def predict(**args):
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
-   # try:
-        logger.info("Training model...")
-        logger.debug("Train with args: %s", args)
-       
-        # Modify the model name based on task type
-        args["model"] = utils.modify_model_name(
-            args["model"], args["task_type"]
+    # try:
+    logger.info("Training model...")
+    logger.debug("Train with args: %s", args)
+
+    # Modify the model name based on task type
+    args["model"] = utils.modify_model_name(
+        args["model"], args["task_type"]
+    )
+    # Check and update data path if necessary
+    base_path = os.path.join(config.DATA_PATH, "raw")
+    args["data"] = utils.validate_and_modify_path(
+        args["data"], base_path
+    )
+
+    # Check and update data paths of val and training in data.yaml
+    if not utils.check_paths_in_yaml(args["data"], base_path):
+        raise ValueError(
+            "The path to the either train or validation "
+            "data does not exist. Please provide a valid path."
         )
-        # Check and update data path if necessary
-        base_path = os.path.join(config.DATA_PATH, "raw")
-        args["data"] = utils.validate_and_modify_path(
-            args["data"], base_path
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # The project should correspond to the name of your project
+    # and should only include the project directory, not the full path.
+    args["project"] = config.MODEL_NAME
+
+    # The directory where the model will be saved after training
+    # by joining the values of args["project"] and args["name"].
+    args["name"] = os.path.join("models", timestamp)
+
+    # Check if there are weights to load from an already trained model
+    # Otherwise, load the pretrained model from the model registry
+
+    if args["weights"] is not None:
+        path = utils.validate_and_modify_path(
+            args["weights"], config.MODELS_PATH
         )
 
-        # Check and update data paths of val and training in data.yaml
-        if not utils.check_paths_in_yaml(args["data"], base_path):
-            raise ValueError(
-                "The path to the either train or validation "
-                "data does not exist. Please provide a valid path."
-            )
+        model = YOLO(path)
 
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    else:
+        model = YOLO(args["model"])
 
-        # The project should correspond to the name of your project
-        # and should only include the project directory, not the full path.
-        args["project"] = config.MODEL_NAME
+    os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
+    utils.pop_keys_from_dict(
+        args, ["task_type", "disable_wandb", "weights"]
+    )
+    # The use of exist_ok=True ensures that the model will
+    # be saved in the same path if resume=True.
+    model.train(exist_ok=True, **args)
 
-        # The directory where the model will be saved after training
-        # by joining the values of args["project"] and args["name"].
-        args["name"] = os.path.join("models", timestamp)
-
-        # Check if there are weights to load from an already trained model
-        # Otherwise, load the pretrained model from the model registry
-
-        if args["weights"] is not None:
-            path = utils.validate_and_modify_path(
-                args["weights"], config.MODELS_PATH
-            )
-
-            model = YOLO(path)
-
-        else:
-            model = YOLO(args["model"])
-
-        os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
-        utils.pop_keys_from_dict(
-            args, ["task_type", "disable_wandb", "weights"]
-        )
-        # The use of exist_ok=True ensures that the model will
-        # be saved in the same path if resume=True.
-        model.train(exist_ok=True, **args)
-
-        return {
-            f'The model was trained successfully \
+    return {
+        f'The model was trained successfully \
             and was saved to: {os.path.join(args["project"], args["name"])}'
-        }
+    }
 
-    #except Exception as err:
-    #    raise HTTPException(reason=err) from err
 
-def main():#FIXME: Remove method before running train and predict
+# except Exception as err:
+#    raise HTTPException(reason=err) from err
+
+
+def main():  # FIXME: Remove method before running train and predict
     """
     Runs above-described methods from CLI
     uses: python3 path/to/api/__init__.py method --arg1 ARG1_VALUE
-     --arg2 ARG2_VALUE 
+     --arg2 ARG2_VALUE
     """
     method_dispatch = {
         "get_metadata": get_metadata,
@@ -184,11 +189,15 @@ def main():#FIXME: Remove method before running train and predict
             results = method_function()
         else:
             logger.debug("Calling method with args: %s", args)
-            del vars(args)['method'] 
-            if hasattr(args, 'input'):
-                file_extension = os.path.splitext(args.input)[1] 
-                args.input=  UploadedFile(
-        "input", args.input, "application/octet-stream", f"input{file_extension}")
+            del vars(args)["method"]
+            if hasattr(args, "input"):
+                file_extension = os.path.splitext(args.input)[1]
+                args.input = UploadedFile(
+                    "input",
+                    args.input,
+                    "application/octet-stream",
+                    f"input{file_extension}",
+                )
             results = method_function(**vars(args))
         print(json.dumps(results))
         logger.debug("Results: %s", results)
@@ -198,7 +207,6 @@ def main():#FIXME: Remove method before running train and predict
 
 
 if __name__ == "__main__":
-    
     parser = argparse.ArgumentParser(
         description="Model parameters", add_help=False
     )
@@ -214,7 +222,7 @@ if __name__ == "__main__":
     predict_parser = subparsers.add_parser(
         "predict", help="commands for prediction", parents=[parser]
     )
-    
+
     utils.add_arguments_from_schema(
         schemas.PredArgsSchema(), predict_parser
     )
@@ -231,7 +239,7 @@ if __name__ == "__main__":
 
     main()
 
-    '''
-    python3 api/__init__.py  train --model yolov8n.yaml --task_type  det  --data /srv/yolov8_api/data/raw/seg/label.yaml
-       python3 api/__init__.py  predict  --input /srv/yolov8_api/tests/data/det/train/images/02_-Rust-2017-207u24s_jpg.rf.cb22459400f68cb6d111d18db2f7d834.jpg --accept application/json
-    '''
+    """
+    python3 api/__init__.py  train --model yolov8n.yaml\
+    --task_type  det  --data /srv/yolov8_api/data/raw/seg/label.yaml
+    """
