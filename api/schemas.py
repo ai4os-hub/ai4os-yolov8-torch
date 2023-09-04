@@ -371,7 +371,7 @@ class TrainArgsSchema(marshmallow.Schema):
     degrees = fields.Float(
         metadata= {'description':"Image rotation (+/- deg)"},
         
-        load_default=0.0
+        load_default=0.001
     )
     translate = fields.Float(
         metadata= {'description':"Image translation (+/- fraction)"},

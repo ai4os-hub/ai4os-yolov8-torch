@@ -19,7 +19,7 @@ from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
-from . import config, responses, schemas, utils
+from yolov8_api.api import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -106,7 +106,7 @@ def predict(**args):
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
-    """
+        """
         Trains a yolov8 model using the specified arguments.
 
         Args:
@@ -127,8 +127,8 @@ def train(**args):
             model will be saved within the project directory.
             - The `weights` argument can be used to load pre-trained
             weights from a file.
-    """
-    try:
+        """
+    #try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
 
@@ -185,8 +185,8 @@ def train(**args):
              {os.path.join(args["project"], args["name"])}'
         }
 
-    except Exception as err:
-        raise HTTPException(reason=err) from err
+   # except Exception as err:
+    #    raise HTTPException(reason=err) from err
 
 
 def main():
