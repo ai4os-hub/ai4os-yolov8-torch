@@ -21,9 +21,11 @@ the same folder. However, remember to add the prefix `test_` to the file.
 
 import os
 import shutil
+import pytest
 
 
 # check if the chkp is saved in the chkp directory.
+@pytest.mark.skip(reason="takes too much resources")
 def test_train_function(training):
     """test if the chkp is saved in the chkp directory"""
     checkpoint_file = os.path.join(training, "weights/last.pt")

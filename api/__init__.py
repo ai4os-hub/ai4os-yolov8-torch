@@ -110,7 +110,8 @@ def train(**args):
     Trains a yolov8 model using the specified arguments.
 
     Args:
-        **args (dict): A dictionary of arguments for training the model.
+        **args (dict): A dictionary of arguments for training the model
+        defined in the schema.
 
     Returns:
         dict: A dictionary containing a success message and the path
