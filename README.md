@@ -9,17 +9,9 @@ In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv
 
 # Install the API and the external submodule requirement
 To launch the API, first, install the package, and then run DeepaaS:
-``` 
+``` bash
 git clone --depth 1 https://git.scc.kit.edu/m-team/ai/yolov8_api.git
 cd  yolov8_api
-pip install -e .
-```
-
-To launch it, first install the package then run [deepaas](https://github.com/indigo-dc/DEEPaaS):
-
-```bash
-git clone https://git.scc.kit.edu/m-team/ai/yolov8_api
-cd yolov8_api
 pip install -e .
 deepaas-run --listen-ip 0.0.0.0
 ```
