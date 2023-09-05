@@ -108,7 +108,7 @@ def copy_remote(frompath, topath, timeout=600):
         stdout=subprocess.PIPE,  # Capture stdout
         stderr=subprocess.PIPE,  # Capture stderr
         text=True,  # Return strings rather than bytes
-    ) as process: # nosec B603
+    ) as process:  # nosec B603
         try:
             outs, errs = process.communicate(None, timeout)
         except TimeoutExpired:
@@ -312,9 +312,9 @@ def add_arguments_from_schema(schema, parser):
             arg_kwargs["type"] = int
         elif isinstance(field_obj, fields.Bool):
             arg_kwargs["action"] = (
-                "store_true"
-                if field_obj.load_default == False
-                else "store_false"
+                "store_false"
+                if field_obj.load_default
+                else "store_true"
             )
 
         elif isinstance(field_obj, fields.Float):

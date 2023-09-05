@@ -108,7 +108,8 @@ class PredArgsSchema(marshmallow.Schema):
     )
     classes = fields.Field(
         metadata={
-            "description": "Filter results by class, i.e. class=0, or class=[0,2,3]"
+            "description": "Filter results by class, i.e. class=0, "
+            "or class=[0,2,3]"
         },
         load_default=None,
     )
@@ -196,8 +197,9 @@ class TrainArgsSchema(marshmallow.Schema):
         metadata={
             "description": "If you want to initialize weights for training"
             "from a custom checkpoint, add the path to the checkpoint, "
-            'for example: "timestamp/last.pt" where timestamp is in model directory'
-            "or an absolute path to a checkpoint like 'path/to/ckpt_dir/last.pt'",
+            'for example: "timestamp/last.pt" where timestamp is in model'
+            " directory or an absolute path to a checkpoint like "
+            "'path/to/ckpt_dir/last.pt'",
         },
         load_default=None,
     )

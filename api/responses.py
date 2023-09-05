@@ -36,29 +36,36 @@ def json_response(results, **options):
     logger.debug("Response result: %d", result)
     logger.debug("Response options: %d", options)
     try:
-        if options['task_type'] in ["seg", "det"]:
+        if options["task_type"] in ["seg", "det"]:
             for element in results[0]:
                 result.append(
                     element.tojson()
                 )  # This method converts the result into JSON
 
-        elif  options['task_type']=="cls":    
-                result = {}
-                for element in results[0]:
-                    result['file_name'] = os.path.basename(element.path)
-                    top5conf= [conf.item() for conf in element.probs.top5conf]
-                    class_names = [element.names[i] for i in element.probs.top5]
-                    result['top5_prediction'] = {class_names[i]: top5conf[i] for i in range(len(class_names))}
+        elif options["task_type"] == "cls":
+            result = {}
+            for element in results[0]:
+                result["file_name"] = os.path.basename(element.path)
+                top5conf = [
+                    conf.item() for conf in element.probs.top5conf
+                ]
+                class_names = [
+                    element.names[i] for i in element.probs.top5
+                ]
+                result["top5_prediction"] = {
+                    class_names[i]: top5conf[i]
+                    for i in range(len(class_names))
+                }
         else:
-            raise ValueError("The task type is not supported.")            
+            raise ValueError("The task type is not supported.")
         if isinstance(result, (dict, list, str)):
             return result
         if isinstance(result, np.ndarray):
             return result.tolist()
 
     except Exception as err:  # TODO: Fix to specific exception
-            logger.warning("Error converting result to json: %s", err)
-            raise RuntimeError("Unsupported response type") from err
+        logger.warning("Error converting result to json: %s", err)
+        raise RuntimeError("Unsupported response type") from err
 
 
 def pdf_response(results, **options):
@@ -81,7 +88,6 @@ def pdf_response(results, **options):
     try:
         merger = PdfFileMerger()
         for element in results[0]:
-   
             # result.append(element.plot())
             im = Image.fromarray(
                 element.plot(

@@ -72,7 +72,7 @@ def model_param(request):
 
 
 # Fixture for the 'task_type' parameter
-@pytest.fixture(scope="module", params=["seg"])
+@pytest.fixture(scope="module", params=["cls", "det", "seg"])
 def task_type_param(request):
     return request.param
 
@@ -102,7 +102,7 @@ def show_conf_param(request):
 
 
 # Fixture for the 'augment' parameter
-@pytest.fixture(scope="module", params=[True])
+@pytest.fixture(scope="module", params=[False])
 def augment_param(request):
     return request.param
 
@@ -162,4 +162,4 @@ def test_predict(pred_kwds):
     """Test the predict function."""
 
     result = api.predict(**pred_kwds)
-    return result, pred_kwds["accept"]
+    return result, pred_kwds["accept"], pred_kwds["task_type"]

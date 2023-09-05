@@ -19,7 +19,7 @@ from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
-from yolov8_api.api import config, responses, schemas, utils
+from . import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -142,10 +142,12 @@ def train(**args):
             args["data"], base_path
         )
         task_type = args["task_type"]
-        if task_type == "seg" and args["augment"] == True:
-            #https://github.com/ultralytics/ultralytics/issues/859
-            raise ValueError("augment for segmentation has not been supported yet")
-              
+        if task_type == "seg" and args["augment"]:
+            # https://github.com/ultralytics/ultralytics/issues/859
+            raise ValueError(
+                "augment for segmentation has not been supported yet"
+            )
+
         # Check and update data paths of val and training in config.yaml
         if not utils.check_paths_in_yaml(args["data"], base_path):
             raise ValueError(
@@ -177,7 +179,7 @@ def train(**args):
             model = YOLO(args["model"])
 
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
-       
+
         utils.pop_keys_from_dict(
             args, ["task_type", "disable_wandb", "weights"]
         )
@@ -190,9 +192,8 @@ def train(**args):
                 {os.path.join(args["project"], args["name"])}'
         }
 
-
     except Exception as err:
-      raise HTTPException(reason=err) from err
+        raise HTTPException(reason=err) from err
 
 
 def main():
@@ -269,6 +270,7 @@ if __name__ == "__main__":
     """
     python3 api/__init__.py  train --model yolov8n.yaml\
     --task_type  det  --data /srv/yolov8_api/data/raw/seg/label.yaml
-    python3 api/__init__.py  predict --input /srv/yolov8_api/tests/data/det/test/cat1.jpg\
+    python3 api/__init__.py  predict --input \
+    /srv/yolov8_api/tests/data/det/test/cat1.jpg\
     --task_type  det --accept application/json
     """

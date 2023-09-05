@@ -26,23 +26,38 @@ import io
 def test_prediction(test_predict):
     """Test the predict function."""
     # Access the test_predict fixture defined in conftest.py
-    result, accept = test_predict
+    result, accept, task_type = test_predict
 
     # Assert the expected result based on the 'accept' argument
+
     if accept == "image/png":
         assert isinstance(result, io.BytesIO)
     else:
-        assert result[0] is not None, "The first element of the list is None"
-        assert isinstance(result[0], str)
-        assert "name" in result[0],  "The name of the file is not in results"
-        assert "class" in result[0],  "The name of classes is not in results"
-        assert "box" in result[0], "The coordinate of boxes is not in results"
+        if task_type in ["seg", "det"]:
+            missing_keys = [
+                key
+                for key in ["name", "class", "box"]
+                if key not in result[0]
+            ]
+            assert (
+                not missing_keys
+            ), f"Expected keys {missing_keys} missing in result"
+            result = result[0]
+        else:
+            missing_keys = [
+                key
+                for key in ["file_name", "top5_prediction"]
+                if key not in result.keys()
+            ]
+            assert (
+                not missing_keys
+            ), f"Expected keys {missing_keys} missing in result"
+            result = json.dumps(result)
         try:
-            json.loads(result[0])
+            json.loads(result)
         except json.JSONDecodeError:
             assert False, "Result is not a valid JSON file"
-    
-  #  pylint
+
 
 # Example to test predictions probabilities range 0.0 and 1.1
 # def test_predictions_range(predictions):
