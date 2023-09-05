@@ -101,7 +101,8 @@ class PredArgsSchema(marshmallow.Schema):
 
     augment = fields.Boolean(
         metadata={
-            "description": "Apply image augmentation to prediction sources",
+            "description": "Apply image augmentation to prediction sources"
+            "augment for segmentation has not supported yet.",
         },
         load_default=False,
     )
@@ -195,9 +196,8 @@ class TrainArgsSchema(marshmallow.Schema):
         metadata={
             "description": "If you want to initialize weights for training"
             "from a custom checkpoint, add the path to the checkpoint, "
-            'for example: "timestamp/last.pt" where timestamp is '
-            "or a complete path to a checkpoint like 'path/to/ckpt_dir/last.pt'"
-            "in the model directory, or a complete path to a checkpoint.",
+            'for example: "timestamp/last.pt" where timestamp is in model directory'
+            "or an absolute path to a checkpoint like 'path/to/ckpt_dir/last.pt'",
         },
         load_default=None,
     )

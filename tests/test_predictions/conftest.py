@@ -45,8 +45,11 @@ import api
 from api import config
 import fnmatch
 
-DATA_FILES = os.listdir(os.path.join(config.TEST_DATA_PATH, "det/test"))
- 
+DATA_FILES = os.listdir(
+    os.path.join(config.TEST_DATA_PATH, "det/test")
+)
+
+
 # Fixture for the 'input' parameter@pytest.fixture(
 @pytest.fixture(
     scope="module",
@@ -55,7 +58,7 @@ DATA_FILES = os.listdir(os.path.join(config.TEST_DATA_PATH, "det/test"))
 )
 def input(request):
     file = os.path.join(
-       os.path.join(config.TEST_DATA_PATH, "det/test"), request.param
+        os.path.join(config.TEST_DATA_PATH, "det/test"), request.param
     )
 
     content_type = "application/octet-stream"
@@ -69,19 +72,19 @@ def model_param(request):
 
 
 # Fixture for the 'task_type' parameter
-@pytest.fixture(scope="module", params=[ "det"])
+@pytest.fixture(scope="module", params=["seg"])
 def task_type_param(request):
     return request.param
 
 
 # Fixture for the 'conf' parameter
-@pytest.fixture(scope="module", params=[0.5])
+@pytest.fixture(scope="module", params=[0.25])
 def conf_param(request):
     return request.param
 
 
 # Fixture for the 'iou' parameter
-@pytest.fixture(scope="module", params=[0.75])
+@pytest.fixture(scope="module", params=[0.5])
 def iou_param(request):
     return request.param
 
@@ -101,12 +104,6 @@ def show_conf_param(request):
 # Fixture for the 'augment' parameter
 @pytest.fixture(scope="module", params=[True])
 def augment_param(request):
-    return request.param
-
-
-# Fixture for the 'agnostic_nms' parameter
-@pytest.fixture(scope="module", params=[True])
-def agnostic_nms_param(request):
     return request.param
 
 
@@ -138,7 +135,6 @@ def pred_kwds(
     show_conf_param,
     show_labels_param,
     augment_param,
-    agnostic_nms_param,
     classes_param,
     boxes_param,
     accept_param,
@@ -153,7 +149,6 @@ def pred_kwds(
         "show_conf": show_conf_param,
         "show_labels": show_labels_param,
         "augment": augment_param,
-        "agnostic_nms": agnostic_nms_param,
         "classes": classes_param,
         "boxes": boxes_param,
         "accept": accept_param,
@@ -165,5 +160,6 @@ def pred_kwds(
 @pytest.fixture(scope="module")
 def test_predict(pred_kwds):
     """Test the predict function."""
+
     result = api.predict(**pred_kwds)
     return result, pred_kwds["accept"]
