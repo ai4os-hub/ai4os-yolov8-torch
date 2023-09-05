@@ -311,7 +311,12 @@ def add_arguments_from_schema(schema, parser):
         if isinstance(field_obj, fields.Int):
             arg_kwargs["type"] = int
         elif isinstance(field_obj, fields.Bool):
-            arg_kwargs["action"] = "store_true"
+            arg_kwargs["action"] = (
+                "store_true"
+                if field_obj.load_default == False
+                else "store_false"
+            )
+
         elif isinstance(field_obj, fields.Float):
             arg_kwargs["type"] = float
         else:
@@ -320,11 +325,11 @@ def add_arguments_from_schema(schema, parser):
         if field_obj.required:
             arg_kwargs["required"] = True
 
-        if field_obj.load_default and not  isinstance(field_obj, fields.Bool):
+        if field_obj.load_default and not isinstance(
+            field_obj, fields.Bool
+        ):
             arg_kwargs["default"] = field_obj.load_default
-           # arg_kwargs["default"] = field_obj.metadata.get("load_default")
-          
-            
+
         if field_obj.metadata.get("description"):
             arg_kwargs["help"] = field_obj.metadata["description"]
         # Debug print statements

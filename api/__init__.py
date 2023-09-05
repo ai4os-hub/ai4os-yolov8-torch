@@ -19,7 +19,7 @@ from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
-from yolov8_api.api import config, responses, schemas, utils
+from . import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -106,29 +106,29 @@ def predict(**args):
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
-        """
-        Trains a yolov8 model using the specified arguments.
+    """
+    Trains a yolov8 model using the specified arguments.
 
-        Args:
-            **args (dict): A dictionary of arguments for training the model
-            defined in the schema.
+    Args:
+        **args (dict): A dictionary of arguments for training the model
+        defined in the schema.
 
-        Returns:
-            dict: A dictionary containing a success message and the path
-            where the trained model was saved.
+    Returns:
+        dict: A dictionary containing a success message and the path
+        where the trained model was saved.
 
-        Raises:
-            HTTPException: If an error occurs during training.
-        Note:
-            - The `project` argument should correspond to the name of
-            your project and should only include the project directory,
-            not the full path.
-            - The `name` argument specifies the subdirectory where the
-            model will be saved within the project directory.
-            - The `weights` argument can be used to load pre-trained
-            weights from a file.
-        """
-    #try:
+    Raises:
+        HTTPException: If an error occurs during training.
+    Note:
+        - The `project` argument should correspond to the name of
+        your project and should only include the project directory,
+        not the full path.
+        - The `name` argument specifies the subdirectory where the
+        model will be saved within the project directory.
+        - The `weights` argument can be used to load pre-trained
+        weights from a file.
+    """
+    try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
 
@@ -182,11 +182,12 @@ def train(**args):
 
         return {
             f'The model was trained successfully and was saved to: \
-             {os.path.join(args["project"], args["name"])}'
+                {os.path.join(args["project"], args["name"])}'
         }
 
-   # except Exception as err:
-    #    raise HTTPException(reason=err) from err
+
+    except Exception as err:
+      raise HTTPException(reason=err) from err
 
 
 def main():
