@@ -2,7 +2,7 @@
 
 [![Build Status](https://jenkins.indigo-datacloud.eu/buildStatus/icon?job=Pipeline-as-code/DEEP-OC-org/yolov8_api/master)](https://jenkins.indigo-datacloud.eu/job/Pipeline-as-code/job/DEEP-OC-org/job/yolov8_api/job/master)
 
-Ultralytics YOLOv8 represents the forefront of object detection models, incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, tracking, instance segmentation, image classification, and pose estimation. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
+Ultralytics YOLOv8 represents the forefront of object detection models, incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, tracking, instance segmentation, and image classification. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
 
 # Adding DeepaaS API into the existing codebase
 In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv8, enabling the seamless utilization of this pipeline. The inclusion of the DeepaaS API enhances the functionality and accessibility of the code, making it easier for users to leverage and interact with the pipeline efficiently.
@@ -86,8 +86,9 @@ apt install -y libgl1
 ```
 
 ## Dataset Preparation
-- Detection and Segmentation Task
-To train the yolov8 model, your annotations should be saved as yolo formats (.txt). Please organize your data in the following structure:
+- Detection and Segmentation Tasks:
+
+    - To train the yolov8 model, your annotations should be saved as yolo formats (.txt). Please organize your data in the following structure:
 ```
 
 │
@@ -129,9 +130,9 @@ The `config.yaml` file contains the following information about the data:
 
 ```yaml
 # Images and labels directory should be insade 'fasterrcnn_pytorch_api/data' directory.
-train: 'my_dataset/train/imgs'
-val: 'my_dataset/val/imgs'
-test: 'my_dataset/test/imgs' #optional
+train: 'path/to/my_dataset/train/imgs'
+val: 'path/to/my_dataset/val/imgs'
+test: 'path/to/my_dataset/test/imgs' #optional
 # Class names.
 names: 
     0: class1, 
@@ -144,6 +145,12 @@ NC: n
 The `train` and `val` fields specify the paths to the directories containing the training and validation images, respectively.
 `names` is a dictionary of class names. The order of the names should match the order of the object class indices in the YOLO dataset files.
 
+><span style="color:Blue">**Note:**</span>The train and val path should be a complete path or relative from
+data directory e.g. `root/pat/to/mydata/train/images` or if it is in the `path/to/yolov8_api/data/raw` just 
+`mydata/train/images`
+
+
+-  Classification Task:
 For the classification task, the dataset format should be as follows:
 ```
 data/
@@ -169,7 +176,7 @@ data/
 
 ## Available Models
 
-The Ultralytics YOLOv8 model can be used to train multiple tasks including classification, detection, segmentation and pose detection.
+The Ultralytics YOLOv8 model can be used to train multiple tasks including classification, detection, and segmentatio.
 To train the model based on your project, you can select on of the task_type option in the training arguments and the corresponding model will be loaded and trained.
 for each task, you can select the model arguments among the following options:
 

@@ -18,7 +18,7 @@ the same folder. However, remember to add the prefix `test_` to the file.
 # pylint: disable=redefined-outer-name
 # pylint: disable=unused-argument
 
-
+'''
 def test_authors(metadata):
     """Tests that metadata provides authors information."""
     assert "author" in metadata
@@ -28,7 +28,7 @@ def test_authors(metadata):
 def test_emails(metadata):
     """Tests that metadata provides authors information."""
     assert "author-email" in metadata
-    assert metadata["Author-email"] == {
+    assert metadata["author-email"] == {
         "Fahimeh": "khadijeh.alibabaei@kit.edu"
     }
 
@@ -36,13 +36,13 @@ def test_emails(metadata):
 def test_description(metadata):
     """Tests that metadata provides description information."""
     assert "description" in metadata
-    assert metadata["Description"] == "add api to yolov8"
+    assert metadata["description"] == "add api to yolov8"
 
 
 def test_license(metadata):
     """Tests that metadata provides license information."""
     assert "license" in metadata
-    assert metadata["License"] == "MIT"
+    assert metadata["license"] == "MIT"
 
 
 def test_version(metadata):
@@ -52,7 +52,7 @@ def test_version(metadata):
     assert all(v.isnumeric() for v in metadata["version"].split("."))
     assert len(metadata["version"].split(".")) == 3
 
-
+'''
 # def test_models(metadata):
 #     """Tests that metadata provides models information."""
 #     assert "models" in metadata

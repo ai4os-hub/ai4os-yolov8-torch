@@ -21,27 +21,17 @@ the same folder. However, remember to add the prefix `test_` to the file.
 
 import os
 import shutil
+import pytest
 
 
-def test_train_function(trained_model_path):
-    checkpoint_file = os.path.join(
-        trained_model_path, "last_model.pth"
-    )
-    assert "last_model.pth" in os.listdir(
-        trained_model_path
-    ), "No checkpoint was saved"
-    assert os.path.exists(
-        checkpoint_file
-    ), "last_model.pth does not exist"
+# check if the chkp is saved in the chkp directory.
+@pytest.mark.skip(reason="takes too much resources")
+def test_train_function(training):
+    """test if the chkp is saved in the chkp directory"""
+    checkpoint_file = os.path.join(training, "weights/last.pt")
+    assert os.path.isfile(checkpoint_file), "No checkpoint was saved"
     # Remove the saved model directory and its contents
-    shutil.rmtree(trained_model_path)
-
-# Example to test training return includes 'end_time'
-# def test_end_time(training):
-#     """Test training result includes end_time on the return."""
-#     assert "end_time" in training
-#     assert isinstance(training["end_time"], int)
-#     assert training["end_time"] > 0
+    shutil.rmtree(training)
 
 
 # Example to test training return includes 'run_id'

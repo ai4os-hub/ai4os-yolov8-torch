@@ -9,21 +9,22 @@ By convention, the CONSTANTS defined in this module are in UPPER_CASE.
 """
 import os
 import logging
+import ast
 from importlib import metadata
 from pathlib import Path
 
-MODEL_LIST= [
-            "yolov8n.yaml",
-            "yolov8n.pt",
-            "yolov8s.yaml",
-            "yolov8s.pt",
-            "yolov8m.yaml",
-            "yolov8m.pt",
-            "yolov8l.yaml",
-            "yolov8l.pt",
-            "yolov8x.yaml",
-            "yolov8x.pt",
-        ]
+MODEL_LIST = [
+    "yolov8n.yaml",
+    "yolov8n.pt",
+    "yolov8s.yaml",
+    "yolov8s.pt",
+    "yolov8m.yaml",
+    "yolov8m.pt",
+    "yolov8l.yaml",
+    "yolov8l.pt",
+    "yolov8x.yaml",
+    "yolov8x.pt",
+]
 # Default AI model
 MODEL_NAME = os.getenv("MODEL_NAME", default="yolov8_api")
 
@@ -50,19 +51,23 @@ BASE_PATH = Path(__file__).resolve(strict=True).parents[1]
 # Path definition for data folder
 DATA_PATH = os.getenv("DATA_PATH", default=BASE_PATH / "data")
 DATA_PATH = Path(DATA_PATH)
+TEST_DATA_PATH = os.getenv(
+    "TEST_DATA_PATH", default=BASE_PATH / "tests/data"
+)
+TEST_DATA_PATH = Path(TEST_DATA_PATH)
 # Path definition for the pre-trained models
 MODELS_PATH = os.getenv("MODELS_PATH", default=BASE_PATH / "models")
 MODELS_PATH = Path(MODELS_PATH)
 
+REMOTE_PATH = os.getenv("MODELS_PATH", default="models")
 # logging level across API modules can be setup via API_LOG_LEVEL,
 # options: DEBUG, INFO(default), WARNING, ERROR, CRITICAL
 ENV_LOG_LEVEL = os.getenv("API_LOG_LEVEL", default="INFO")
 LOG_LEVEL = getattr(logging, ENV_LOG_LEVEL.upper())
 
 
-
 try:
-    MODEL_LIST = os.getenv("MODEL_LIST",  default=MODEL_LIST)
+    MODEL_LIST = os.getenv("MODEL_LIST", default=MODEL_LIST)
     if isinstance(MODEL_LIST, str):
         # Parse the string as a list of strings
         MODEL_LIST = ast.literal_eval(MODEL_LIST)
