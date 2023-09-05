@@ -137,7 +137,7 @@ def train(**args):
             args["model"], args["task_type"]
         )
         # Check and update data path if necessary
-        base_path = os.path.join(config.DATA_PATH, "raw")
+        base_path = os.path.join(config.DATA_PATH, "processed")
         args["data"] = utils.validate_and_modify_path(
             args["data"], base_path
         )
@@ -267,7 +267,7 @@ if __name__ == "__main__":
 
     """
     python3 api/__init__.py  train --model yolov8n.yaml\
-    --task_type  det  --data /srv/yolov8_api/data/raw/seg/label.yaml
+    --task_type  det  --data /srv/yolov8_api/data/processed/seg/label.yaml
     python3 api/__init__.py  predict --input \
     /srv/yolov8_api/tests/data/det/test/cat1.jpg\
     --task_type  det --accept application/json
