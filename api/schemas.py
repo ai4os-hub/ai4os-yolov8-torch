@@ -47,7 +47,7 @@ class PredArgsSchema(marshmallow.Schema):
             "accepted image formats: .bmo, .dng, .jpg, .jpeg, "
             ".mpo, .png, .tif, .tiff, .pfm, and .webp. \n"
             "accepted video formats: .asf, .avi, .gif, .m4v, .mkv,"
-            ".mov, .mp4, .mpeg, .mpg, .ts, .wmv, .webm"
+            ".mov, .mp4, .mpeg, .mpg, .ts, .wmv, .webm",
         },
     )
 
@@ -65,10 +65,10 @@ class PredArgsSchema(marshmallow.Schema):
             '"det" for object detection model\n'
             '"seg" for object segmentation model\n'
             '"cls" for object classification model\n'
-            'The default is "det"'
+            'The default is "det"',
+            "enum": ["det", "seg", "cls"],
         },
         load_default="det",
-        enum=["det", "seg", "cls", "pose"],
     )
 
     conf = fields.Float(
@@ -141,18 +141,18 @@ class TrainArgsSchema(marshmallow.Schema):
             '"seg" for object segmentation model\n'
             '"cls" for object classification model\n'
             'The default is "det"',
+            "enum": ["det", "seg", "cls"],
         },
         load_default="det",
-        enum=["det", "seg", "cls"],
     )
 
-    model = fields.Str(  # FIXME
+    model = fields.Str(
         metadata={
             "description": " name of the model to train\n"
             '"yolov8X.yaml" bulid a model from scratch\n'
-            '"yolov8X.pt" load a pretrained model (recommended for training)'
+            '"yolov8X.pt" load a pretrained model (recommended for training)',
+            "enum": config.MODEL_LIST,
         },
-        enum=config.MODEL_LIST,
         required=True,
     )
 
@@ -207,9 +207,10 @@ class TrainArgsSchema(marshmallow.Schema):
             "description": "If the training was stopped before completing all"
             " epochs, you can resume training by setting resume=True"
             " to continue from the last checkpoint.",
+            "enum": [True, False],
         },
         load_default=True,
-        enum=[True, False],  # Use a list for the enum
+        # Use a list for the enum
     )
 
     save_period = fields.Int(
@@ -237,18 +238,18 @@ class TrainArgsSchema(marshmallow.Schema):
         metadata={
             "description": "Optimizer to use, choices="
             "[SGD, Adam, Adamax,AdamW, NAdam, RAdam, RMSProp, auto]",
+            "enum": [
+                "SGD",
+                "Adam",
+                "Adamax",
+                "AdamW",
+                "NAdam",
+                "RAdam",
+                "RMSProp",
+                "auto",
+            ],
         },
         load_default="auto",
-        enum=[
-            "SGD",
-            "Adam",
-            "Adamax",
-            "AdamW",
-            "NAdam",
-            "RAdam",
-            "RMSProp",
-            "auto",
-        ],
     )
 
     seed = fields.Int(
@@ -260,24 +261,24 @@ class TrainArgsSchema(marshmallow.Schema):
     deterministic = fields.Bool(
         metadata={
             "description": "Whether to enable deterministic mode",
+            "enum": [True, False],
         },
         load_default=True,
-        enum=[True, False],
     )
     single_cls = fields.Bool(
         metadata={
             "description": "Train multi-class data as single-class",
+            "enum": [True, False],
         },
         load_default=False,
-        enum=[True, False],
     )
     rect = fields.Bool(
         metadata={
             "description": "Rectangular training (mode='train') or rectangular"
             " validation (mode='val')",
+            "enum": [True, False],
         },
         load_default=False,
-        enum=[True, False],
     )
 
     fraction = fields.Float(
@@ -303,16 +304,16 @@ class TrainArgsSchema(marshmallow.Schema):
         metadata={
             "description": "Automatic Mixed Precision (AMP) training,"
             " choices=[True, False], True runs AMP check",
+            "enum": [True, False],
         },
         load_default=False,
-        enum=[True, False],
     )
     cos_lr = fields.Bool(
         metadata={
             "description": "Use cosine learning rate scheduler",
+            "enum": [True, False],
         },
         load_default=False,
-        enum=[True, False],
     )
     lr0 = fields.Float(
         metadata={
@@ -452,9 +453,11 @@ class TrainArgsSchema(marshmallow.Schema):
     )
 
     disable_wandb = fields.Bool(
-        metadata={"description": "Whether disables wandb logging"},
+        metadata={
+            "description": "Whether disables wandb logging",
+            "enum": [True, False],
+        },
         load_default=True,
-        enum=[True, False],
     )
 
 

@@ -5,7 +5,7 @@
 # https://blog.paperspace.com/train-yolov5-custom-data/
 #  AND https://haobin-tan.netlify.app/ai/computer-vision/object-detection/
 # coco-json-to-yolo-txt/
-#import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 import defusedxml.ElementTree as ET
 import argparse
 import json
