@@ -192,7 +192,8 @@ def train(**args):
                 {os.path.join(args["project"], args["name"])}'
         }
 
-
+    except Exception as err:
+        raise HTTPException(reason=err) from err
 def main():
     """
     Runs above-described methods from CLI
