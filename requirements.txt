@@ -7,6 +7,7 @@ flaat~=1.1.1
 fPDF2~=2.7.5
 ultralytics~=8.0.150
 PyPDF3
+defusedxml==0.5.0
 # Optional tools
 # mlflow~=2.13.0
 
