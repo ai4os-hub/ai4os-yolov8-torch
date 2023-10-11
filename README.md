@@ -22,6 +22,7 @@ apt update
 apt install -y unzip
 apt install -y gcc
 apt install -y libgl1
+apt install -y libglib2.0-0
 ```
 
 ><span style="color:Blue">**Note:**</span>  The associated Docker container for this module can be found at: https://git.scc.kit.edu/m-team/ai/DEEP-OC-yolov8_api.git
