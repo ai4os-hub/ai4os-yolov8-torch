@@ -166,6 +166,7 @@ class TrainArgsSchema(marshmallow.Schema):
             "mydata/data.yaml"
         },
         allow_none=True,
+        required=True
     )
     epochs = fields.Int(
         metadata={
