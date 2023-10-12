@@ -275,14 +275,13 @@ def validate_and_modify_path(path, base_path):
     Returns:
         str: The validated and possibly modified file path.
     """
-    if not os.path.isfile(path):
-        modified_path = os.path.join(base_path, path)
-        if not os.path.isfile(modified_path):
+    if not os.path.exists(path):
+        path = os.path.join(base_path, path)
+        if not os.path.exists(path):
             raise ValueError(
                 f"The path {path} does not exist."
                 "Please provide a valid path."
             )
-        return modified_path
     return path
 
 
