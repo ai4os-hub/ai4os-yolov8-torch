@@ -180,14 +180,18 @@ def train(**args):
         else:
             model = YOLO(args["model"])
 
+        device = args.get("device", "cpu")
+        if device != "cpu" and not torch.cuda.is_available():
+           print("CUDA is not available, switching to CPU mode.")
+           device = "cpu"
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
 
         utils.pop_keys_from_dict(
-            args, ["task_type", "disable_wandb", "weights"]
+            args, ["task_type", "disable_wandb", "weights", "device"]
         )
         # The use of exist_ok=True ensures that the model will
         # be saved in the same path if resume=True.
-        model.train(exist_ok=True, **args)
+        model.train(exist_ok=True ,device=device,  **args)
 
         return {
             f'The model was trained successfully and was saved to: \
@@ -197,6 +201,7 @@ def train(**args):
     except Exception as err:
         logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
+        
 def main():
     """
     Runs above-described methods from CLI
