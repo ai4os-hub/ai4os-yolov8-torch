@@ -208,11 +208,11 @@ class TrainArgsSchema(marshmallow.Schema):
         metadata={
             "description": "If the training was stopped before completing all"
             " epochs, you can resume training by setting resume=True"
-            " to continue from the last checkpoint.",
+            " to continue from the last checkpoint and put the path to the "
+            "checkpoint into the weight argument. ",
             "enum": [True, False],
         },
         load_default=False,
-        # Use a list for the enum
     )
 
     save_period = fields.Int(
