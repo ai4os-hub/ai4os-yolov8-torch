@@ -82,6 +82,12 @@ def predict(**args):
                 path, config.MODELS_PATH
             )
 
+        task_type = args["task_type"]    
+        if task_type == "seg" and args["augment"]:
+            # https://github.com/ultralytics/ultralytics/issues/859
+            raise ValueError(
+                "augment for segmentation has not been supported yet"
+            )
         with tempfile.TemporaryDirectory() as tmpdir:
             for f in [args["input"]]:
                 shutil.copy(
@@ -101,6 +107,7 @@ def predict(**args):
             )
 
     except Exception as err:
+        logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
 
 
@@ -142,11 +149,6 @@ def train(**args):
             args["data"], base_path
         )
         task_type = args["task_type"]
-        if task_type == "seg" and args["augment"]:
-            # https://github.com/ultralytics/ultralytics/issues/859
-            raise ValueError(
-                "augment for segmentation has not been supported yet"
-            )
 
         # Check and update data paths of val and training in config.yaml
         if not utils.check_paths_in_yaml(args["data"], base_path):
@@ -193,6 +195,7 @@ def train(**args):
         }
 
     except Exception as err:
+        logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
 def main():
     """
