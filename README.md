@@ -172,6 +172,7 @@ data/
 |
 |-- ...
 ```
+><span style="color:Blue">**Note:**</span>  For the classification task, you don't need the config.yaml file. Simply provide the path to the data directory in the data argument for training.
 
 ><span style="color:Blue">**Note:**</span>  If you have annotations files in Coco json format or Pascal VOC xml format, you can use the following script to convert them to the proper format for yolo. 
 
