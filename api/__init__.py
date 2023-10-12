@@ -150,13 +150,13 @@ def train(**args):
             args["data"], base_path
         )
         task_type = args["task_type"]
-
+        if task_type in  ["det", "seg"]:
         # Check and update data paths of val and training in config.yaml
-        if not utils.check_paths_in_yaml(args["data"], base_path):
-            raise ValueError(
-                "The path to the either train or validation "
-                "data does not exist. Please provide a valid path."
-            )
+            if not utils.check_paths_in_yaml(args["data"], base_path):
+                raise ValueError(
+                    "The path to the either train or validation "
+                    "data does not exist. Please provide a valid path."
+                )
 
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
