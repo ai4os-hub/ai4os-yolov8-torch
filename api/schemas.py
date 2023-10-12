@@ -195,7 +195,7 @@ class TrainArgsSchema(marshmallow.Schema):
     )
     weights = fields.Str(
         metadata={
-            "description": "If you want to initialize weights for training"
+            "description": "If you want to initialize weights for training "
             "from a custom checkpoint, add the path to the checkpoint, "
             'for example: "timestamp/last.pt" where timestamp is in model'
             " directory or an absolute path to a checkpoint like "
