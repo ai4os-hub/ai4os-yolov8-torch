@@ -13,6 +13,7 @@ import tempfile
 import shutil
 import argparse
 import json
+import torch
 
 from ultralytics import YOLO
 from aiohttp.web import HTTPException
