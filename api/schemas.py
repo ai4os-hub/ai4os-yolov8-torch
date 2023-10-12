@@ -211,7 +211,7 @@ class TrainArgsSchema(marshmallow.Schema):
             " to continue from the last checkpoint.",
             "enum": [True, False],
         },
-        load_default=True,
+        load_default=False,
         # Use a list for the enum
     )
 
@@ -265,7 +265,7 @@ class TrainArgsSchema(marshmallow.Schema):
             "description": "Whether to enable deterministic mode",
             "enum": [True, False],
         },
-        load_default=True,
+        load_default=False,
     )
     single_cls = fields.Bool(
         metadata={
