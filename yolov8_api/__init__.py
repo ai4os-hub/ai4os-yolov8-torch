@@ -18,12 +18,8 @@ from ultralytics import (
 import yolov8_api.utils as utils
 
 
-logger = logging.getLogger(
-    __name__
-)
-logger.setLevel(
-    cfg.LOG_LEVEL
-)
+logger = logging.getLogger(__name__)
+logger.setLevel(cfg.LOG_LEVEL)
 
 
 # TODO: warm (Start Up)
@@ -50,17 +46,9 @@ def predict(
     # return results of prediction
     # Load a pretrained YOLOv8n model
 
-    model = YOLO(
-        args[
-            "model"
-        ]
-    )
-    test_image_path = args[
-        "input"
-    ]
-    results = (
-        []
-    )
+    model = YOLO(args["model"])
+    test_image_path = args["input"]
+    results = []
     for image_path in test_image_path:
         print(
             "Evaluating:",
@@ -78,10 +66,6 @@ def predict(
             image_path,
             **args,
         )
-        logger.debug(
-            f"[predict()]: {result}"
-        )
-        results.append(
-            result
-        )
+        logger.debug(f"[predict()]: {result}")
+        results.append(result)
     return results

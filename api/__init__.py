@@ -83,7 +83,7 @@ def predict(**args):
                 path, config.MODELS_PATH
             )
 
-        task_type = args["task_type"]    
+        task_type = args["task_type"]
         if task_type == "seg" and args["augment"]:
             # https://github.com/ultralytics/ultralytics/issues/859
             raise ValueError(
@@ -150,8 +150,8 @@ def train(**args):
             args["data"], base_path
         )
         task_type = args["task_type"]
-        if task_type in  ["det", "seg"]:
-        # Check and update data paths of val and training in config.yaml
+        if task_type in ["det", "seg"]:
+            # Check and update data paths of val and training in config.yaml
             if not utils.check_paths_in_yaml(args["data"], base_path):
                 raise ValueError(
                     "The path to the either train or validation "
@@ -183,8 +183,8 @@ def train(**args):
 
         device = args.get("device", "cpu")
         if device != "cpu" and not torch.cuda.is_available():
-           print("CUDA is not available, switching to CPU mode.")
-           device = "cpu"
+            print("CUDA is not available, switching to CPU mode.")
+            device = "cpu"
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
 
         utils.pop_keys_from_dict(
@@ -192,7 +192,7 @@ def train(**args):
         )
         # The use of exist_ok=True ensures that the model will
         # be saved in the same path if resume=True.
-        model.train(exist_ok=True ,device=device,  **args)
+        model.train(exist_ok=True, device=device, **args)
 
         return {
             f'The model was trained successfully and was saved to: \
@@ -202,7 +202,8 @@ def train(**args):
     except Exception as err:
         logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
-        
+
+
 def main():
     """
     Runs above-described methods from CLI
