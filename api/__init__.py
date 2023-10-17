@@ -108,7 +108,6 @@ def predict(**args):
             )
 
     except Exception as err:
-        logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
 
 
