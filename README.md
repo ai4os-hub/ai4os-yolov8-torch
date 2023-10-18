@@ -7,7 +7,7 @@ Ultralytics YOLOv8 represents the forefront of object detection models, incorpor
 # Adding DeepaaS API into the existing codebase
 In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv8, enabling the seamless utilization of this pipeline. The inclusion of the DeepaaS API enhances the functionality and accessibility of the code, making it easier for users to leverage and interact with the pipeline efficiently.
 
-# Install the API and the external submodule requirement
+# Install the API 
 To launch the API, first, install the package, and then run DeepaaS:
 ``` bash
 git clone --depth 1 https://git.scc.kit.edu/m-team/ai/yolov8_api.git
