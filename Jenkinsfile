@@ -6,7 +6,7 @@ def job_result_url = ''
 
 pipeline {
     agent {
-        label 'python3.6'
+        label 'python'
     }
 
     environment {
@@ -79,7 +79,7 @@ pipeline {
         stage("Re-build Docker images") {
             when {
                 anyOf {
-                   branch 'master'
+                   branch 'main'
                    branch 'test'
                    buildingTag()
                }
@@ -96,5 +96,4 @@ pipeline {
 
 
 
-    }
 }
