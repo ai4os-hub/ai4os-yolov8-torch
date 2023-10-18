@@ -16,10 +16,9 @@ pip install -e .
 deepaas-run --listen-ip 0.0.0.0
 ```
 
-><span style="color:Blue">**Note:**</span> Before installing the API and submodule requirements, please make sure to install the following system packages: `gcc`, `unzip`, and `libgl1` as well. These packages are essential for a smooth installation process and proper functioning of the framework.
+><span style="color:Blue">**Note:**</span> Before installing the API, please make sure to install the following system packages: `gcc`, `libgl1`, and `libglib2.0-0` as well. These packages are essential for a smooth installation process and proper functioning of the framework.
 ```
 apt update
-apt install -y unzip
 apt install -y gcc
 apt install -y libgl1
 apt install -y libglib2.0-0
@@ -175,7 +174,10 @@ data/
 ><span style="color:Blue">**Note:**</span>  For the classification task, you don't need the config.yaml file. Simply provide the path to the data directory in the data argument for training.
 
 ><span style="color:Blue">**Note:**</span>  If you have annotations files in Coco json format or Pascal VOC xml format, you can use the following script to convert them to the proper format for yolo. 
-
+``` 
+yolov8_api/yolov8_api/seg_coco_json_to_yolo.py #for segmentation
+yolov8_api/yolov8_api/preprocess_ann.py #For detection
+``` 
 ## Available Models
 
 The Ultralytics YOLOv8 model can be used to train multiple tasks including classification, detection, and segmentatio.
