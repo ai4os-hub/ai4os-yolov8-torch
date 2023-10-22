@@ -4,9 +4,11 @@
 
 def job_result_url = ''
 
+ci_cd_image = 'mteamkit/cicd-pytorch-gl'
+
 pipeline {
     agent {
-        label 'python'
+        docker { image "${ci_cd_image}" }
     }
 
     environment {
