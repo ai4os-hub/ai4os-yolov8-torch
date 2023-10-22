@@ -42,7 +42,7 @@ pipeline {
             }
             post {
                 success {
-                    HTMLReport('cover', 'index.html', 'coverage.py report')
+                    HTMLReport('htmlcov', 'index.html', 'coverage.py report')
                 }
             }
         }
@@ -70,7 +70,7 @@ pipeline {
             }
             post {
                always {
-                    HTMLReport("/tmp/bandit", 'index.html', 'Bandit report')
+                    HTMLReport("./", 'bandit.html', 'Bandit report')
                 }
             }
         }
