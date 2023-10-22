@@ -48,9 +48,6 @@ pipeline {
         }
 
         stage('Metrics gathering') {
-            agent {
-                label 'sloc'
-            }
             steps {
                 checkout scm
                 SLOCRun()
