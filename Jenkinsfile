@@ -4,7 +4,7 @@
 
 def job_result_url = ''
 
-ci_cd_image = 'mteamkit/cicd-pytorch-gl'
+ci_cd_image = 'mteamkit/cicd-python-gl'
 
 pipeline {
     agent {
