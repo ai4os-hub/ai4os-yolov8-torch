@@ -25,6 +25,17 @@ pipeline {
             }
         }
 
+        stage('Metrics gathering') {
+            steps {
+                SLOCRun()
+            }
+            post {
+                success {
+                    SLOCPublish()
+                }
+            }
+        }
+
         stage('Style analysis: PEP8') {
             steps {
                 ToxEnvRun('qc.sty')
@@ -43,18 +54,6 @@ pipeline {
             post {
                 success {
                     HTMLReport('htmlcov', 'index.html', 'coverage.py report')
-                }
-            }
-        }
-
-        stage('Metrics gathering') {
-            steps {
-                checkout scm
-                SLOCRun()
-            }
-            post {
-                success {
-                    SLOCPublish()
                 }
             }
         }
