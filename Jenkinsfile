@@ -27,7 +27,8 @@ pipeline {
 
         stage('Metrics gathering') {
             steps {
-                SLOCRun()
+                //SLOCRun()
+                sh "cloc --by-file --fullpath --not-match-d='(.tox|htmlcov|.egg-info)' --xml --out=cloc.xml ."
             }
             post {
                 success {
