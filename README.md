@@ -85,6 +85,16 @@ apt install -y libglib2.0-0
 └── tox.ini                <- tox file with settings for running tox; see tox.testrun.org
 ```
 
+### Environment variables settings
+"In `./api/config.py` you can configure several environment variables:
+
+- `DATA_PATH`: Path definition for the data folder; the default is './data'.
+-  `MODELS_PATH`: Path definition for saving trained models; the default is './models'.
+- `REMOTE_PATH`: Path to the remote directory containing your trained models. Rclone uses this path for downloading or listing the trained models.
+- `YOLOV8_DEFAULT_TASK_TYPE`: Specify the default tasks related to your work among detection (det), segmentation (seg), and classification (cls).
+- `YOLOV8_DEFAULT_WEIGHTS`: Define default timestamped weights for your trained models to be used during prediction. If no timestamp is specified by the user during prediction, the first model in YOLOV8_DEFAULT_WEIGHTS will be used. If it is set to None, the Yolov8n trained on coco/imagenet will be used. Format them as timestamp1, timestamp2, timestamp3, ..."
+
+
 ## Dataset Preparation
 - Detection and Segmentation Tasks:
 
