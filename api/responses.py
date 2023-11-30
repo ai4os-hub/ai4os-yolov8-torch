@@ -123,7 +123,7 @@ def png_response(results, **options):
                 labels=options["show_labels"],
                 conf=options["show_conf"],
                 boxes=options["boxes"],
-                font_size= 6.0
+                font_size=6.0,
             )
             success, buffer = cv2.imencode(".png", result)
             if not success:
