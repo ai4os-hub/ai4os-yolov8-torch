@@ -4,11 +4,15 @@
 
 def job_result_url = ''
 
-ci_cd_image = 'docker.io/mteamkit/cicd-python-gl'
+ci_cd_image = 'mteamkit/cicd-python-gl'
+ci_cd_image_registry = 'https://docker.io'
 
 pipeline {
     agent {
-        docker { image "${ci_cd_image}" }
+        docker { 
+            image "${ci_cd_image}"
+            registryUrl "${ci_cd_image_registry}"
+        }
     }
 
     environment {
