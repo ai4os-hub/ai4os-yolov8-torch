@@ -71,7 +71,7 @@ class PredArgsSchema(marshmallow.Schema):
         load_default=config.YOLOV8_DEFAULT_TASK_TYPE[0],
     )
 
-    imgsz = fields.List(fields.Int() or fields.Int(), 
+    imgsz = fields.List(fields.Int(), 
                         validate=validate.Length(max=2),
                         metadata={
             "description": "image size as scalar or (h, w) list, i.e. (640, 480)"
@@ -196,7 +196,6 @@ class TrainArgsSchema(marshmallow.Schema):
     imgsz = fields.Int(
         metadata={
             "description": "Input images size as int for train and val modes,"
-            " or list [w, h] for predict and export modes"
         },
         load_default=640,
     )

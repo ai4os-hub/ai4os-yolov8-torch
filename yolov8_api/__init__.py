@@ -12,9 +12,7 @@ from your_module import your_function as training
 # TODO: add your imports here
 import logging
 import yolov8_api.config as cfg
-from ultralytics import (
-    YOLO,
-)
+from ultralytics import YOLO
 import yolov8_api.utils as utils
 
 
@@ -45,6 +43,7 @@ def predict(
 
     # return results of prediction
     # Load a pretrained YOLOv8n model
+    print('arg of prediction are', args)
 
     model = YOLO(args["model"])
     test_image_path = args["input"]
@@ -69,3 +68,7 @@ def predict(
         logger.debug(f"[predict()]: {result}")
         results.append(result)
     return results
+if __name__ == "__main__":
+    args = {'input': ['/home/se1131/cat1.jpg'], 'model': 'yolov8n.pt',  'imgsz': [680, 512], 'conf': 0.25, 'iou': 0.5, 'show_labels': True, 'show_conf': True, 'augment': False, 'classes': None, 'boxes': True,
+}
+    predict(**args)

@@ -77,6 +77,7 @@ def predict(**args):
             args["model"] = utils.modify_model_name(
                 "yolov8n.pt", args["task_type"]
             )
+            print('model_name: ', args["model"])
         else:
             path = os.path.join(args["model"], "weights/best.pt")
             args["model"] = utils.validate_and_modify_path(
@@ -84,6 +85,8 @@ def predict(**args):
             )
 
         task_type = args["task_type"]
+       
+   
         if task_type == "seg" and args["augment"]:
             # https://github.com/ultralytics/ultralytics/issues/859
             raise ValueError(
