@@ -48,7 +48,7 @@ pipeline {
             }
             post {
                 always {
-                    recordIssues(tools: [flake8(pattern: 'flake8.log')])
+                    recordIssues(tools: [flake8(pattern: 'flake8.log', name: 'PEP8 report', id: "flake8_pylint")])
                 }
             }
         }
