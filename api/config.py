@@ -75,3 +75,14 @@ except KeyError as err:
     raise RuntimeError(
         "Undefined configuration for MODEL_LIST. "
     ) from err
+
+#Specify the default tasks related to your work among detection (det), 
+# segmentation (seg), and classification (cls).
+YOLOV8_DEFAULT_TASK_TYPE = os.getenv("YOLOV8_DEFAULT_TASK_TYPE", default= "det,seg,cls")
+YOLOV8_DEFAULT_TASK_TYPE = YOLOV8_DEFAULT_TASK_TYPE.split(',')
+
+
+#Specify default timestamped weights for your trained models to be utilized during 
+#prediction. Format them as timestamp1, timestamp2, timestamp3, ...
+YOLOV8_DEFAULT_WEIGHTS = os.getenv("YOLOV8_DEFAULT_WEIGHTS", default= None)
+YOLOV8_DEFAULT_WEIGHTS = YOLOV8_DEFAULT_WEIGHTS.split(',') if YOLOV8_DEFAULT_WEIGHTS else [None]

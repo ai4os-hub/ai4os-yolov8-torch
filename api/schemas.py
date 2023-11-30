@@ -57,7 +57,7 @@ class PredArgsSchema(marshmallow.Schema):
             " if not provided, the pre-trained YOLOv8n model will be"
             " loaded based on the selected task_type.",
         },
-        load_default=None,
+        load_default= config.YOLOV8_DEFAULT_WEIGHTS[0],
     )
     task_type = fields.Str(
         metadata={
@@ -66,10 +66,16 @@ class PredArgsSchema(marshmallow.Schema):
             '"seg" for object segmentation model\n'
             '"cls" for object classification model\n'
             'The default is "det"',
-            "enum": ["det", "seg", "cls"],
+            "enum": config.YOLOV8_DEFAULT_TASK_TYPE,
         },
-        load_default="det",
+        load_default=config.YOLOV8_DEFAULT_TASK_TYPE[0],
     )
+
+    imgsz = fields.List(fields.Int() or fields.Int(), 
+                        validate=validate.Length(max=2),
+                        metadata={
+            "description": "image size as scalar or (h, w) list, i.e. (640, 480)"
+        })
 
     conf = fields.Float(
         metadata={
