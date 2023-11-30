@@ -53,9 +53,12 @@ class PredArgsSchema(marshmallow.Schema):
 
     model = fields.Str(
         metadata={
-            "description": "The timestamp when you saved your trained model,"
-            " if not provided, the pre-trained YOLOv8n model will be"
-            " loaded based on the selected task_type.",
+             "description": "The timestamp inside the 'models' directory indicates the time when"
+            "you saved your trained model,"
+            "The directory structure should resemble 'models/your_timestamp/weights/best.pt'."
+            "To see the available timestamp, please run the get_metadata function and check model_local."
+            " If not provided, the pre-trained default model will be"
+            " loaded. "
         },
         load_default= config.YOLOV8_DEFAULT_WEIGHTS[0],
     )
