@@ -12,6 +12,7 @@ pipeline {
         docker { 
             image "${ci_cd_image}"
             registryUrl "${ci_cd_image_registry}"
+            registryCredentialsId 'indigobot'
         }
     }
 
