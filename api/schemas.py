@@ -52,7 +52,7 @@ class PredArgsSchema(marshmallow.Schema):
     )
 
     model = fields.Str(
-        metadata={
+        metadata={"description":
             "The timestamp inside the 'models' directory "
             "represents the time when you saved your trained model. "
             "The directory structure should resemble "
