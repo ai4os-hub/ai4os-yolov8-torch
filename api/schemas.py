@@ -470,11 +470,11 @@ class TrainArgsSchema(marshmallow.Schema):
         },
         load_default=True,
     )
-    disable_MLFLOW = fields.Bool(
+    Enable_MLFLOW = fields.Bool(
         metadata={
             "description": "Whether disables MLFOW logging",
         },
-        load_default=True,
+        load_default=False,
     )
 
 

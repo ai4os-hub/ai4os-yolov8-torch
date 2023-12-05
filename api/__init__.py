@@ -142,7 +142,7 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
-        settings.update({'mlflow': args['disable_MLFLOW']})
+        settings.update({'mlflow': args['Enable_MLFLOW']})
  
         os.environ["MLFLOW_TRACKING_PASSWORD"] =  getpass.getpass() 
 
