@@ -1,0 +1,85 @@
+{
+    "os": "Linux-6.2.0-37-generic-x86_64-with-glibc2.35",
+    "python": "3.10.10",
+    "heartbeatAt": "2023-11-30T14:42:41.965692",
+    "startedAt": "2023-11-30T14:42:41.083065",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "train",
+        "--model",
+        "yolov8n.yaml",
+        "--task_type",
+        "det",
+        "--data",
+        "/home/se1131/American_Sign_Language/data.yaml"
+    ],
+    "state": "running",
+    "program": "/home/se1131/Documents/yolov8_api/api/__init__.py",
+    "codePath": "api/__init__.py",
+    "git": {
+        "remote": "https://git.scc.kit.edu/m-team/ai/yolov8_api.git",
+        "commit": "f73532bbdd3d080ffa34bb21c941f53d901d9feb"
+    },
+    "email": "khadijeh.alibabaei@kit.edu",
+    "root": "/home/se1131/Documents/yolov8_api",
+    "host": "se1131-LIFEBOOK-U7411",
+    "username": "se1131",
+    "executable": "/home/se1131/anaconda3/envs/frcnn/bin/python3",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 1284.5465,
+        "min": 400.0,
+        "max": 4400.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1295.911,
+            "min": 400.0,
+            "max": 4400.0
+        },
+        {
+            "current": 1316.521,
+            "min": 400.0,
+            "max": 4400.0
+        },
+        {
+            "current": 1302.868,
+            "min": 400.0,
+            "max": 4400.0
+        },
+        {
+            "current": 1261.632,
+            "min": 400.0,
+            "max": 4400.0
+        },
+        {
+            "current": 1298.271,
+            "min": 400.0,
+            "max": 4400.0
+        },
+        {
+            "current": 1322.467,
+            "min": 400.0,
+            "max": 4400.0
+        },
+        {
+            "current": 1322.387,
+            "min": 400.0,
+            "max": 4400.0
+        },
+        {
+            "current": 1326.947,
+            "min": 400.0,
+            "max": 4400.0
+        }
+    ],
+    "disk": {
+        "total": 467.8895797729492,
+        "used": 258.26711654663086
+    },
+    "memory": {
+        "total": 15.220108032226562
+    }
+}
