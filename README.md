@@ -102,7 +102,7 @@ If you want to use Mflow to track and log your experiments, you should first set
 optional options:
 - `MLFLOW_EXPERIMENT_NAME`
 - `MLFLOW_RUN`
-Then you should set the argument `disable_MLFLOW` to false during the execution of the training.
+- Then you should set the argument `disable_MLFLOW` to false during the execution of the training.
 
 
 ## Dataset Preparation
