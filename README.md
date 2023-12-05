@@ -94,7 +94,7 @@ apt install -y libglib2.0-0
 - `YOLOV8_DEFAULT_TASK_TYPE`: Specify the default tasks related to your work among detection (det), segmentation (seg), and classification (cls).
 - `YOLOV8_DEFAULT_WEIGHTS`: Define default timestamped weights for your trained models to be used during prediction. If no timestamp is specified by the user during prediction, the first model in YOLOV8_DEFAULT_WEIGHTS will be used. If it is set to None, the Yolov8n trained on coco/imagenet will be used. Format them as timestamp1, timestamp2, timestamp3, ..."
 
-### track your experimentss with Mlfow
+### Track your experiments with Mlfow
 If you want to use Mflow to track and log your experiments, you should first set the following environment variables:
 - `MLFLOW_TRACKING_URI`
 - `MLFLOW_TRACKING_USERNAME`
