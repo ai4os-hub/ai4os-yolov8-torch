@@ -6,6 +6,7 @@ docs [1] and at a canonical exemplar module [2].
 [1]: https://docs.ai4eosc.eu/
 [2]: https://github.com/deephdc/demo_app
 """
+import getpass
 import os
 import logging
 import datetime
@@ -15,7 +16,7 @@ import argparse
 import json
 import torch
 
-from ultralytics import YOLO
+from ultralytics import YOLO,  settings
 from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
@@ -141,6 +142,9 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
+        settings.update({'mlflow': args['disable_MLFLOW']})
+ 
+        os.environ["MLFLOW_TRACKING_PASSWORD"] =  getpass.getpass() 
 
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(

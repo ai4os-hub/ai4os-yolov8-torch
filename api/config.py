@@ -12,6 +12,7 @@ import logging
 import ast
 from importlib import metadata
 from pathlib import Path
+import datetime
 
 MODEL_LIST = [
     "yolov8n.yaml",
@@ -86,3 +87,18 @@ YOLOV8_DEFAULT_TASK_TYPE = YOLOV8_DEFAULT_TASK_TYPE.split(',')
 #prediction. Format them as timestamp1, timestamp2, timestamp3, ...
 YOLOV8_DEFAULT_WEIGHTS = os.getenv("YOLOV8_DEFAULT_WEIGHTS", default= None)
 YOLOV8_DEFAULT_WEIGHTS = YOLOV8_DEFAULT_WEIGHTS.split(',') if YOLOV8_DEFAULT_WEIGHTS else [None]
+#define default weights path for your trained model to use during prediction 
+YOLOV8_DEFAULT_WEIGHTS = os.getenv("YOLOV8_DEFAULT_WEIGHTS", default= None)
+if YOLOV8_DEFAULT_WEIGHTS  is not None:
+    YOLOV8_DEFAULT_WEIGHTS  = YOLOV8_DEFAULT_WEIGHTS .split(',')
+
+#Variables related to mlfow
+try: 
+    MLFLOW_TRACKING_URI= os.getenv("YOLOV8_DEFAULT_WEIGHTS", default= "https://mlflow.dev.ai4eosc.eu/")
+    MLFLOW_EXPERIMENT_NAME= os.getenv("MLFLOW_EXPERIMENT_NAME", default= "yolov8") 
+    MLFLOW_RUN= os.getenv("MLFLOW_RUN", default= datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))  
+    
+except KeyError as err:
+    raise RuntimeError(
+        "Undefined configuration for mlflow settings"
+    ) from err
