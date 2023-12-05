@@ -194,7 +194,7 @@ def train(**args):
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
 
         utils.pop_keys_from_dict(
-            args, ["task_type", "disable_wandb", "weights", "device"]
+            args, ["task_type", "disable_wandb", "weights", "device",  "Enable_MLFLOW "]
         )
         # The use of exist_ok=True ensures that the model will
         # be saved in the same path if resume=True.
