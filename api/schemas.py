@@ -472,7 +472,7 @@ class TrainArgsSchema(marshmallow.Schema):
     )
     Enable_MLFLOW = fields.Bool(
         metadata={
-            "description": "Whether disables MLFOW logging",
+            "description": "Whether eables MLFOW logging",
         },
         load_default=False,
     )

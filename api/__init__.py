@@ -142,9 +142,10 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
-        settings.update({'mlflow': args['Enable_MLFLOW']})
- 
-        os.environ["MLFLOW_TRACKING_PASSWORD"] =  getpass.getpass() 
+        if args['Enable_MLFLOW']:
+            settings.update({'mlflow': args['Enable_MLFLOW']})
+            os.environ["MLFLOW_TRACKING_PASSWORD"] =  getpass.getpass()
+            
 
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
@@ -168,11 +169,11 @@ def train(**args):
 
         # The project should correspond to the name of the project
         # and should only include the project directory, not the full path.
-        args["project"] = config.MODEL_NAME
+        args["project"] = 'models'
 
         # The directory where the model will be saved after training
         # by joining the values of args["project"] and args["name"].
-        args["name"] = os.path.join("models", timestamp)
+        args["name"] = timestamp
 
         # Check if there are weights to load from an already trained model
         # Otherwise, load the pretrained model from the model registry
