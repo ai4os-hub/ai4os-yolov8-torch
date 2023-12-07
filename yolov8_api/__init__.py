@@ -68,6 +68,7 @@ def predict(
         logger.debug(f"[predict()]: {result}")
         results.append(result)
     return results
+    
 if __name__ == "__main__":
     args = {'input': ['/home/se1131/cat1.jpg'], 'model': 'yolov8n.pt',  'imgsz': [680, 512], 'conf': 0.25, 'iou': 0.5, 'show_labels': True, 'show_conf': True, 'augment': False, 'classes': None, 'boxes': True,
 }

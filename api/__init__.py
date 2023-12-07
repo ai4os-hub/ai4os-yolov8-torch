@@ -15,6 +15,8 @@ import shutil
 import argparse
 import json
 import torch
+import mlflow
+
 
 from ultralytics import YOLO,  settings
 from aiohttp.web import HTTPException
@@ -142,9 +144,14 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
-        if args['Enable_MLFLOW']:
-            settings.update({'mlflow': args['Enable_MLFLOW']})
-            os.environ["MLFLOW_TRACKING_PASSWORD"] =  getpass.getpass()
+        Enable_MLFLOW=  args['Enable_MLFLOW']
+        if Enable_MLFLOW:
+            settings.update({'mlflow':args['Enable_MLFLOW']})
+            run_name=os.getenv('MLFLOW_RUN')
+            active_run = mlflow.active_run() or mlflow.start_run(run_name=run_name)
+            run_id=active_run.info.run_id
+            print('the run_id is' ,run_id)
+         
             
 
         # Modify the model name based on task type
@@ -200,6 +207,15 @@ def train(**args):
         # The use of exist_ok=True ensures that the model will
         # be saved in the same path if resume=True.
         model.train(exist_ok=True, device=device, **args)
+        if Enable_MLFLOW:
+
+            with mlflow.start_run(run_id=run_id):
+                # Log the PyTorch model to the artifact location specified by 'artifact_path'
+                mlflow.pyfunc.log_model(artifact_path="model", artifacts={'model_path': str(model.trainer.save_dir)},python_model=mlflow.pyfunc.PythonModel())
+
+           
+
+
 
         return {
             f'The model was trained successfully and was saved to: \
@@ -209,7 +225,6 @@ def train(**args):
     except Exception as err:
         logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
-
 
 def main():
     """
