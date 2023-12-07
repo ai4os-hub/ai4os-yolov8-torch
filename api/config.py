@@ -98,12 +98,20 @@ YOLOV8_DEFAULT_WEIGHTS = (
 )
 
 
-#Variables related to mlfow
-try: 
-    MLFLOW_TRACKING_URI= os.getenv("MLFLOW_TRACKING_URI", default= "https://mlflow.dev.ai4eosc.eu/")
-    MLFLOW_EXPERIMENT_NAME= os.getenv("MLFLOW_EXPERIMENT_NAME", default= "yolov8") 
-    MLFLOW_RUN= os.getenv("MLFLOW_RUN", default= datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))  
-    
+# Variables related to mlfow
+try:
+    MLFLOW_TRACKING_URI = os.getenv(
+        "MLFLOW_TRACKING_URI",
+        default="https://mlflow.dev.ai4eosc.eu/",
+    )
+    MLFLOW_EXPERIMENT_NAME = os.getenv(
+        "MLFLOW_EXPERIMENT_NAME", default="yolov8"
+    )
+    MLFLOW_RUN = os.getenv(
+        "MLFLOW_RUN",
+        default=datetime.datetime.now().strftime("%Y%m%d_%H%M%S"),
+    )
+
 except KeyError as err:
     raise RuntimeError(
         "Undefined configuration for mlflow settings"

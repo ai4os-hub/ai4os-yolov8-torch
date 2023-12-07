@@ -53,14 +53,14 @@ class PredArgsSchema(marshmallow.Schema):
 
     model = fields.Str(
         metadata={
-             "description": "The timestamp inside the 'models' directory indicates the time when"
+            "description": "The timestamp inside the 'models' directory indicates the time when"
             "you saved your trained model,"
             "The directory structure should resemble 'models/your_timestamp/weights/best.pt'."
             "To see the available timestamp, please run the get_metadata function and check model_local."
             " If not provided, the pre-trained default model will be"
             " loaded. "
         },
-        load_default= config.YOLOV8_DEFAULT_WEIGHTS[0],
+        load_default=config.YOLOV8_DEFAULT_WEIGHTS[0],
     )
     task_type = fields.Str(
         metadata={
@@ -74,11 +74,13 @@ class PredArgsSchema(marshmallow.Schema):
         load_default=config.YOLOV8_DEFAULT_TASK_TYPE[0],
     )
 
-    imgsz = fields.List(fields.Int(), 
-                        validate=validate.Length(max=2),
-                        metadata={
+    imgsz = fields.List(
+        fields.Int(),
+        validate=validate.Length(max=2),
+        metadata={
             "description": "image size as scalar or (h, w) list, i.e. (640, 480)"
-        })
+        },
+    )
 
     conf = fields.Float(
         metadata={
@@ -476,8 +478,8 @@ class TrainArgsSchema(marshmallow.Schema):
         },
         load_default=False,
     )
- 
-    
+
+
 if __name__ == "__main__":
     from marshmallow import fields
 

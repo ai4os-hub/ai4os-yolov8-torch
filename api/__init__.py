@@ -18,7 +18,7 @@ import torch
 import mlflow
 
 
-from ultralytics import YOLO,  settings
+from ultralytics import YOLO, settings
 from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
@@ -80,7 +80,7 @@ def predict(**args):
             args["model"] = utils.modify_model_name(
                 "yolov8n.pt", args["task_type"]
             )
-            print('model_name: ', args["model"])
+            print("model_name: ", args["model"])
         else:
             path = os.path.join(args["model"], "weights/best.pt")
             args["model"] = utils.validate_and_modify_path(
@@ -88,8 +88,7 @@ def predict(**args):
             )
 
         task_type = args["task_type"]
-       
-   
+
         if task_type == "seg" and args["augment"]:
             # https://github.com/ultralytics/ultralytics/issues/859
             raise ValueError(
@@ -144,15 +143,15 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
-        Enable_MLFLOW=  args['Enable_MLFLOW']
+        Enable_MLFLOW = args["Enable_MLFLOW"]
         if Enable_MLFLOW:
-            settings.update({'mlflow':args['Enable_MLFLOW']})
-            run_name=os.getenv('MLFLOW_RUN')
-            active_run = mlflow.active_run() or mlflow.start_run(run_name=run_name)
-            run_id=active_run.info.run_id
-            print('the run_id is' ,run_id)
-         
-            
+            settings.update({"mlflow": args["Enable_MLFLOW"]})
+            run_name = os.getenv("MLFLOW_RUN")
+            active_run = mlflow.active_run() or mlflow.start_run(
+                run_name=run_name
+            )
+            run_id = active_run.info.run_id
+            print("the run_id is", run_id)
 
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
@@ -176,7 +175,7 @@ def train(**args):
 
         # The project should correspond to the name of the project
         # and should only include the project directory, not the full path.
-        args["project"] = 'models'
+        args["project"] = "models"
 
         # The directory where the model will be saved after training
         # by joining the values of args["project"] and args["name"].
@@ -202,20 +201,28 @@ def train(**args):
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
 
         utils.pop_keys_from_dict(
-            args, ["task_type", "disable_wandb", "weights", "device",  "Enable_MLFLOW"]
+            args,
+            [
+                "task_type",
+                "disable_wandb",
+                "weights",
+                "device",
+                "Enable_MLFLOW",
+            ],
         )
         # The use of exist_ok=True ensures that the model will
         # be saved in the same path if resume=True.
         model.train(exist_ok=True, device=device, **args)
         if Enable_MLFLOW:
-
             with mlflow.start_run(run_id=run_id):
                 # Log the PyTorch model to the artifact location specified by 'artifact_path'
-                mlflow.pyfunc.log_model(artifact_path="model", artifacts={'model_path': str(model.trainer.save_dir)},python_model=mlflow.pyfunc.PythonModel())
-
-           
-
-
+                mlflow.pyfunc.log_model(
+                    artifact_path="model",
+                    artifacts={
+                        "model_path": str(model.trainer.save_dir)
+                    },
+                    python_model=mlflow.pyfunc.PythonModel(),
+                )
 
         return {
             f'The model was trained successfully and was saved to: \
@@ -225,6 +232,7 @@ def train(**args):
     except Exception as err:
         logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
+
 
 def main():
     """
