@@ -16,14 +16,15 @@ import argparse
 import json
 import torch
 import mlflow
+import requests
 
 
-from ultralytics import YOLO, settings
+from ultralytics import YOLO,  settings
 from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
-from . import config, responses, schemas, utils
+from yolov8_api.api import config, responses, schemas, utils
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
@@ -80,7 +81,7 @@ def predict(**args):
             args["model"] = utils.modify_model_name(
                 "yolov8n.pt", args["task_type"]
             )
-            print("model_name: ", args["model"])
+            print('model_name: ', args["model"])
         else:
             path = os.path.join(args["model"], "weights/best.pt")
             args["model"] = utils.validate_and_modify_path(
@@ -88,7 +89,8 @@ def predict(**args):
             )
 
         task_type = args["task_type"]
-
+       
+   
         if task_type == "seg" and args["augment"]:
             # https://github.com/ultralytics/ultralytics/issues/859
             raise ValueError(
@@ -143,15 +145,27 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
-        Enable_MLFLOW = args["Enable_MLFLOW"]
-        if Enable_MLFLOW:
-            settings.update({"mlflow": args["Enable_MLFLOW"]})
-            run_name = os.getenv("MLFLOW_RUN")
-            active_run = mlflow.active_run() or mlflow.start_run(
-                run_name=run_name
-            )
-            run_id = active_run.info.run_id
-            print("the run_id is", run_id)
+        Enable_MLFLOW=  args['Enable_MLFLOW']
+        settings.update({'mlflow':False})
+
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        # The project should correspond to the name of the project
+        # and should only include the project directory, not the full path.
+        args["project"] = 'models'
+
+        # The directory where the model will be saved after training
+        # by joining the values of args["project"] and args["name"].
+        args["name"] = timestamp
+        
+      #  if Enable_MLFLOW:
+           # settings.update({'mlflow':args['Enable_MLFLOW']})
+         #   run_name=os.getenv('MLFLOW_RUN', default=args["name"])
+          #  active_run = mlflow.start_run(run_name=run_name)
+          #  run_id=active_run.info.run_id
+            
+         
+            
 
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
@@ -171,15 +185,7 @@ def train(**args):
                     "data does not exist. Please provide a valid path."
                 )
 
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
-        # The project should correspond to the name of the project
-        # and should only include the project directory, not the full path.
-        args["project"] = "models"
-
-        # The directory where the model will be saved after training
-        # by joining the values of args["project"] and args["name"].
-        args["name"] = timestamp
+        
 
         # Check if there are weights to load from an already trained model
         # Otherwise, load the pretrained model from the model registry
@@ -201,30 +207,43 @@ def train(**args):
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
 
         utils.pop_keys_from_dict(
-            args,
-            [
-                "task_type",
-                "disable_wandb",
-                "weights",
-                "device",
-                "Enable_MLFLOW",
-            ],
+            args, ["task_type", "disable_wandb", "weights", "device",  "Enable_MLFLOW"]
         )
         # The use of exist_ok=True ensures that the model will
         # be saved in the same path if resume=True.
-        model.train(exist_ok=True, device=device, **args)
+       # model.train(exist_ok=True, device=device, **args)
         if Enable_MLFLOW:
-            with mlflow.start_run(run_id=run_id):
-                # Log the PyTorch model to the artifact location specified by 'artifact_path'
-                mlflow.pyfunc.log_model(
-                    artifact_path="model",
-                    artifacts={
-                        "model_path": str(model.trainer.save_dir)
-                    },
-                    python_model=mlflow.pyfunc.PythonModel(),
-                )
+            mlflow.end_run()
+            mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
+            with mlflow.start_run(run_name=args['name']):#(run_id=run_id):
+                artifact_uri = mlflow.get_artifact_uri( )
+                #print('The artifact_uri is', artifact_uri)
+                
+                model.train(exist_ok=True, device=device, **args)
+                run, active_run = mlflow, mlflow.active_run()
+                print("active run id",active_run.info.run_id)
 
-        return {
+                # logs params in mlflow
+                run.log_params(vars(model.trainer.model.args))
+                # log best fit and last fit in mlflow
+                mlflow.log_artifact(model.trainer.last)
+                mlflow.log_artifact(model.trainer.best)
+                SANITIZE = lambda x: {k.replace('(', '').replace(')', ''): float(v) for k, v in x.items()}
+                # logs metrics in mlflow
+                mlflow.log_metrics(metrics=SANITIZE(model.trainer.label_loss_items(model.trainer.tloss, prefix='train')),
+                           step=model.trainer.epoch)
+                mlflow.log_metrics(metrics=SANITIZE(model.trainer.lr), step=model.trainer.epoch)
+                mlflow.log_metrics(metrics=SANITIZE(model.trainer.metrics), step=model.trainer.epoch)
+
+                # Log the PyTorch model to the artifact location specified by 'artifact_path'
+                mlflow.pyfunc.log_model(artifact_path='model',
+                                        artifacts={'model_path': str(model.trainer.save_dir)},
+                                        python_model=mlflow.pyfunc.PythonModel())
+                
+                return {"artifact_path": args["name"], "artifact_uri": artifact_uri}
+        else:
+            model.train(exist_ok=True, device=device, **args)
+            return {
             f'The model was trained successfully and was saved to: \
                 {os.path.join(args["project"], args["name"])}'
         }
@@ -232,7 +251,6 @@ def train(**args):
     except Exception as err:
         logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
-
 
 def main():
     """
