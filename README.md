@@ -10,7 +10,7 @@ In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv
 # Install the API 
 To launch the API, first, install the package, and then run DeepaaS:
 ``` bash
-git clone --depth 1 https://git.scc.kit.edu/m-team/ai/yolov8_api.git
+git clone --depth 1 https://codebase.helmholtz.cloud/m-team/ai/yolov8_api.git
 cd  yolov8_api
 pip install -e .
 deepaas-run --listen-ip 0.0.0.0
@@ -24,7 +24,7 @@ apt install -y libgl1
 apt install -y libglib2.0-0
 ```
 
-><span style="color:Blue">**Note:**</span>  The associated Docker container for this module can be found at: https://git.scc.kit.edu/m-team/ai/DEEP-OC-yolov8_api.git
+><span style="color:Blue">**Note:**</span>  The associated Docker container for this module can be found at: https://codebase.helmholtz.cloud/m-team/ai/DEEP-OC-yolov8_api.git
 
 ## Project structure
 
