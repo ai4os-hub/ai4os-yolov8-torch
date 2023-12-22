@@ -20,6 +20,8 @@ import requests
 
 
 from ultralytics import YOLO, settings
+from ultralytics.data.dataset import YOLODataset
+
 from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
@@ -116,20 +118,85 @@ def predict(**args):
     except Exception as err:
         raise HTTPException(reason=err) from err
 
+from mlflow.entities import Dataset
+from mlflow.models import infer_signature
+import cv2
+import random
+import numpy as np
+
+
+
+def mlflow_logging(model, num_epochs, args):
+    mlflow.end_run()
+    mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
+    
+    with mlflow.start_run(run_name=args["name"]):
+        artifact_uri = mlflow.get_artifact_uri()
+        SANITIZE = lambda x: {
+            k.replace("(", "").replace(")", ""): float(v)
+            for k, v in x.items()
+        }        
+        # logs metrics in mlflow
+        for epoch in range(1, num_epochs + 1):
+            mlflow.log_metrics(
+                metrics=SANITIZE(
+                    model.trainer.label_loss_items(
+                        model.trainer.tloss, prefix="train"
+                    )
+                ),
+                step=epoch,
+            )
+            mlflow.log_metrics(
+                metrics=SANITIZE(model.trainer.lr),
+                step=epoch,
+            )
+            mlflow.log_metrics(
+                metrics=SANITIZE(model.trainer.metrics),
+                step=epoch,
+            )
+        
+        run, active_run = mlflow, mlflow.active_run()
+        print("active run id", active_run.info.run_id)
+        
+        # logs params in mlflow
+        run.log_params(vars(model.trainer.model.args))
+        
+        # log best fit and last fit in mlflow
+        mlflow.log_artifact(model.trainer.last)
+        mlflow.log_artifact(model.trainer.best)
+                
+        # Log the PyTorch model to the artifact location specified by 'artifact_path'
+        mlflow.pyfunc.log_model(
+            artifact_path="model",
+            artifacts={"model_path": str(model.trainer.save_dir)},
+            python_model=mlflow.pyfunc.PythonModel()
+        )
+        
+        # Register Model to Model Registry
+        MLFLOW_MODEL_NAME = "yolov8_footballPlayersDet"
+        run_id = active_run.info.run_id
+        result = mlflow.register_model(
+            f"runs:/{run_id}/artifacts/", MLFLOW_MODEL_NAME
+        )
+
+    return {
+        "artifact_path": args["name"],
+        "artifact_uri": artifact_uri,
+    }
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
     """
     Trains a yolov8 model using the specified arguments.
-
+    
     Args:
         **args (dict): A dictionary of arguments for training the model
         defined in the schema.
-
+    
     Returns:
         dict: A dictionary containing a success message and the path
         where the trained model was saved.
-
+    
     Raises:
         HTTPException: If an error occurs during training.
     Note:
@@ -156,12 +223,6 @@ def train(**args):
         # The directory where the model will be saved after training
         # by joining the values of args["project"] and args["name"].
         args["name"] = timestamp
-
-        #  if Enable_MLFLOW:
-        # settings.update({'mlflow':args['Enable_MLFLOW']})
-        #   run_name=os.getenv('MLFLOW_RUN', default=args["name"])
-        #  active_run = mlflow.start_run(run_name=run_name)
-        #  run_id=active_run.info.run_id
 
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
@@ -210,62 +271,13 @@ def train(**args):
                 "Enable_MLFLOW",
             ],
         )
-        # The use of exist_ok=True ensures that the model will
-        # be saved in the same path if resume=True.
-        # model.train(exist_ok=True, device=device, **args)
         if Enable_MLFLOW:
-            mlflow.end_run()
-            mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
-            with mlflow.start_run(
-                run_name=args["name"]
-            ):  # (run_id=run_id):
-                artifact_uri = mlflow.get_artifact_uri()
-                # print('The artifact_uri is', artifact_uri)
+            num_epochs = args["epochs"]
+            model.train(exist_ok=True, device=device, **args)
+            print("num_epochs", num_epochs)
 
-                model.train(exist_ok=True, device=device, **args)
-                run, active_run = mlflow, mlflow.active_run()
-                print("active run id", active_run.info.run_id)
-
-                # logs params in mlflow
-                run.log_params(vars(model.trainer.model.args))
-                # log best fit and last fit in mlflow
-                mlflow.log_artifact(model.trainer.last)
-                mlflow.log_artifact(model.trainer.best)
-                SANITIZE = lambda x: {
-                    k.replace("(", "").replace(")", ""): float(v)
-                    for k, v in x.items()
-                }
-                # logs metrics in mlflow
-                mlflow.log_metrics(
-                    metrics=SANITIZE(
-                        model.trainer.label_loss_items(
-                            model.trainer.tloss, prefix="train"
-                        )
-                    ),
-                    step=model.trainer.epoch,
-                )
-                mlflow.log_metrics(
-                    metrics=SANITIZE(model.trainer.lr),
-                    step=model.trainer.epoch,
-                )
-                mlflow.log_metrics(
-                    metrics=SANITIZE(model.trainer.metrics),
-                    step=model.trainer.epoch,
-                )
-
-                # Log the PyTorch model to the artifact location specified by 'artifact_path'
-                mlflow.pyfunc.log_model(
-                    artifact_path="model",
-                    artifacts={
-                        "model_path": str(model.trainer.save_dir)
-                    },
-                    python_model=mlflow.pyfunc.PythonModel(),
-                )
-
-                return {
-                    "artifact_path": args["name"],
-                    "artifact_uri": artifact_uri,
-                }
+            # Call the mlflow_logging function for MLflow-related operations
+            return mlflow_logging(model, num_epochs, args)
         else:
             model.train(exist_ok=True, device=device, **args)
             return {
@@ -276,7 +288,6 @@ def train(**args):
     except Exception as err:
         logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
-
 
 def main():
     """
