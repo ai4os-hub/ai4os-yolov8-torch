@@ -124,8 +124,6 @@ import cv2
 import random
 import numpy as np
 
-
-
 def mlflow_logging(model, num_epochs, args):
     mlflow.end_run()
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
