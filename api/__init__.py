@@ -165,13 +165,13 @@ def mlflow_logging(model, num_epochs, args):
                 
         # Log the PyTorch model to the artifact location specified by 'artifact_path'
         mlflow.pyfunc.log_model(
-            artifact_path="model",
-            artifacts={"model_path": str(model.trainer.save_dir)},
+            artifact_path="artifacts",
+            #artifacts={"model_path": str(model.trainer.save_dir)},
             python_model=mlflow.pyfunc.PythonModel()
         )
         
         # Register Model to Model Registry
-        MLFLOW_MODEL_NAME = "yolov8_footballPlayersDet"
+        MLFLOW_MODEL_NAME = "yolov8_footballPlayersDetection"
         run_id = active_run.info.run_id
         result = mlflow.register_model(
             f"runs:/{run_id}/artifacts/", MLFLOW_MODEL_NAME
