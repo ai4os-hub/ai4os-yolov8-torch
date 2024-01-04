@@ -122,10 +122,11 @@ from mlflow.entities import Dataset
 from mlflow.models import infer_signature
 import cv2
 import random
-import numpy as np
+from PIL import Image
+
 
 def mlflow_logging(model, num_epochs, args):
-    mlflow.end_run()
+    mlflow.end_run() #stop any previous active mlflow run
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
     
     with mlflow.start_run(run_name=args["name"]):
@@ -153,6 +154,55 @@ def mlflow_logging(model, num_epochs, args):
                 step=epoch,
             )
         
+        ##           Log the Dataset                         ##
+        
+
+        
+        # Print OpenCV version for debugging
+        print(f"OpenCV Version: {cv2.__version__}")
+        
+        # Ensure that no random seed is set
+        random.seed(None)
+        
+        
+        # Specify the path to the folder containing images
+        img_folder = "/srv/yolov8_mlflow/yolov8_api/data/train/images"
+        
+        # List all files in the folder
+        img_files = [f for f in os.listdir(img_folder) if f.endswith(('.jpg', '.jpeg', '.png'))]
+        
+        # Check if there are any images in the folder
+        if not img_files:
+            print(f"No images found in {img_folder}")
+        else:
+            # Randomly select an image from the list
+            selected_img = random.choice(img_files)
+        
+            # Construct the full path to the selected image
+            img_path = os.path.join(img_folder, selected_img)
+        
+            # Read the selected image using OpenCV
+            img = cv2.imread(img_path)
+        
+            # Check if the image was read uccessfully
+            if img is None:
+                print(f"Error: Unable to read the image from {img_path}")
+            else:
+                # Continue with the rest of your code using the selected image
+                resized_img = cv2.resize(img, (640, 640), interpolation=cv2.INTER_LINEAR)
+                normalized_img = resized_img / 255.0
+                torch_img = torch.from_numpy(normalized_img).float()
+                torch_img = torch_img.permute(2, 0, 1).unsqueeze(0)
+                torch_img_cpu = torch_img.cpu().numpy()      
+
+    
+        # Convert the NumPy array to a MLflow Dataset entity
+        dataset_entity = mlflow.data.from_numpy(torch_img_cpu)
+        print("dataset_info", dataset_entity)
+        
+        # Log the Dataset entity as input
+        mlflow.log_input(dataset_entity, context="training")
+
         run, active_run = mlflow, mlflow.active_run()
         print("active run id", active_run.info.run_id)
         
@@ -162,20 +212,87 @@ def mlflow_logging(model, num_epochs, args):
         # log best fit and last fit in mlflow
         mlflow.log_artifact(model.trainer.last)
         mlflow.log_artifact(model.trainer.best)
-                
-        # Log the PyTorch model to the artifact location specified by 'artifact_path'
+
+        import numpy as np
+
+        # Infer signature to a model, i.e. the input data used to feed the model and output of the trained model #
+        #                                                                                                        #
+        
+        # Assuming model is an instance of YOLO and img is an input image
+        prediction_inf = model(img)
+
+        train_inf_np = model.trainer.model.info()
+        print ("\ntrain_inf_np", train_inf_np)
+        train_inf_array = np.array(train_inf_np)
+        
+        # Convert the tuple to a dictionary
+        train_inf = {"value": np.array(train_inf_np)} 
+        print ("\ntrain_inf", train_inf)
+        #print ("\npred_inf", prediction_inf)
+       
+        # Create list of detection dictionaries
+        results_all = []
+        for result in prediction_inf:
+            # Assuming result is an ultralytics.engine.results.Results object
+            data = result.boxes.data.cpu().tolist()
+            h, w = result.orig_shape
+            for i, row in enumerate(data):  # xyxy, track_id if tracking, conf, class_id
+                box = {'x1': row[0] / w, 'y1': row[1] / h, 'x2': row[2] / w, 'y2': row[3] / h}
+                conf = row[-2]
+                class_id = int(row[-1])
+                name = result.names[class_id]
+                detection_result = {'name': name, 'class': class_id, 'confidence': conf, 'box': box}
+                if result.boxes.is_track:
+                    detection_result['track_id'] = int(row[-3])  # track ID
+                if result.masks:
+                    x, y = result.masks.xy[i][:, 0], result.masks.xy[i][:, 1]  # numpy array
+                    detection_result['segments'] = {'x': (x / w).tolist(), 'y': (y / h).tolist()}
+                if result.keypoints is not None:
+                    x, y, visible = result.keypoints[i].data[0].cpu().unbind(dim=1)  # torch Tensor
+                    detection_result['keypoints'] = {'x': (x / w).tolist(), 'y': (y / h).tolist(), 'visible': visible.tolist()}
+                results_all.append(detection_result)
+
+        # Use infer_signature with train_inf and results_all
+        signature = infer_signature(train_inf, {"detections": results_all})  
+        
+        # Get the base directory of artifact_path
+        base_dir = os.path.basename(str(model.trainer.save_dir))
+        print("\nbase_dir", base_dir)
+        
         mlflow.pyfunc.log_model(
             artifact_path="artifacts",
-            #artifacts={"model_path": str(model.trainer.save_dir)},
-            python_model=mlflow.pyfunc.PythonModel()
+            python_model=mlflow.pyfunc.PythonModel(),
+            signature=signature
         )
+
+        #Log additional artifacts
+        mlflow.log_artifacts(str(model.trainer.save_dir), artifact_path="artifacts")
+
+
+        # Log the plot figure        
+        from ultralytics.utils.plotting import plot_results
+        print(f"{str(model.trainer.save_dir)}/results.csv")
+        fig1 = plot_results(f"{str(model.trainer.save_dir)}/results.csv", segment=True)
+        #mlflow.log_artifact(fig1, artifact_path="artifacts")
+
         
+        #from ultralytics.utils.plotting import plot_images        
+        # Load images from img_files and convert them to a list of NumPy arrays
+        # images = [np.array(Image.open(os.path.join(img_folder, img_file))) for img_file in img_files]
+            
+        # fig1 = plot_images(images, batch_idx=2, cls=0.5, bboxes=np.zeros(0, dtype=np.float32), 
+        #             masks=np.zeros(0, dtype=np.uint8), kpts=np.zeros((0, 51), 
+        #             dtype=np.float32), paths=None, fname=selected_img, names=None, on_plot=selected_img) 
+        
+
+
         # Register Model to Model Registry
         MLFLOW_MODEL_NAME = "yolov8_footballPlayersDetection"
         run_id = active_run.info.run_id
         result = mlflow.register_model(
             f"runs:/{run_id}/artifacts/", MLFLOW_MODEL_NAME
         )
+    
 
     return {
         "artifact_path": args["name"],
