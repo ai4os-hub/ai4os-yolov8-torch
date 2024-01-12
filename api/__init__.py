@@ -28,9 +28,17 @@ from deepaas.model.v2.wrapper import UploadedFile
 import yolov8_api as aimodel
 from yolov8_api.api import config, responses, schemas, utils
 
+from mlflow import MlflowClient
+import mlflow.pyfunc
+
+
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
 
+
+#global var
+
+MLFLOW_MODEL_NAME = "yolov8_footballPlayersDetection"
 
 def get_metadata():
     """Returns a dictionary containing metadata information about the module.
@@ -62,6 +70,30 @@ def get_metadata():
     except Exception as err:
         raise HTTPException(reason=err) from err
 
+def mlflow_fetch():
+       
+    mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
+    client = MlflowClient(tracking_uri = os.environ["MLFLOW_TRACKING_URI"])            
+    #Fetch a model using model_uri using the default path where the MLflow autologging function stores the mode
+    #model_uri = F"runs:/{run_id}/model/{last_model_version}"
+    #check the latest version of the model            
+    model_version_infos = client.search_model_versions(F"name = '{MLFLOW_MODEL_NAME}'")
+    print("model_version", model_version_infos)
+    last_model_version = max([model_version_info.version for model_version_info in model_version_infos])
+    model_uri = F"models:/{MLFLOW_MODEL_NAME}/{last_model_version}"
+    print("model_uri", model_uri)
+    #define a path dir where to store locally the mlflow loaded model
+    dst_path = config.MODELS_PATH
+    print("dest_path", dst_path)
+    
+    #Load the mlflow model 
+    model = mlflow.pyfunc.load_model(model_uri, dst_path=dst_path)            
+    # Define the destination path in MODELS_PATH                    
+    path = os.path.join(dst_path, "weights/best.pt")    
+    
+    return path
+
+
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
 def predict(**args):
@@ -77,19 +109,19 @@ def predict(**args):
         The predicted model values json, png, pdf or mp4 file.
     """
     try:
-        logger.debug("Predict with args: %s", args)
-
+        logger.debug("Predict with args: %s", args)        
         if args["model"] is None:
-            args["model"] = utils.modify_model_name(
-                "yolov8n.pt", args["task_type"]
-            )
-            print("model_name: ", args["model"])
+            #Load the model from mlflow registry
+            path = mlflow_fetch()
+            args["model"] = utils.validate_and_modify_path(
+                path, config.MODELS_PATH
+            )    
+            print("args_model", args["model"])
         else:
             path = os.path.join(args["model"], "weights/best.pt")
             args["model"] = utils.validate_and_modify_path(
                 path, config.MODELS_PATH
             )
-
         task_type = args["task_type"]
 
         if task_type == "seg" and args["augment"]:
@@ -166,7 +198,7 @@ def mlflow_logging(model, num_epochs, args):
         
         
         # Specify the path to the folder containing images
-        img_folder = "/srv/yolov8_mlflow/yolov8_api/data/train/images"
+        img_folder = "/srv/yolov8_api/data/train/images"
         
         # List all files in the folder
         img_files = [f for f in os.listdir(img_folder) if f.endswith(('.jpg', '.jpeg', '.png'))]
@@ -184,7 +216,7 @@ def mlflow_logging(model, num_epochs, args):
             # Read the selected image using OpenCV
             img = cv2.imread(img_path)
         
-            # Check if the image was read uccessfully
+            # Check if the image was read unsuccessfully
             if img is None:
                 print(f"Error: Unable to read the image from {img_path}")
             else:
@@ -208,10 +240,6 @@ def mlflow_logging(model, num_epochs, args):
         
         # logs params in mlflow
         run.log_params(vars(model.trainer.model.args))
-        
-        # log best fit and last fit in mlflow
-        mlflow.log_artifact(model.trainer.last)
-        mlflow.log_artifact(model.trainer.best)
 
         import numpy as np
 
@@ -270,9 +298,9 @@ def mlflow_logging(model, num_epochs, args):
 
 
         # Log the plot figure        
-        from ultralytics.utils.plotting import plot_results
-        print(f"{str(model.trainer.save_dir)}/results.csv")
-        fig1 = plot_results(f"{str(model.trainer.save_dir)}/results.csv", segment=True)
+        #from ultralytics.utils.plotting import plot_results
+        #print(f"{str(model.trainer.save_dir)}/results.csv")
+        #fig1 = plot_results(f"{str(model.trainer.save_dir)}/results.csv", segment=True)
         #mlflow.log_artifact(fig1, artifact_path="artifacts")
 
         
@@ -287,12 +315,10 @@ def mlflow_logging(model, num_epochs, args):
 
 
         # Register Model to Model Registry
-        MLFLOW_MODEL_NAME = "yolov8_footballPlayersDetection"
         run_id = active_run.info.run_id
         result = mlflow.register_model(
             f"runs:/{run_id}/artifacts/", MLFLOW_MODEL_NAME
         )
-    
 
     return {
         "artifact_path": args["name"],
