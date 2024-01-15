@@ -157,6 +157,67 @@ import random
 from PIL import Image
 
 
+def mlflow_update()
+
+    mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
+    client = MlflowClient(tracking_uri = os.environ["MLFLOW_TRACKING_URI"])            
+    #Fetch a model using model_uri using the default path where the MLflow autologging function stores the mode
+    #model_uri = F"runs:/{run_id}/model/{last_model_version}"
+    #check the latest version of the model            
+    model_version_infos = client.search_model_versions(F"name = '{MLFLOW_MODEL_NAME}'")
+    last_model_version = max([model_version_info.version for model_version_info in model_version_infos])
+    model_uri = F"models:/{MLFLOW_MODEL_NAME}/{last_model_version}"
+    print("model_uri", model_uri)
+
+    # Add a description to the registered model   
+    client.update_registered_model(
+      name=MLFLOW_MODEL_NAME,
+      description="This model detect players in a football play field "
+    )
+
+    # set tags, alias, update and delete them
+    # create "champion" alias for version x of model "MLFLOW_MODEL_NAME"
+    client.set_registered_model_alias(MLFLOW_MODEL_NAME, "champion", last_model_version)
+
+    # get a model version by alias
+    print(f"\n Model version alias: ",client.get_model_version_by_alias(MLFLOW_MODEL_NAME, "champion"))
+
+    # delete the alias
+    #client.delete_registered_model_alias(MLFLOW_MODEL_NAME, "Champion")
+
+    # Set registered model tag
+    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "task", "detection")
+    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "author", "lisana.berberi@kit.edu")
+    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "framework", "pytorch")
+
+    # Set a transition to the model: Production, Stage, Archived, None
+    client.transition_model_version_stage(
+      name=MLFLOW_MODEL_NAME,
+      version=last_model_version,
+      stage='Production'    
+    )
+
+    # Get the current value of model transition   
+    model_version_details = client.get_model_version(
+      name=MLFLOW_MODEL_NAME,
+      version=last_model_version,
+    )
+    model_stage = model_version_details.current_stage 
+    print(F"The current model stage is: '{model_stage}'")
+
+    # Set model transition to archive
+    client.transition_model_version_stage(
+      name=MLFLOW_MODEL_NAME,
+      version=1,
+      stage="Archived",
+    )
+
+    # Delete  model version    
+    # client.delete_model_version(
+    #  name=MLFLOW_MODEL_NAME,
+    #  version=1,
+    # )
+
 def mlflow_logging(model, num_epochs, args):
     mlflow.end_run() #stop any previous active mlflow run
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
@@ -319,6 +380,10 @@ def mlflow_logging(model, num_epochs, args):
         result = mlflow.register_model(
             f"runs:/{run_id}/artifacts/", MLFLOW_MODEL_NAME
         )
+
+        # Update model description, tags, alias, transitions.
+        mlflow_update()
+        
 
     return {
         "artifact_path": args["name"],
