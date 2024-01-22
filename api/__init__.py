@@ -109,14 +109,19 @@ def predict(**args):
         The predicted model values json, png, pdf or mp4 file.
     """
     try:
-        logger.debug("Predict with args: %s", args)        
+        logger.debug("Predict with args: %s", args)    
         if args["model"] is None:
-            #Load the model from mlflow registry
+            #Load the (pretrained) model from mlflow registry if exists
             path = mlflow_fetch()
-            args["model"] = utils.validate_and_modify_path(
-                path, config.MODELS_PATH
-            )    
-            print("args_model", args["model"])
+            if path is not None:
+                args["model"] = utils.validate_and_modify_path(
+                                path, config.MODELS_PATH
+                            )    
+                print("args_model", args["model"])
+            else:
+                # No model fetched from MLflow, use the default model
+                args["model"] = utils.modify_model_name("yolov8n.pt", args["task_type"])
+
         else:
             path = os.path.join(args["model"], "weights/best.pt")
             args["model"] = utils.validate_and_modify_path(
@@ -259,7 +264,7 @@ def mlflow_logging(model, num_epochs, args):
         
         
         # Specify the path to the folder containing images
-        img_folder = "/srv/yolov8_api/data/train/images"
+        img_folder = os.path.join(config.DATA_PATH, "train/images")
         
         # List all files in the folder
         img_files = [f for f in os.listdir(img_folder) if f.endswith(('.jpg', '.jpeg', '.png'))]
@@ -339,6 +344,12 @@ def mlflow_logging(model, num_epochs, args):
                 if result.keypoints is not None:
                     x, y, visible = result.keypoints[i].data[0].cpu().unbind(dim=1)  # torch Tensor
                     detection_result['keypoints'] = {'x': (x / w).tolist(), 'y': (y / h).tolist(), 'visible': visible.tolist()}
+                
+                # Include mask and image information
+                detection_result['mask'] = {'path': config.MODELS_PATH + 'mask.png'}  
+                detection_result['image_with_box'] = {'path': config.MODEL_NAME + 'image_with_box.png'} 
+        
+                        
                 results_all.append(detection_result)
 
         # Use infer_signature with train_inf and results_all
