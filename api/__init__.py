@@ -18,7 +18,6 @@ import torch
 import mlflow
 import requests
 
-
 from ultralytics import YOLO, settings
 from ultralytics.data.dataset import YOLODataset
 
@@ -30,6 +29,13 @@ from yolov8_api.api import config, responses, schemas, utils
 
 from mlflow import MlflowClient
 import mlflow.pyfunc
+
+from mlflow.entities import Dataset
+from mlflow.models import infer_signature
+import cv2
+import random
+from PIL import Image
+
 
 
 logger = logging.getLogger(__name__)
@@ -70,29 +76,40 @@ def get_metadata():
     except Exception as err:
         raise HTTPException(reason=err) from err
 
+    
 def mlflow_fetch():
        
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
     client = MlflowClient(tracking_uri = os.environ["MLFLOW_TRACKING_URI"])            
-    #Fetch a model using model_uri using the default path where the MLflow autologging function stores the mode
-    #model_uri = F"runs:/{run_id}/model/{last_model_version}"
+
     #check the latest version of the model            
     model_version_infos = client.search_model_versions(F"name = '{MLFLOW_MODEL_NAME}'")
-    print("model_version", model_version_infos)
-    last_model_version = max([model_version_info.version for model_version_info in model_version_infos])
-    model_uri = F"models:/{MLFLOW_MODEL_NAME}/{last_model_version}"
-    print("model_uri", model_uri)
+    if not model_version_infos:
+        # No model found in MLflow
+        return None
+        
+    # get the last model
+    #last_model_version = max([model_version_info.version for model_version_info in model_version_infos])
+    
+   # model_uri = F"models:/{MLFLOW_MODEL_NAME}/{last_model_version}"
+    #get the production model
+    model_uri = F"models:/{MLFLOW_MODEL_NAME}/'Production'"
+    #print("model_uri", model_uri)
+    
     #define a path dir where to store locally the mlflow loaded model
     dst_path = config.MODELS_PATH
-    print("dest_path", dst_path)
-    
-    #Load the mlflow model 
-    model = mlflow.pyfunc.load_model(model_uri, dst_path=dst_path)            
-    # Define the destination path in MODELS_PATH                    
-    path = os.path.join(dst_path, "weights/best.pt")    
-    
+    # Extract the 'RUN_ID' field value for each ModelVersion
+    run_id = [model_version.run_id for model_version in model_version_infos]
+          
+    #Fetch a model using model_uri using the default path where the MLflow logged the model
+    loaded_model = mlflow.pyfunc.load_model(model_uri, dst_path=dst_path)
+          
+    # Define the destination path in MODELS_PATH  and 
+    #load the best pretrained logged model                  
+    path = os.path.join(dst_path, "weights/last.pt")
+    print("Path", path)
+        
     return path
-
 
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
@@ -113,7 +130,7 @@ def predict(**args):
         if args["model"] is None:
             #Load the (pretrained) model from mlflow registry if exists
             path = mlflow_fetch()
-            if path is not None:
+            if os.path.exists(path):
                 args["model"] = utils.validate_and_modify_path(
                                 path, config.MODELS_PATH
                             )    
@@ -121,6 +138,7 @@ def predict(**args):
             else:
                 # No model fetched from MLflow, use the default model
                 args["model"] = utils.modify_model_name("yolov8n.pt", args["task_type"])
+                #print("None")
 
         else:
             path = os.path.join(args["model"], "weights/best.pt")
@@ -151,26 +169,16 @@ def predict(**args):
             return responses.response_parsers[args["accept"]](
                 result, **args
             )
-
     except Exception as err:
         raise HTTPException(reason=err) from err
 
-from mlflow.entities import Dataset
-from mlflow.models import infer_signature
-import cv2
-import random
-from PIL import Image
-
-
-def mlflow_update()
-
+def mlflow_update():
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
     client = MlflowClient(tracking_uri = os.environ["MLFLOW_TRACKING_URI"])            
-    #Fetch a model using model_uri using the default path where the MLflow autologging function stores the mode
-    #model_uri = F"runs:/{run_id}/model/{last_model_version}"
     #check the latest version of the model            
     model_version_infos = client.search_model_versions(F"name = '{MLFLOW_MODEL_NAME}'")
-    last_model_version = max([model_version_info.version for model_version_info in model_version_infos])
+    last_model_version = max([model_version_info.version for model_version_info 
+                                                          in model_version_infos])
     model_uri = F"models:/{MLFLOW_MODEL_NAME}/{last_model_version}"
     print("model_uri", model_uri)
 
@@ -182,24 +190,29 @@ def mlflow_update()
 
     # set tags, alias, update and delete them
     # create "champion" alias for version x of model "MLFLOW_MODEL_NAME"
-    client.set_registered_model_alias(MLFLOW_MODEL_NAME, "champion", last_model_version)
+    client.set_registered_model_alias(MLFLOW_MODEL_NAME, "champion", 
+                                      last_model_version)
 
     # get a model version by alias
-    print(f"\n Model version alias: ",client.get_model_version_by_alias(MLFLOW_MODEL_NAME, "champion"))
+    print(f"\n Model version alias: ",client.get_model_version_by_alias(
+                                        MLFLOW_MODEL_NAME, "champion"))
 
     # delete the alias
     #client.delete_registered_model_alias(MLFLOW_MODEL_NAME, "Champion")
 
     # Set registered model tag
-    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "task", "detection")
-    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "author", "lisana.berberi@kit.edu")
-    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "framework", "pytorch")
+    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "task", 
+                                    "detection")
+    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "author", 
+                                    "lisana.berberi@kit.edu")
+    client.set_registered_model_tag(MLFLOW_MODEL_NAME, "framework", 
+                                    "pytorch")
 
     # Set a transition to the model: Production, Stage, Archived, None
     client.transition_model_version_stage(
       name=MLFLOW_MODEL_NAME,
       version=last_model_version,
-      stage='Production'    
+      stage='None'    
     )
 
     # Get the current value of model transition   
@@ -251,6 +264,16 @@ def mlflow_logging(model, num_epochs, args):
                 metrics=SANITIZE(model.trainer.metrics),
                 step=epoch,
             )
+       
+        
+        # Log the data.yaml file  as an artifact #
+ 
+        # Assuming config.DATA_PATH contains the directory where data.yaml is located
+        data_path = config.DATA_PATH
+        data_file_path = os.path.join(data_path, "data.yaml")
+        
+        # Use mlflow.log_artifact to log the contents of data.yaml
+        mlflow.log_artifact(data_file_path, artifact_path="artifacts")
         
         ##           Log the Dataset                         ##
         
@@ -308,9 +331,9 @@ def mlflow_logging(model, num_epochs, args):
         run.log_params(vars(model.trainer.model.args))
 
         import numpy as np
-
-        # Infer signature to a model, i.e. the input data used to feed the model and output of the trained model #
-        #                                                                                                        #
+        # Infer signature to a model, i.e. the input data used to feed the model 
+        #and output of the trained model #
+        #                                                               #
         
         # Assuming model is an instance of YOLO and img is an input image
         prediction_inf = model(img)
@@ -326,6 +349,7 @@ def mlflow_logging(model, num_epochs, args):
        
         # Create list of detection dictionaries
         results_all = []
+
         for result in prediction_inf:
             # Assuming result is an ultralytics.engine.results.Results object
             data = result.boxes.data.cpu().tolist()
@@ -343,15 +367,21 @@ def mlflow_logging(model, num_epochs, args):
                     detection_result['segments'] = {'x': (x / w).tolist(), 'y': (y / h).tolist()}
                 if result.keypoints is not None:
                     x, y, visible = result.keypoints[i].data[0].cpu().unbind(dim=1)  # torch Tensor
-                    detection_result['keypoints'] = {'x': (x / w).tolist(), 'y': (y / h).tolist(), 'visible': visible.tolist()}
-                
-                # Include mask and image information
-                detection_result['mask'] = {'path': config.MODELS_PATH + 'mask.png'}  
-                detection_result['image_with_box'] = {'path': config.MODEL_NAME + 'image_with_box.png'} 
-        
-                        
+                    detection_result['keypoints'] = {'x': (x / w).tolist(), 'y': (y / h).tolist(), 
+                                                     'visible': visible.tolist()}
+
                 results_all.append(detection_result)
 
+            output_file_path = os.path.join(config.MODELS_PATH, "detection_results.txt")
+            with open(output_file_path, "w") as output_file:
+            # Now write all results to the file after the loop
+                for result_entry in results_all:
+                    output_file.write(f"{str(result_entry)}\n")
+                    
+
+        # Use mlflow.log_artifact to log the contents of the detection_results
+        mlflow.log_artifact(output_file_path, artifact_path="artifacts")
+        
         # Use infer_signature with train_inf and results_all
         signature = infer_signature(train_inf, {"detections": results_all})  
         
@@ -359,42 +389,30 @@ def mlflow_logging(model, num_epochs, args):
         base_dir = os.path.basename(str(model.trainer.save_dir))
         print("\nbase_dir", base_dir)
         
-        mlflow.pyfunc.log_model(
+        model_t = mlflow.pyfunc.log_model(
             artifact_path="artifacts",
             python_model=mlflow.pyfunc.PythonModel(),
             signature=signature
         )
-
+              
         #Log additional artifacts
         mlflow.log_artifacts(str(model.trainer.save_dir), artifact_path="artifacts")
 
-
-        # Log the plot figure        
-        #from ultralytics.utils.plotting import plot_results
-        #print(f"{str(model.trainer.save_dir)}/results.csv")
-        #fig1 = plot_results(f"{str(model.trainer.save_dir)}/results.csv", segment=True)
-        #mlflow.log_artifact(fig1, artifact_path="artifacts")
-
-        
-        #from ultralytics.utils.plotting import plot_images        
-        # Load images from img_files and convert them to a list of NumPy arrays
-        # images = [np.array(Image.open(os.path.join(img_folder, img_file))) for img_file in img_files]
-            
-        # fig1 = plot_images(images, batch_idx=2, cls=0.5, bboxes=np.zeros(0, dtype=np.float32), 
-        #             masks=np.zeros(0, dtype=np.uint8), kpts=np.zeros((0, 51), 
-        #             dtype=np.float32), paths=None, fname=selected_img, names=None, on_plot=selected_img) 
-        
-
-
-        # Register Model to Model Registry
+        #create a new version of that model
+        client = MlflowClient(tracking_uri = os.environ["MLFLOW_TRACKING_URI"])   
         run_id = active_run.info.run_id
+        result = client.create_model_version(
+                name=MLFLOW_MODEL_NAME,
+                source=f"runs:/{run_id}/artifacts/{MLFLOW_MODEL_NAME}",
+                run_id=run_id,
+                )
+        #register that version to Model Registry
         result = mlflow.register_model(
-            f"runs:/{run_id}/artifacts/", MLFLOW_MODEL_NAME
-        )
-
+            f"runs:/{run_id}/artifacts/",
+            MLFLOW_MODEL_NAME
+        )      
         # Update model description, tags, alias, transitions.
-        mlflow_update()
-        
+        mlflow_update()      
 
     return {
         "artifact_path": args["name"],
