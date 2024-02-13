@@ -15,7 +15,7 @@ import argparse
 import json
 import torch
 
-from ultralytics import YOLO
+from ultralytics import YOLO, settings
 from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
@@ -140,6 +140,8 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
+        settings.update({"datasets_dir": config.DATA_PATH})
+        settings.update({"model_dir": config.MODELS_PATH})
 
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
@@ -163,11 +165,11 @@ def train(**args):
 
         # The project should correspond to the name of the project
         # and should only include the project directory, not the full path.
-        args["project"] = config.MODEL_NAME
+        args["project"] = config.MODELS_PATH
 
         # The directory where the model will be saved after training
         # by joining the values of args["project"] and args["name"].
-        args["name"] = os.path.join("models", timestamp)
+        args["name"] = os.path.join(timestamp)
 
         # Check if there are weights to load from an already trained model
         # Otherwise, load the pretrained model from the model registry

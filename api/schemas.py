@@ -52,8 +52,8 @@ class PredArgsSchema(marshmallow.Schema):
     )
 
     model = fields.Str(
-        metadata={"description":
-            "The timestamp inside the 'models' directory "
+        metadata={
+            "description": "The timestamp inside the 'models' directory "
             "represents the time when you saved your trained model. "
             "The directory structure should resemble "
             "'models/your_timestamp/weights/best.pt'. To see the "
@@ -69,6 +69,7 @@ class PredArgsSchema(marshmallow.Schema):
             '"det" for object detection model\n'
             '"seg" for object segmentation model\n'
             '"cls" for object classification model\n'
+            '"obb" for  oriented bounding boxes object detection\n'
             'The default is "det"',
             "enum": config.YOLOV8_DEFAULT_TASK_TYPE,
         },
@@ -155,8 +156,9 @@ class TrainArgsSchema(marshmallow.Schema):
             '"det" for object detection model\n'
             '"seg" for object segmentation model\n'
             '"cls" for object classification model\n'
+            '"obb" for  oriented bounding boxes object detection\n'
             'The default is "det"',
-            "enum": ["det", "seg", "cls"],
+            "enum": ["det", "seg", "cls", "obb"],
         },
         load_default="det",
     )

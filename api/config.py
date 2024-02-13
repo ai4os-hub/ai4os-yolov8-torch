@@ -79,7 +79,7 @@ except KeyError as err:
 # Specify the default tasks related to your work among detection (det),
 # segmentation (seg), and classification (cls).
 YOLOV8_DEFAULT_TASK_TYPE = os.getenv(
-    "YOLOV8_DEFAULT_TASK_TYPE", default="det,seg,cls"
+    "YOLOV8_DEFAULT_TASK_TYPE", default="det,seg,cls,obb"
 )
 YOLOV8_DEFAULT_TASK_TYPE = YOLOV8_DEFAULT_TASK_TYPE.split(",")
 

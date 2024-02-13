@@ -36,7 +36,7 @@ def json_response(results, **options):
     logger.debug("Response result: %d", result)
     logger.debug("Response options: %d", options)
     try:
-        if options["task_type"] in ["seg", "det"]:
+        if options["task_type"] in ["seg", "det", "obb"]:
             for element in results[0]:
                 result.append(
                     element.tojson()

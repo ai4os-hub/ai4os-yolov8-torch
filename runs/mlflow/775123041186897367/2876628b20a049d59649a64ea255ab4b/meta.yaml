@@ -1,0 +1,15 @@
+artifact_uri: /srv/yolov8_api/runs/mlflow/775123041186897367/2876628b20a049d59649a64ea255ab4b/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '775123041186897367'
+lifecycle_stage: active
+run_id: 2876628b20a049d59649a64ea255ab4b
+run_name: '20240212_144024'
+run_uuid: 2876628b20a049d59649a64ea255ab4b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1707748853305
+status: 1
+tags: []
+user_id: root
