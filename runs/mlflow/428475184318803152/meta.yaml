@@ -1,6 +1,0 @@
-artifact_location: /srv/yolov8_api/runs/mlflow/428475184318803152
-creation_time: 1707749081560
-experiment_id: '428475184318803152'
-last_update_time: 1707749081560
-lifecycle_stage: active
-name: /srv/yolov8_api/models
