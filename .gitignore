@@ -147,3 +147,4 @@ data/raw/train
 data/raw/val 
 data/*
 models/*
+runs/*
