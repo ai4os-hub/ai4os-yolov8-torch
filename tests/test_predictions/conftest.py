@@ -37,6 +37,7 @@ be generated:
 Be careful when using multiple fixtures with multiple parameters, as the
 number of tests generated can grow exponentially.
 """
+
 # pylint: disable=redefined-outer-name
 import pytest
 import os

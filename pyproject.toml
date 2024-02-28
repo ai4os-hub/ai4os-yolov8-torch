@@ -18,7 +18,7 @@ classifiers = [
 dynamic = ["version", "dependencies"]
 
 # Add author and author email here
-authors = [{name= "Fahimeh", email= "khadijeh.alibabaei@kit.edu"} ]
+authors = [{name= "Fahimeh Alibabaei", email= "khadijeh.alibabaei@kit.edu"} ,{name= "Lisana Berberi", email= "lisana.berberi@kit.edu"} ]
 #authors-email = ["khadijeh.alibabaei@kit.edu"]
 
 [project.urls]

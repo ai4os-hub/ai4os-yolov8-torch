@@ -20,6 +20,7 @@ leaking processes occupying ports. If tests fail due to address already in
 use, you can run `lsof -i :{PORT}` and to check which process is occupying
 the port. Then, you can kill the process with `kill -9 {PID}`.
 """
+
 # pylint: disable=redefined-outer-name
 import subprocess
 from subprocess import TimeoutExpired

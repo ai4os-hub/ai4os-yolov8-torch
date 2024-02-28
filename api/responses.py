@@ -3,6 +3,7 @@ Module for defining custom API response parsers and content types.
 This module is used by the API server to convert the output of the
 requested method into the desired format.
 """
+
 import logging
 from PIL import Image
 import numpy as np
@@ -36,7 +37,7 @@ def json_response(results, **options):
     logger.debug("Response result: %d", result)
     logger.debug("Response options: %d", options)
     try:
-        if options["task_type"] in ["seg", "det"]:
+        if options["task_type"] in ["seg", "det", "obb"]:
             for element in results[0]:
                 result.append(
                     element.tojson()
@@ -93,7 +94,7 @@ def pdf_response(results, **options):
                 element.plot(
                     labels=options["show_labels"],
                     conf=options["show_conf"],
-                    boxes=options["boxes"],
+                    boxes=options["show_boxes"],
                 )
             )
             im = im.convert("RGB")
@@ -122,7 +123,7 @@ def png_response(results, **options):
             result = result.plot(
                 labels=options["show_labels"],
                 conf=options["show_conf"],
-                boxes=options["boxes"],
+                boxes=options["show_boxes"],
                 font_size=6.0,
             )
             success, buffer = cv2.imencode(".png", result)
@@ -187,7 +188,7 @@ def mp4_response(results, **options):
             result.plot(
                 labels=options["show_labels"],
                 conf=options["show_conf"],
-                boxes=options["boxes"],
+                boxes=options["show_boxes"],
             )
         )
     message = create_video_in_buffer(new_results)

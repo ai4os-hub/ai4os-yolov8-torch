@@ -6,6 +6,7 @@ to add new inputs to your API.
 The module shows simple but efficient example schemas. However, you may
 need to modify them for your needs.
 """
+
 import marshmallow
 from webargs import ValidationError, fields, validate
 
@@ -57,10 +58,16 @@ class PredArgsSchema(marshmallow.Schema):
             "you saved your trained model,"
             "The directory structure should resemble 'models/your_timestamp/weights/best.pt'."
             "To see the available timestamp, please run the get_metadata function and check model_local."
-            " If not provided, the pre-trained default model will be"
-            " loaded. "
+            " If not provided, either a model from the MLflow registry will be loaded (if mlflow_fetch= true) or "
+            "the pre-trained default model will be loaded depending on the task type."
         },
         load_default=config.YOLOV8_DEFAULT_WEIGHTS[0],
+    )
+    mlflow_fetch = fields.Boolean(
+        metadata={
+            "description": "Load a model from MLflow model registry.",
+        },
+        load_default=False,
     )
     task_type = fields.Str(
         metadata={
@@ -68,6 +75,7 @@ class PredArgsSchema(marshmallow.Schema):
             '"det" for object detection model\n'
             '"seg" for object segmentation model\n'
             '"cls" for object classification model\n'
+            '"obb" for  oriented bounding boxes object detection\n'
             'The default is "det"',
             "enum": config.YOLOV8_DEFAULT_TASK_TYPE,
         },
@@ -125,7 +133,7 @@ class PredArgsSchema(marshmallow.Schema):
         load_default=None,
     )
 
-    boxes = fields.Boolean(
+    show_boxes = fields.Boolean(
         metadata={
             "description": "Show boxes in segmentation predictions"
         },
@@ -153,8 +161,9 @@ class TrainArgsSchema(marshmallow.Schema):
             '"det" for object detection model\n'
             '"seg" for object segmentation model\n'
             '"cls" for object classification model\n'
+            '"obb" for  oriented bounding boxes object detection\n'
             'The default is "det"',
-            "enum": ["det", "seg", "cls"],
+            "enum": config.YOLOV8_DEFAULT_TASK_TYPE,
         },
         load_default="det",
     )

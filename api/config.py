@@ -7,6 +7,7 @@ file on your model package to define CONSTANTS related to your model.
 
 By convention, the CONSTANTS defined in this module are in UPPER_CASE.
 """
+
 import os
 import logging
 import ast
@@ -80,7 +81,7 @@ except KeyError as err:
 # Specify the default tasks related to your work among detection (det),
 # segmentation (seg), and classification (cls).
 YOLOV8_DEFAULT_TASK_TYPE = os.getenv(
-    "YOLOV8_DEFAULT_TASK_TYPE", default="det,seg,cls"
+    "YOLOV8_DEFAULT_TASK_TYPE", default="det,seg,cls,obb"
 )
 YOLOV8_DEFAULT_TASK_TYPE = YOLOV8_DEFAULT_TASK_TYPE.split(",")
 
