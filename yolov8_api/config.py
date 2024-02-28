@@ -19,6 +19,6 @@ LOG_LEVEL = getattr(logging, ENV_LOG_LEVEL.upper())
 
 # EXAMPLE on how to load environment variables
 MY_PARAMETER_INT = int(os.getenv("MY_PARAMETER_INT", default="10"))
-MLFLOW_RUN_DESCRIPTION = "ADD SOME DETECTION HERE"
-MLFLOW_AUTHOR = "ADD YOUR NAME HERE"
-MLFLOW_MODEL_NAME = "CHOOSE YOUR MODEL NAME HERE"
+
+
+
