@@ -117,9 +117,3 @@ except KeyError as err:
     raise RuntimeError(
         "Undefined configuration for mlflow settings"
     ) from err
-
-
-MLFLOW_RUN_DESCRIPTION = "ADD SOME DETECTION HERE"
-MLFLOW_AUTHOR = "ADD YOUR NAME HERE"
-MLFLOW_MODEL_NAME ='yolov8_PlayersDetection'# "CHOOSE YOUR MODEL NAME HERE"
- 

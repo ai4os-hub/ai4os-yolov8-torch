@@ -54,18 +54,26 @@ class PredArgsSchema(marshmallow.Schema):
 
     model = fields.Str(
         metadata={
-            "description": "The timestamp inside the 'models' directory indicates the time when"
-            "you saved your trained model,"
-            "The directory structure should resemble 'models/your_timestamp/weights/best.pt'."
-            "To see the available timestamp, please run the get_metadata function and check model_local."
-            " If not provided, either a model from the MLflow registry will be loaded (if mlflow_fetch= true) or "
-            "the pre-trained default model will be loaded depending on the task type."
+            "description": "The timestamp inside the 'models' directory "
+            "indicates the time when you saved your trained model, "
+            "The directory structure should resemble "
+            "'models/your_timestamp/weights/best.pt'. "
+            "To see the available timestamp, please run the "
+            "get_metadata function and check model_local. "
+            "If not provided, either a model from the MLflow "
+            "registry will be loaded (if mlflow_fetch=true) "
+            "or the pre-trained default model will be loaded "
+            "depending on the task type."
         },
         load_default=config.YOLOV8_DEFAULT_WEIGHTS[0],
     )
     mlflow_fetch = fields.Boolean(
         metadata={
-            "description": "Load a model from MLflow model registry.",
+            "description": "Load a model from your MLflow model registry. "
+            "Please set the MLFLOW_MODEL_NAME in the "
+            "yolov8_api/config.py file to be loaded for "
+            "prediction. Make sure you have passed the environment "
+            "variables related to your MLflow (See readme)."
         },
         load_default=False,
     )
@@ -86,7 +94,8 @@ class PredArgsSchema(marshmallow.Schema):
         fields.Int(),
         validate=validate.Length(max=2),
         metadata={
-            "description": "image size as scalar or (h, w) list, i.e. (640, 480)"
+            "description": "image size as scalar or (h, w) list,"
+            " i.e. (640, 480)"
         },
     )
 

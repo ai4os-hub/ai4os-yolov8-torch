@@ -102,6 +102,9 @@ If you want to use Mflow to track and log your experiments, you should first set
 optional options:
 - `MLFLOW_EXPERIMENT_NAME`
 - `MLFLOW_RUN`
+- `MLFLOW_RUN_DESCRIPTION`
+- `MLFLOW_AUTHOR`
+- `MLFLOW_MODEL_NAME`: This name will be used as the name for your model registered in the MLflow Registry.
 - Then you should set the argument `Enable_MLFLOW` to `True` during the execution of the training.
 
 

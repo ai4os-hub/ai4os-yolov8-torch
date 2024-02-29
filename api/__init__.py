@@ -7,7 +7,6 @@ docs [1] and at a canonical exemplar module [2].
 [2]: https://github.com/deephdc/demo_app
 """
 
-import getpass
 import os
 import logging
 import datetime
@@ -16,23 +15,19 @@ import shutil
 import argparse
 import json
 import torch
-import mlflow
-import requests
+
 
 from ultralytics import YOLO, settings
-from ultralytics.data.dataset import YOLODataset
 
 from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
 from yolov8_api.api import config, responses, schemas, utils
-from yolov8_api.api.utils import (
+from yolov8_api.utils import (
     mlflow_fetch,
     mlflow_logging,
-    mlflow_update,
 )
-
 
 
 logger = logging.getLogger(__name__)
@@ -92,20 +87,19 @@ def predict(**args):
         logger.debug("Predict with args: %s", args)
         if args["model"] is None:
             # Load the (pretrained) model from mlflow registry if exists
-            #   if user does not set MLFLOW_TRACKING_URI, he/she get the error KeyError: 'MLFLOW_TRACKING_URI'
-            if args['mlflow_fetch']:
+            if args["mlflow_fetch"]:
                 path = mlflow_fetch()
                 if os.path.exists(path):
                     args["model"] = utils.validate_and_modify_path(
                         path, config.MODELS_PATH
                     )
                     print("args_model", args["model"])
-            else:  
+            else:
                 # No model fetched from MLflow, use the default model
                 args["model"] = utils.modify_model_name(
                     "yolov8n.pt", args["task_type"]
                 )
-        
+
         else:
             path = os.path.join(args["model"], "weights/best.pt")
             args["model"] = utils.validate_and_modify_path(
@@ -138,7 +132,6 @@ def predict(**args):
     except Exception as err:
         logger.critical(err, exc_info=True)
         raise HTTPException(reason=err) from err
-
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
@@ -194,14 +187,16 @@ def train(**args):
                     "data does not exist. Please provide a valid path."
                 )
 
-         # The project should correspond to the name of the project
+        # The project should correspond to the name of the project
         # and should only include the project directory.
         args["project"] = config.MODELS_PATH
 
         # The directory where the model will be saved after training
         # by joining the values of args["project"] and args["name"].
-        args["name"] = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        
+        args["name"] = datetime.datetime.now().strftime(
+            "%Y%m%d_%H%M%S"
+        )
+
         # Check if there are weights to load from an already trained model
         # Otherwise, load the pretrained model from the model registry
 
@@ -322,7 +317,9 @@ if __name__ == "__main__":
 
     """
     python3 api/__init__.py  train --model yolov8n.yaml\
-    --task_type  det  --data /srv/yolov8_api/football-players-detection-4/data.yaml --Enable_MLFLOW 
+    --task_type  det
+    --data /srv/yolov8_api/football-players-detection-4/data.yaml
+    --Enable_MLFLOW
     python3 api/__init__.py  predict --input \
     /srv/yolov8_api/tests/data/det/test/cat1.jpg\
     --task_type  det --accept application/json
