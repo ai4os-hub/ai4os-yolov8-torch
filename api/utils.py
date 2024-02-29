@@ -683,6 +683,8 @@ def mlflow_logging(model, num_epochs, args):
         print('model url is ',model_uri)
         
         # register trained model to the Model Registry
+        #I remove the create_model_version that users can register 
+        # their own trained model to the Model Registry
         result = mlflow.register_model(
            f"runs:/{run_id}/artifacts/", config.MLFLOW_MODEL_NAME
         )
