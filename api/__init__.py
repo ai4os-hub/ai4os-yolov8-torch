@@ -23,7 +23,7 @@ from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
-from yolov8_api.api import config, responses, schemas, utils
+from . import config, responses, schemas, utils
 from yolov8_api.utils import (
     mlflow_fetch,
     mlflow_logging,
@@ -72,24 +72,24 @@ def get_metadata():
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
 def predict(**args):
-    """Performs model prediction from given input data and parameters.
+        """Performs model prediction from given input data and parameters.
 
-    Arguments:
-        **args -- Arbitrary keyword arguments from PredArgsSchema.
+        Arguments:
+            **args -- Arbitrary keyword arguments from PredArgsSchema.
 
-    Raises:
-        HTTPException: Unexpected errors aim to return 50X
+        Raises:
+            HTTPException: Unexpected errors aim to return 50X
 
-    Returns:
-        The predicted model values json, png, pdf or mp4 file.
-    """
-    try:
+        Returns:
+            The predicted model values json, png, pdf or mp4 file.
+        """
+
         logger.debug("Predict with args: %s", args)
         if args["model"] is None:
             # Load the (pretrained) model from mlflow registry if exists
             if args["mlflow_fetch"]:
                 path = mlflow_fetch()
-                if os.path.exists(path):
+                if path is not None and os.path.exists(path):
                     args["model"] = utils.validate_and_modify_path(
                         path, config.MODELS_PATH
                     )
@@ -129,9 +129,7 @@ def predict(**args):
             return responses.response_parsers[args["accept"]](
                 result, **args
             )
-    except Exception as err:
-        logger.critical(err, exc_info=True)
-        raise HTTPException(reason=err) from err
+
 
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)

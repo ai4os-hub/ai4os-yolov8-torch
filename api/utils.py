@@ -15,7 +15,7 @@ from marshmallow import fields
 from subprocess import TimeoutExpired  # nosec B404
 import ultralytics
 import yaml
-from yolov8_api.api import config
+from . import config
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
