@@ -420,14 +420,14 @@ def mlflow_update():
     # set tags, alias, update and delete them
     # create "champion" alias for version x of model "MLFLOW_MODEL_NAME"
     client.set_registered_model_alias(
-        MLFLOW_MODEL_NAME, config.MLFLOW_MODEL_NAME, last_model_version
+        config.MLFLOW_MODEL_NAME, "champion", last_model_version
     )
 
     # get a model version by alias
     print(
         f"\n Model version alias: ",
         client.get_model_version_by_alias(
-            MLFLOW_MODEL_NAME, config.MLFLOW_MODEL_NAME
+            config.MLFLOW_MODEL_NAME, "champion"
         ),
     )
 
@@ -679,15 +679,14 @@ def mlflow_logging(model, num_epochs, args):
             tracking_uri=os.environ["MLFLOW_TRACKING_URI"]
         )
         run_id = active_run.info.run_id
-        result = client.create_model_version(
-            name= config.MLFLOW_MODEL_NAME,
-            source=f"runs:/{run_id}/artifacts/{config.MLFLOW_MODEL_NAME}",
-            run_id=run_id,
-        )
-        # register that version to Model Registry
+        model_uri = mlflow.get_artifact_uri("artifacts")
+        print('model url is ',model_uri)
+        
+        # register trained model to the Model Registry
         result = mlflow.register_model(
-            f"runs:/{run_id}/artifacts/", config.MLFLOW_MODEL_NAME
+           f"runs:/{run_id}/artifacts/", config.MLFLOW_MODEL_NAME
         )
+
         # Update model description, tags, alias, transitions.
         mlflow_update()
 
@@ -702,6 +701,7 @@ def mlflow_fetch():
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
     client = MlflowClient(
         tracking_uri=os.environ["MLFLOW_TRACKING_URI"]
+
     )
 
     # check the latest version of the model
