@@ -9,6 +9,7 @@ from your_module import your_function as predict
 from your_module import your_function as training
 ```
 """
+
 # TODO: add your imports here
 import logging
 import yolov8_api.config as cfg

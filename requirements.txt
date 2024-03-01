@@ -9,5 +9,6 @@ ultralytics~=8.1.10
 PyPDF3
 defusedxml==0.5.0
 # Optional tools
-# mlflow~=2.13.0
+mlflow~=2.7.1
+gitpython
 

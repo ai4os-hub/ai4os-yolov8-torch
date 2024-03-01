@@ -6,6 +6,7 @@ your API.
 The module shows simple but efficient example utilities. However,
 you may need to modify them for your needs.
 """
+
 import logging
 import subprocess  # nosec B404
 import sys

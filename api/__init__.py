@@ -6,6 +6,7 @@ docs [1] and at a canonical exemplar module [2].
 [1]: https://docs.ai4eosc.eu/
 [2]: https://github.com/deephdc/demo_app
 """
+
 import os
 import logging
 import datetime
@@ -15,15 +16,27 @@ import argparse
 import json
 import torch
 
+
 from ultralytics import YOLO, settings
+
 from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
 from . import config, responses, schemas, utils
+from yolov8_api.utils import (
+    mlflow_fetch,
+    mlflow_logging,
+)
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(config.LOG_LEVEL)
+
+
+# global var
+
+MLFLOW_MODEL_NAME = "yolov8_footballPlayersDetection"
 
 
 def get_metadata():
@@ -62,30 +75,39 @@ def predict(**args):
     """Performs model prediction from given input data and parameters.
 
     Arguments:
-        **args -- Arbitrary keyword arguments from PredArgsSchema.
+            **args -- Arbitrary keyword arguments from PredArgsSchema.
 
     Raises:
-        HTTPException: Unexpected errors aim to return 50X
+            HTTPException: Unexpected errors aim to return 50X
 
     Returns:
-        The predicted model values json, png, pdf or mp4 file.
+            The predicted model values json, png, pdf or mp4 file.
     """
-    try:
-        logger.debug("Predict with args: %s", args)
 
+    logger.debug("Predict with args: %s", args)
+    try:
         if args["model"] is None:
-            args["model"] = utils.modify_model_name(
-                "yolov8n.pt", args["task_type"]
-            )
-            print("model_name: ", args["model"])
+            # Load the (pretrained) model from mlflow registry if exists
+            if args["mlflow_fetch"]:
+                path = mlflow_fetch()
+                if path is not None and os.path.exists(path):
+                    args["model"] = utils.validate_and_modify_path(
+                        path, config.MODELS_PATH
+                    )
+                    print("args_model", args["model"])
+            else:
+                # No model fetched from MLflow, use the default model
+                args["model"] = utils.modify_model_name(
+                    "yolov8n.pt", args["task_type"]
+                )
+
         else:
             path = os.path.join(args["model"], "weights/best.pt")
             args["model"] = utils.validate_and_modify_path(
                 path, config.MODELS_PATH
             )
-
         task_type = args["task_type"]
-
+        args.pop("mlflow_fetch", None)
         if task_type == "seg" and args["augment"]:
             # https://github.com/ultralytics/ultralytics/issues/859
             raise ValueError(
@@ -111,7 +133,6 @@ def predict(**args):
 
     except Exception as err:
         raise HTTPException(reason=err) from err
-
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
@@ -140,9 +161,14 @@ def train(**args):
     try:
         logger.info("Training model...")
         logger.debug("Train with args: %s", args)
-        settings.update({"datasets_dir": config.DATA_PATH})
-        settings.update({"model_dir": config.MODELS_PATH})
-
+        Enable_MLFLOW = args["Enable_MLFLOW"]
+        settings.update(
+            {
+                "mlflow": False,
+                "datasets_dir": config.DATA_PATH,
+                "model_dir": config.MODELS_PATH,
+            }
+        )
         # Modify the model name based on task type
         args["model"] = utils.modify_model_name(
             args["model"], args["task_type"]
@@ -153,7 +179,7 @@ def train(**args):
             args["data"], base_path
         )
         task_type = args["task_type"]
-        if task_type in ["det", "seg"]:
+        if task_type in ["det", "seg", "obb"]:
             # Check and update data paths of val and training in config.yaml
             if not utils.check_paths_in_yaml(args["data"], base_path):
                 raise ValueError(
@@ -161,15 +187,15 @@ def train(**args):
                     "data does not exist. Please provide a valid path."
                 )
 
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
         # The project should correspond to the name of the project
-        # and should only include the project directory, not the full path.
+        # and should only include the project directory.
         args["project"] = config.MODELS_PATH
 
         # The directory where the model will be saved after training
         # by joining the values of args["project"] and args["name"].
-        args["name"] = os.path.join(timestamp)
+        args["name"] = datetime.datetime.now().strftime(
+            "%Y%m%d_%H%M%S"
+        )
 
         # Check if there are weights to load from an already trained model
         # Otherwise, load the pretrained model from the model registry
@@ -191,16 +217,27 @@ def train(**args):
         os.environ["WANDB_DISABLED"] = str(args["disable_wandb"])
 
         utils.pop_keys_from_dict(
-            args, ["task_type", "disable_wandb", "weights", "device"]
+            args,
+            [
+                "task_type",
+                "disable_wandb",
+                "weights",
+                "device",
+                "Enable_MLFLOW",
+            ],
         )
-        # The use of exist_ok=True ensures that the model will
-        # be saved in the same path if resume=True.
-        model.train(exist_ok=True, device=device, **args)
+        if Enable_MLFLOW:
+            num_epochs = args["epochs"]
+            model.train(exist_ok=True, device=device, **args)
 
-        return {
-            f'The model was trained successfully and was saved to: \
+            # Call the mlflow_logging function for MLflow-related operations
+            return mlflow_logging(model, num_epochs, args)
+        else:
+            model.train(exist_ok=True, device=device, **args)
+            return {
+                f'The model was trained successfully and was saved to: \
                 {os.path.join(args["project"], args["name"])}'
-        }
+            }
 
     except Exception as err:
         logger.critical(err, exc_info=True)
@@ -280,7 +317,9 @@ if __name__ == "__main__":
 
     """
     python3 api/__init__.py  train --model yolov8n.yaml\
-    --task_type  det  --data /srv/yolov8_api/data/processed/seg/label.yaml
+    --task_type  det
+    --data /srv/yolov8_api/football-players-detection-4/data.yaml
+    --Enable_MLFLOW
     python3 api/__init__.py  predict --input \
     /srv/yolov8_api/tests/data/det/test/cat1.jpg\
     --task_type  det --accept application/json

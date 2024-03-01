@@ -15,6 +15,7 @@ your function defined at `api.get_metadata`.
 If your file grows in complexity, you can split it into multiple files in
 the same folder. However, remember to add the prefix `test_` to the file.
 """
+
 # pylint: disable=redefined-outer-name
 # pylint: disable=unused-argument
 

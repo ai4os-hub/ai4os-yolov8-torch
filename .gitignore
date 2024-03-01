@@ -143,8 +143,8 @@ GTAGS
 
 # Directoris #
 ###################################
-data/raw/train 
-data/raw/val 
-data/*
+data/raw/* 
+data/raw/* 
+wandb/*
 models/*
-runs/*
+

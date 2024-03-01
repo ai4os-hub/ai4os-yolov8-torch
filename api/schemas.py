@@ -6,6 +6,7 @@ to add new inputs to your API.
 The module shows simple but efficient example schemas. However, you may
 need to modify them for your needs.
 """
+
 import marshmallow
 from webargs import ValidationError, fields, validate
 
@@ -54,14 +55,27 @@ class PredArgsSchema(marshmallow.Schema):
     model = fields.Str(
         metadata={
             "description": "The timestamp inside the 'models' directory "
-            "represents the time when you saved your trained model. "
+            "indicates the time when you saved your trained model, "
             "The directory structure should resemble "
-            "'models/your_timestamp/weights/best.pt'. To see the "
-            "available timestamps, please run the get_metadata "
-            "function and check model_local. If not provided, "
-            "the pre-trained default model will be loaded."
+            "'models/your_timestamp/weights/best.pt'. "
+            "To see the available timestamp, please run the "
+            "get_metadata function and check model_local. "
+            "If not provided, either a model from the MLflow "
+            "registry will be loaded (if mlflow_fetch=true) "
+            "or the pre-trained default model will be loaded "
+            "depending on the task type."
         },
         load_default=config.YOLOV8_DEFAULT_WEIGHTS[0],
+    )
+    mlflow_fetch = fields.Boolean(
+        metadata={
+            "description": "Load a model from your MLflow model registry. "
+            "Please set the MLFLOW_MODEL_NAME in the "
+            "yolov8_api/config.py file to be loaded for "
+            "prediction. Make sure you have passed the environment "
+            "variables related to your MLflow (See readme)."
+        },
+        load_default=False,
     )
     task_type = fields.Str(
         metadata={
@@ -128,7 +142,7 @@ class PredArgsSchema(marshmallow.Schema):
         load_default=None,
     )
 
-    boxes = fields.Boolean(
+    show_boxes = fields.Boolean(
         metadata={
             "description": "Show boxes in segmentation predictions"
         },
@@ -158,7 +172,7 @@ class TrainArgsSchema(marshmallow.Schema):
             '"cls" for object classification model\n'
             '"obb" for  oriented bounding boxes object detection\n'
             'The default is "det"',
-            "enum": ["det", "seg", "cls", "obb"],
+            "enum": config.YOLOV8_DEFAULT_TASK_TYPE,
         },
         load_default="det",
     )
@@ -475,6 +489,12 @@ class TrainArgsSchema(marshmallow.Schema):
             "enum": [True, False],
         },
         load_default=True,
+    )
+    Enable_MLFLOW = fields.Bool(
+        metadata={
+            "description": "Whether eables MLFOW logging",
+        },
+        load_default=False,
     )
 
 

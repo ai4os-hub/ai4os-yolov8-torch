@@ -4,6 +4,7 @@ fixtures to simplify model and api specific testing.
 Modify this file only if you need to add new fixtures or modify the existing
 related to the environment and generic tests.
 """
+
 # pylint: disable=redefined-outer-name
 import inspect
 import os
