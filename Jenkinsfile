@@ -5,10 +5,15 @@
 def job_result_url = ''
 
 ci_cd_image = 'mteamkit/cicd-python-gl'
+ci_cd_image_registry = 'https://docker.io'
 
 pipeline {
     agent {
-        docker { image "${ci_cd_image}" }
+        docker { 
+            image "${ci_cd_image}"
+            registryUrl "${ci_cd_image_registry}"
+            registryCredentialsId 'indigobot'
+        }
     }
 
     environment {
@@ -43,7 +48,7 @@ pipeline {
             }
             post {
                 always {
-                    recordIssues(tools: [flake8(pattern: 'flake8.log')])
+                    recordIssues(tools: [flake8(pattern: 'flake8.log', name: 'PEP8 report', id: "flake8_pylint")])
                 }
             }
         }
