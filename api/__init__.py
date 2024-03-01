@@ -72,19 +72,20 @@ def get_metadata():
 
 @utils.predict_arguments(schema=schemas.PredArgsSchema)
 def predict(**args):
-        """Performs model prediction from given input data and parameters.
+    """Performs model prediction from given input data and parameters.
 
-        Arguments:
+    Arguments:
             **args -- Arbitrary keyword arguments from PredArgsSchema.
 
-        Raises:
+    Raises:
             HTTPException: Unexpected errors aim to return 50X
 
-        Returns:
+    Returns:
             The predicted model values json, png, pdf or mp4 file.
-        """
+    """
 
-        logger.debug("Predict with args: %s", args)
+    logger.debug("Predict with args: %s", args)
+    try:
         if args["model"] is None:
             # Load the (pretrained) model from mlflow registry if exists
             if args["mlflow_fetch"]:
@@ -130,7 +131,8 @@ def predict(**args):
                 result, **args
             )
 
-
+    except Exception as err:
+        raise HTTPException(reason=err) from err
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
