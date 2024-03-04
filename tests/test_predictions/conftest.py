@@ -71,6 +71,7 @@ def input(request):
 def model_param(request):
     return request.param
 
+
 @pytest.fixture(scope="module", params=[False])
 def mlflow_fetch(request):
     return request.param
@@ -143,7 +144,7 @@ def pred_kwds(
     classes_param,
     boxes_param,
     accept_param,
-    mlflow_fetch
+    mlflow_fetch,
 ):
     """Fixture to return arbitrary keyword arguments for predictions."""
     pred_kwds = {
@@ -158,7 +159,7 @@ def pred_kwds(
         "classes": classes_param,
         "boxes": boxes_param,
         "accept": accept_param,
-        'mlflow_fetch': mlflow_fetch
+        "mlflow_fetch": mlflow_fetch,
     }
     print(f"the args for detections are {pred_kwds}")
     return {k: v for k, v in pred_kwds.items()}

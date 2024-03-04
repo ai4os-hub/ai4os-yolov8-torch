@@ -23,7 +23,7 @@ from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
-from . import config, responses, schemas, utils
+from yolov8_api.api import config, responses, schemas, utils
 from yolov8_api.utils import (
     mlflow_fetch,
     mlflow_logging,
@@ -133,6 +133,7 @@ def predict(**args):
 
     except Exception as err:
         raise HTTPException(reason=err) from err
+
 
 @utils.train_arguments(schema=schemas.TrainArgsSchema)
 def train(**args):
@@ -317,10 +318,11 @@ if __name__ == "__main__":
 
     """
     python3 api/__init__.py  train --model yolov8n.yaml\
-    --task_type  det
-    --data /srv/yolov8_api/football-players-detection-4/data.yaml
-    --Enable_MLFLOW
-    python3 api/__init__.py  predict --input \
+    --task_type  det\
+    --data /srv/football-players-detection-7/data.yaml\
+    --Enable_MLFLOW --epochs 50
+    
+        python3 api/__init__.py  predict --input \
     /srv/yolov8_api/tests/data/det/test/cat1.jpg\
     --task_type  det --accept application/json
     """
