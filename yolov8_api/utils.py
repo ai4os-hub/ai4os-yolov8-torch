@@ -14,6 +14,7 @@ import os
 import git
 import cv2
 import secrets
+import csv
 
 # I replacd the random beacuse of the security issues
 from pathlib import Path
@@ -203,32 +204,28 @@ def mlflow_logging(model, num_epochs, args):
     mlflow.end_run()  # stop any previous active mlflow run
     # mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
 
-    with mlflow.start_run(run_name=args["name"]):
-        artifact_uri = mlflow.get_artifact_uri()
-        SANITIZE = lambda x: {
-            k.replace("(", "").replace(")", ""): float(v)
-            for k, v in x.items()
-        }
-        # logs metrics in mlflow
-        for epoch in range(1, num_epochs + 1):
-            mlflow.log_metrics(
-                metrics=SANITIZE(
-                    model.trainer.label_loss_items(
-                        model.trainer.tloss, prefix="train"
-                    )
-                ),
-                step=epoch,
-            )
-            mlflow.log_metrics(
-                metrics=SANITIZE(model.trainer.lr),
-                step=epoch,
-            )
-            mlflow.log_metrics(
-                metrics=SANITIZE(model.trainer.metrics),
-                step=epoch,
-            )
+    metrics = {}
 
-        # Log the data.yaml file  as an artifact #
+    with mlflow.start_run(run_name=args["name"], nested=True):
+        artifact_uri = mlflow.get_artifact_uri()
+        results = os.path.join(
+            args["project"], args["name"], "results.csv"
+        )
+        with open(results, mode="r") as file:
+
+            reader = csv.DictReader(file)
+            for row in reader:
+                for key, value in row.items():
+                    key = key.strip()
+                    key = key.strip().replace("(B)", "")
+                    if key not in metrics:
+                        metrics[key] = []
+                    metrics[key].append(float(value))
+        metrics.pop("epoch", None)
+        # logs metrics in mlflow
+        for metric_name, metric_values in metrics.items():
+            for step, value in enumerate(metric_values, start=1):
+                mlflow.log_metric(metric_name, value, step=step)
 
         # Assuming config.DATA_PATH contains the directory where
         #  data.yaml is located
@@ -377,6 +374,7 @@ def mlflow_logging(model, num_epochs, args):
         )
 
         # Use infer_signature with train_inf and results_all
+        results_all = [str(value) for value in results_all]
         signature = infer_signature(
             train_inf, {"detections": results_all}
         )
