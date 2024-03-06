@@ -103,7 +103,7 @@ YOLOV8_DEFAULT_WEIGHTS = (
 try:
     MLFLOW_TRACKING_URI = os.getenv(
         "MLFLOW_TRACKING_URI",
-        default="https://mlflow.dev.ai4eosc.eu/",
+        default="https://mlflow.cloud.ai4eosc.eu/",
     )
     MLFLOW_EXPERIMENT_NAME = os.getenv(
         "MLFLOW_EXPERIMENT_NAME", default="yolov8"
