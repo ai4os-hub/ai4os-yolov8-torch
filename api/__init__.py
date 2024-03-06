@@ -23,7 +23,7 @@ from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
 import yolov8_api as aimodel
-from yolov8_api.api import config, responses, schemas, utils
+from . import config, responses, schemas, utils
 from yolov8_api.utils import (
     mlflow_fetch,
     mlflow_logging,
