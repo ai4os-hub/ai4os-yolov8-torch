@@ -225,6 +225,9 @@ def mlflow_logging(model, num_epochs, args):
         # logs metrics in mlflow
         for metric_name, metric_values in metrics.items():
             for step, value in enumerate(metric_values, start=1):
+                metric_name = metric_name.replace(")", "-").replace(
+                    "(", "-"
+                )
                 mlflow.log_metric(metric_name, value, step=step)
 
         # Assuming config.DATA_PATH contains the directory where
@@ -291,9 +294,13 @@ def mlflow_logging(model, num_epochs, args):
         print("active run id", active_run.info.run_id)
 
         # logs params in mlflow
-        git_repo, version = get_git_info()
-        git_info = {"git_repo": git_repo, "git_version": version}
-        merged_params = {**vars(model.trainer.model.args), **git_info}
+        if get_git_info is not None:
+            git_repo, version = get_git_info()
+            git_info = {"git_repo": git_repo, "git_version": version}
+            merged_params = {
+                **vars(model.trainer.model.args),
+                **git_info,
+            }
         run.log_params(merged_params)
 
         # Assuming model is an instance of YOLO and img is an input image
@@ -401,12 +408,12 @@ def mlflow_logging(model, num_epochs, args):
         # register trained model to the Model Registry
         # I remove the create_model_version that users can register
         # their own trained model to the Model Registry
-        result = mlflow.register_model(
-            f"runs:/{run_id}/artifacts/", config.MLFLOW_MODEL_NAME
-        )
+        # result = mlflow.register_model(
+        #    f"runs:/{run_id}/artifacts/", config.MLFLOW_MODEL_NAME
+        # )
 
         # Update model description, tags, alias, transitions.
-        mlflow_update()
+        # mlflow_update()
 
     return {
         "artifact_path": args["name"],

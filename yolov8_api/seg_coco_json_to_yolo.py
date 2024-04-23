@@ -387,7 +387,7 @@ def merge_multi_segment(
                         0,
                         idx[1] - idx[0],
                     ]
-                    s.append(segments[i][idx[0]: idx[1] + 1])
+                    s.append(segments[i][idx[0] : idx[1] + 1])
 
         else:
             for i in range(
