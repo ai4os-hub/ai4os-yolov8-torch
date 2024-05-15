@@ -1,0 +1,32 @@
+name: GitlabSync
+
+on:
+  release:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+      - test
+      - 'releases/**'
+  delete:
+
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Git Repo Sync
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+      # only github repos can be used..
+    - uses: vykozlov/git-repo-sync@v0.1.0
+      # FORK of https://github.com/wangchucheng/git-repo-sync.git
+      with:
+        # You can store token in your project's 'Setting > Secrets' and reference the names here. Such as ${{ secrets.ACCESS\_TOKEN }}
+        target-url: ${{ secrets.TARGET_URL }}
+        target-username: ${{ secrets.TARGET_USERNAME }}
+        target-token: ${{ secrets.TARGET_TOKEN }}
