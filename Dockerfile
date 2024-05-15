@@ -73,7 +73,7 @@ ENV SHELL /bin/bash
 
 # Install user app
 RUN git clone --depth 1 -b $branch https://github.com/ai4os-hub/ai4os-yolov8-torch.git && \
-    cd  yolov8_api && \
+    cd  ai4os-yolov8-torch && \
     pip3 install --no-cache-dir -e . && \
     cd ..
 

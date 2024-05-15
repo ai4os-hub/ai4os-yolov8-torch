@@ -190,8 +190,8 @@ class TrainArgsSchema(marshmallow.Schema):
     data = fields.Str(
         metadata={
             "description": "Path to the config data file (for seg and det) or "
-            "data (cls task), e.g., 'root/pat/to/mydata/data.yaml' or "
-            "if it is in the 'path/to/yolov8_api/data/raw' just"
+            "data (cls task), e.g., 'root/path/to/mydata/data.yaml' or "
+            "if it is in the 'path/to/ai4os-yolov8-torch/data/raw' just"
             "mydata/data.yaml"
         },
         allow_none=True,

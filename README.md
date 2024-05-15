@@ -1,4 +1,4 @@
-# yolov8 
+# ai4os-yolov8-torch
 
 [![Build Status](https://jenkins.services.ai4os.eu/buildStatus/icon?job=AI4OS-hub/ai4os-yolov8-torch/main)](https://jenkins.services.ai4os.eu/job/AI4OS-hub/job/ai4os-yolov8-torch/job/main/)
 
@@ -10,8 +10,8 @@ In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv
 # Install the API 
 To launch the API, first, install the package, and then run DeepaaS:
 ``` bash
-git clone --depth 1 https://codebase.helmholtz.cloud/m-team/ai/yolov8_api.git
-cd  yolov8_api
+git clone --depth 1 https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch.git
+cd  ai4os-yolov8-torch
 pip install -e .
 deepaas-run --listen-ip 0.0.0.0
 ```
@@ -23,8 +23,6 @@ apt install -y gcc
 apt install -y libgl1
 apt install -y libglib2.0-0
 ```
-
-><span style="color:Blue">**Note:**</span>  The associated Docker container for this module can be found at: https://codebase.helmholtz.cloud/m-team/ai/DEEP-OC-yolov8_api.git
 
 ## Project structure
 
@@ -171,7 +169,7 @@ The `train` and `val` fields specify the paths to the directories containing the
 `names` is a dictionary of class names. The order of the names should match the order of the object class indices in the YOLO dataset files.
 
 ><span style="color:Blue">**Note:**</span>The train and val path should be a complete path or relative from
-data directory e.g. `root/pat/to/mydata/train/images` or if it is in the `path/to/yolov8_api/data/raw` just 
+data directory e.g. `root/path/to/mydata/train/images` or if it is in the `path/to/ai4os-yolov8-torch/data/raw` just 
 `mydata/train/images`
 
 
@@ -200,8 +198,8 @@ data/
 
 ><span style="color:Blue">**Note:**</span>  If you have annotations files in Coco json format or Pascal VOC xml format, you can use the following script to convert them to the proper format for yolo. 
 ``` 
-yolov8_api/yolov8_api/seg_coco_json_to_yolo.py #for segmentation
-yolov8_api/yolov8_api/preprocess_ann.py #For detection
+ai4os-yolov8-torch/yolov8_api/seg_coco_json_to_yolo.py #for segmentation
+ai4os-yolov8-torch/yolov8_api/preprocess_ann.py #For detection
 ``` 
 # Available Models
 

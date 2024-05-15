@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# yolov8_api documentation build configuration file, created by
+# ai4os-yolov8-torch documentation build configuration file, created by
 # sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -41,7 +41,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "yolov8_api"
+project = "ai4os-yolov8-torch"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -164,7 +164,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "yolov8_apidoc"
+htmlhelp_basename = "ai4os-yolov8-torchdoc"
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,8 +183,8 @@ latex_elements = {
 latex_documents = [
     (
         "index",
-        "yolov8_api.tex",
-        "yolov8_api Documentation",
+        "ai4os-yolov8-torch.tex",
+        "ai4os-yolov8-torch Documentation",
         "Fahimeh",
         "manual",
     ),
@@ -218,8 +218,8 @@ latex_documents = [
 man_pages = [
     (
         "index",
-        "yolov8_api",
-        "yolov8_api Documentation",
+        "ai4os-yolov8-torch",
+        "ai4os-yolov8-torch Documentation",
         ["Fahimeh"],
         1,
     )
@@ -237,10 +237,10 @@ man_pages = [
 texinfo_documents = [
     (
         "index",
-        "yolov8_api",
-        "yolov8_api Documentation",
+        "ai4os-yolov8-torch",
+        "ai4os-yolov8-torch Documentation",
         "Fahimeh",
-        "yolov8_api",
+        "ai4os-yolov8-torch",
         "add api to yolov8",
         "Miscellaneous",
     ),
