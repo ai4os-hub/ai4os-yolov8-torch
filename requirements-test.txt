@@ -5,3 +5,4 @@ pytest-mock
 pytest-env
 flake8
 bandit
+torch~=1.13.0

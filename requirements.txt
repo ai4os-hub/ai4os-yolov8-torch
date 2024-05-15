@@ -1,14 +1,13 @@
-# DEEPaaS framework requirements
+## DEEPaaS framework requirements
 deepaas~=2.1.0
-webargs~=5.5.2
-flaat~=1.1.1
-
-# external requirements
-fPDF2~=2.7.5
-ultralytics~=8.1.10 
-PyPDF3
-defusedxml==0.5.0
-# Optional tools
+webargs~=5.5.3
+flaat~=1.1.18
+## external requirements
+fPDF2~=2.7.8
+ultralytics~=8.1.47
+PyPDF3~=1.0.6
+defusedxml~=0.5.0
+## Optional tools
 mlflow~=2.7.1
-gitpython
-
+GitPython~=3.1.43
+#gitpython
