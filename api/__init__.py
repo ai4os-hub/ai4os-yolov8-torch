@@ -114,12 +114,12 @@ def predict(**args):
                 "augment for segmentation has not been supported yet"
             )
         with tempfile.TemporaryDirectory() as tmpdir:
-            for f in [args["input"]]:
+            for f in [args["files"]]:
                 shutil.copy(
                     f.filename, tmpdir + "/" + f.original_filename
                 )
 
-            args["input"] = [
+            args["files"] = [
                 os.path.join(tmpdir, t) for t in os.listdir(tmpdir)
             ]
             result = aimodel.predict(**args)
@@ -267,11 +267,11 @@ def main():
         else:
             logger.debug("Calling method with args: %s", args)
             del vars(args)["method"]
-            if hasattr(args, "input"):
+            if hasattr(args, "files"):
                 file_extension = os.path.splitext(args.input)[1]
-                args.input = UploadedFile(
+                args.files = UploadedFile(
                     "input",
-                    args.input,
+                    args.files,
                     "application/octet-stream",
                     f"input{file_extension}",
                 )
