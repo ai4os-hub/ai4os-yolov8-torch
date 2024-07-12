@@ -51,19 +51,19 @@ DATA_FILES = os.listdir(
 )
 
 
-# Fixture for the 'input' parameter@pytest.fixture(
+# Fixture for the 'files' parameter@pytest.fixture(
 @pytest.fixture(
     scope="module",
     params=fnmatch.filter(DATA_FILES, "*.jpg")
     + fnmatch.filter(DATA_FILES, "*.png"),
 )
-def input(request):
+def files(request):
     file = os.path.join(
         os.path.join(config.TEST_DATA_PATH, "det/test"), request.param
     )
 
     content_type = "application/octet-stream"
-    return UploadedFile("input", file, content_type, request.param)
+    return UploadedFile("files", file, content_type, request.param)
 
 
 # Fixture for the 'model' parameter
@@ -133,7 +133,7 @@ def accept_param(request):
 
 @pytest.fixture(scope="module")
 def pred_kwds(
-    input,
+    files,
     model_param,
     task_type_param,
     conf_param,
@@ -148,7 +148,7 @@ def pred_kwds(
 ):
     """Fixture to return arbitrary keyword arguments for predictions."""
     pred_kwds = {
-        "input": input,
+        "files": files,
         "model": model_param,
         "task_type": task_type_param,
         "conf": conf_param,
