@@ -97,6 +97,7 @@ class PredArgsSchema(marshmallow.Schema):
             "description": "image size as scalar or (h, w) list,"
             " i.e. (640, 480)"
         },
+        load_default=[640,480]
     )
 
     conf = fields.Float(
@@ -153,7 +154,8 @@ class PredArgsSchema(marshmallow.Schema):
             "description": "Return format for method response.",
             "location": "headers",
         },
-        required=True,
+        required=False,
+        load_default="application/json",
         validate=validate.OneOf(responses.content_types),
     )
 

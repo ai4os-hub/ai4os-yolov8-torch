@@ -268,12 +268,12 @@ def main():
             logger.debug("Calling method with args: %s", args)
             del vars(args)["method"]
             if hasattr(args, "files"):
-                file_extension = os.path.splitext(args.input)[1]
+                file_extension = os.path.splitext(args.files)[1]
                 args.files = UploadedFile(
-                    "input",
+                    "files",
                     args.files,
                     "application/octet-stream",
-                    f"input{file_extension}",
+                    f"files{file_extension}",
                 )
             results = method_function(**vars(args))
         print(json.dumps(results))
@@ -322,7 +322,7 @@ if __name__ == "__main__":
     --data /srv/football-players-detection-7/data.yaml\
     --Enable_MLFLOW --epochs 50
     
-        python3 api/__init__.py  predict --input \
+        python3 api/__init__.py  predict --files \
     /srv/yolov8_api/tests/data/det/test/cat1.jpg\
     --task_type  det --accept application/json
     """

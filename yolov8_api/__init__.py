@@ -47,7 +47,7 @@ def predict(
     print("arg of prediction are", args)
 
     model = YOLO(args["model"])
-    test_image_path = args["input"]
+    test_image_path = args["files"]
     results = []
     for image_path in test_image_path:
         print(
@@ -57,7 +57,7 @@ def predict(
         utils.remove_keys_from_dict(
             args,
             [
-                "input",
+                "files",
                 "accept",
                 "task_type",
             ],
@@ -73,7 +73,7 @@ def predict(
 
 if __name__ == "__main__":
     args = {
-        "input": ["/home/se1131/cat1.jpg"],
+        "files": ["/home/se1131/cat1.jpg"],
         "model": "yolov8n.pt",
         "imgsz": [680, 512],
         "conf": 0.25,
