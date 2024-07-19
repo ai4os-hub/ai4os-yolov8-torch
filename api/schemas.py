@@ -135,10 +135,13 @@ class PredArgsSchema(marshmallow.Schema):
         },
         load_default=False,
     )
-    classes = fields.Field(
+    classes =  fields.List(
+        fields.Int(),
         metadata={
             "description": "Filter results by class, i.e. class=0, "
-            "or class=[0,2,3]"
+            "or class=[0,2,3]. Only detections belonging to the "
+            "specified classes will be returned. Useful for focusing"
+            " on relevant objects in multi-class detection tasks."
         },
         load_default=None,
     )
