@@ -10,17 +10,19 @@ links:
   docker_image: ai4oshub/ai4os-yolov8-torch
   ai4_template: ai4-template/1.9.9
 tags:
-- docker
-- api-v2
-- pytorch
-- object detection
-- trainable
-- inference
-- pre-trained
-- image
-- video
-- general purpose
-tasks: []
-categories: []
+  - api-v2
+  - object detection
+  - image
+  - video
+  - general purpose
+tasks:
+  - Computer Vision
+categories:
+  - AI4 pre trained
+  - AI4 trainable
+  - AI4 inference
 libraries:
-- Pytorch
+  - PyTorch
+data-type:
+  - Image
+  - Video
