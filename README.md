@@ -231,6 +231,9 @@ deepaas-run --listen-ip 0.0.0.0
 Then, open the Swagger interface, change the hyperparameters in the train section, and click on train.
 
 ><span style="color:Blue">**Note:**</span>  Please note that the model training process may take some time depending on the size of your dataset and the complexity of your custom backbone. Once the model is trained, you can use the API to perform inference on new images.
+
+><span style="color:Blue">**Note:**</span> Augmentation Settings:
+among the training arguments, there are options related to augmentation, such as flipping, scaling, etc. The default values are set to automatically activate some of these options during training. If you want to disable augmentation entirely or partially, please review the default values and adjust them accordingly to deactivate the desired augmentations.
 # Inference Methods
 
 You can utilize the Swagger interface to upload your images or videos and obtain the following outputs:

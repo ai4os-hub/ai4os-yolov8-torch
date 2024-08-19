@@ -75,13 +75,13 @@ if __name__ == "__main__":
     args = {
         "files": ["/home/se1131/cat1.jpg"],
         "model": "yolov8n.pt",
-        "imgsz": [680, 512],
+        "imgsz": [704, 512],
         "conf": 0.25,
         "iou": 0.5,
         "show_labels": True,
         "show_conf": True,
-        "augment": False,
+        "augment": True,
         "classes": None,
-        "boxes": True,
+        "show_boxes": True,
     }
     predict(**args)

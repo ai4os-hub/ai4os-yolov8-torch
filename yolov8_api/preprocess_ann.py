@@ -182,9 +182,9 @@ def create_class_mapping(
                         class_name
                         not in class_name_to_id_mapping.keys()
                     ):
-                        class_name_to_id_mapping[class_name] = (
-                            current_class_id
-                        )
+                        class_name_to_id_mapping[
+                            class_name
+                        ] = current_class_id
                         current_class_id += 1
 
 
@@ -239,9 +239,9 @@ def extract_info_from_xml(
                         class_name
                         not in class_name_to_id_mapping.keys()
                     ):
-                        class_name_to_id_mapping[class_name] = (
-                            current_class_id
-                        )
+                        class_name_to_id_mapping[
+                            class_name
+                        ] = current_class_id
                         current_class_id += 1
 
                 elif subelem.tag == "bndbox":

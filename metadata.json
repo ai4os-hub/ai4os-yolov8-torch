@@ -8,6 +8,7 @@
     " solution across diverse tasks such as object detection, oriented bounding boxes detection, tracking, instance segmentation, and",
     " image classification. Its refined architecture and innovations make it an ideal choice for",
     " cutting-edge applications in the field of computer vision.\n",
+    "**NOTE**: Among the training arguments, there are options related to augmentation, such as flipping, scaling, etc. The default values are set to automatically activate some of these options during training. If you want to disable augmentation entirely or partially, please review the default values and adjust them accordingly to deactivate the desired augmentations.\n",
     "**References**\n",
     "[1] Jocher, G., Chaurasia, A., & Qiu, J. (2023). YOLO by Ultralytics (Version 8.0.0) [Computer software]. https://github.com/ultralytics/ultralytics\n",
     "[2] https://docs.ultralytics.com/\n",

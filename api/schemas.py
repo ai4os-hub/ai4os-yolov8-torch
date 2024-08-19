@@ -95,9 +95,9 @@ class PredArgsSchema(marshmallow.Schema):
         validate=validate.Length(max=2),
         metadata={
             "description": "image size as scalar or (h, w) list,"
-            " i.e. (640, 480)"
+            " i.e. (704, 512). Note: must be multiple of max stride 32"
         },
-        load_default=[640,480]
+        load_default=[704, 512],
     )
 
     conf = fields.Float(
@@ -130,12 +130,12 @@ class PredArgsSchema(marshmallow.Schema):
 
     augment = fields.Boolean(
         metadata={
-            "description": "Apply image augmentation to prediction sources"
+            "description": "Apply image augmentation to prediction sources. "
             "augment for segmentation has not supported yet.",
         },
         load_default=False,
     )
-    classes =  fields.List(
+    classes = fields.List(
         fields.Int(),
         metadata={
             "description": "Filter results by class, i.e. class=0, "
@@ -431,61 +431,179 @@ class TrainArgsSchema(marshmallow.Schema):
     )
     hsv_h = fields.Float(
         metadata={
-            "description": "Image HSV-Hue augmentation (fraction)"
+            "description": "Augmentation option: adjusts the hue "
+            "of the image by a fraction of"
+            " the color wheel, introducing color "
+            "variability. Helps the model generalize "
+            "across different lighting"
+            " conditions. Range: 0.0 - 1.0"
         },
         load_default=0.015,
     )
     hsv_s = fields.Float(
         metadata={
-            "description": "Image HSV-Saturation augmentation (fraction)"
+            "description": "Augmentation option: Alters the "
+            "saturation of the image by a fraction,"
+            " affecting the intensity of colors. Useful for "
+            "simulating different environmental conditions. "
+            "Range: 0.0 - 1.0"
         },
         load_default=0.7,
     )
     hsv_v = fields.Float(
         metadata={
-            "description": "Image HSV-Value augmentation (fraction)"
+            "description": "Augmentation option: Modifies the value "
+            "(brightness) of the "
+            "image by a fraction, helping the model "
+            "to perform well under various lighting"
+            " conditions. Range: 0.0 - 1.0"
         },
         load_default=0.4,
     )
     degrees = fields.Float(
-        metadata={"description": "Image rotation (+/- deg)"},
-        load_default=0.001,
+        metadata={
+            "description": "Augmentation option: Rotates the"
+            " image randomly within "
+            "the specified degree range, improving"
+            " the model's ability to recognize objects"
+            " at various orientations. Range: -180 - +180"
+        },
+        load_default=0.0,
     )
     translate = fields.Float(
-        metadata={"description": "Image translation (+/- fraction)"},
-        load_default=0.5,
+        metadata={
+            "description": "Augmentation option: Translates the "
+            "image horizontally and"
+            " vertically by a fraction of the image size,"
+            " aiding in learning to detect partially"
+            " visible objects. Range: 0.0 - 1.0"
+        },
+        load_default=0.1,
     )
     scale = fields.Float(
-        metadata={"description": "Image scale (+/- gain)"},
+        metadata={
+            "description": "Augmentation option: Scales the"
+            " image by a gain factor,"
+            " simulating objects at different "
+            "distances from the camera. "
+            "Range: >=0.0"
+        },
         load_default=0.5,
     )
     shear = fields.Float(
-        metadata={"description": "Image shear (+/- deg)"},
-        load_default=0.01,
+        metadata={
+            "description": "Augmentation option: Shears the"
+            " image by a specified "
+            "degree, mimicking the effect of "
+            "objects being viewed from different"
+            " angles. Range: -180 - +180"
+        },
+        load_default=0.0,
     )
     perspective = fields.Float(
         metadata={
-            "description": "Image perspective (+/- fraction), range 0-0.001"
+            "description": "Augmentation option: Applies a"
+            " random perspective transformation"
+            " to the image, enhancing the model's ability"
+            " to understand objects in 3D space. "
+            "Range 0-0.001"
         },
-        load_default=0.01,
+        load_default=0.0,
     )
     flipud = fields.Float(
-        metadata={"description": "Image flip up-down (probability)"},
-        load_default=0.01,
+        metadata={
+            "description": "Augmentation option: Flips the"
+            " image upside down "
+            "with the specified probability,"
+            " increasing the data variability "
+            "without affecting the object's"
+            " characteristics. Range 0.0-1.0"
+        },
+        load_default=0.0,
     )
     fliplr = fields.Float(
         metadata={
-            "description": "Image flip left-right (probability)"
+            "description": "Augmentation option: Flips the"
+            " image left to right "
+            "with the specified probability, "
+            "useful for learning symmetrical "
+            "objects and increasing dataset "
+            "diversity. Range 0.0-1.0"
         },
         load_default=0.5,
     )
     mosaic = fields.Float(
-        metadata={"description": "Image mosaic (probability)"},
-        load_default=1.0,
+        metadata={
+            "description": "Augmentation option:Combines four"
+            " training images "
+            "into one, simulating different "
+            "scene compositions and object "
+            "interactions. Highly effective "
+            "for complex scene understanding."
+            "Range 0.0- 1.0"
+        },
+        load_default=0.1,
     )
     mixup = fields.Float(
-        metadata={"description": "Image mixup (probability)"},
-        load_default=0.01,
+        metadata={
+            "description": "Augmentation option: Blends two "
+            "images and their labels, "
+            "creating a composite image. Enhances "
+            "the model's ability to generalize by "
+            "introducing label noise and visual "
+            "variability. Range 0.0- 1.0"
+        },
+        load_default=0.0,
+    )
+
+    copy_paste = fields.Float(
+        metadata={
+            "description": "Augmentation option: Copies objects"
+            " from one image "
+            "and pastes them onto another, "
+            "useful for increasing object "
+            "instances and learning object "
+            "occlusion. Range 0.0- 1.0"
+        },
+        load_default=0.0,
+    )
+
+    erasing = fields.Float(
+        metadata={
+            "description": "Augmentation option: Randomly erases"
+            " a portion of the"
+            " image during classification "
+            "training, encouraging the model "
+            "to focus on less obvious features "
+            "for recognition."
+            " Range 0.0- 0.9"
+        },
+        load_default=0.4,
+    )
+
+    crop_fraction = fields.Float(
+        metadata={
+            "description": "Augmentation option: Crops the "
+            "classification image to a "
+            "fraction of its size to emphasize "
+            "central features and adapt to object "
+            "scales, reducing background distractions."
+            " Range 0.1- 1.0"
+        },
+        load_default=1.0,
+    )
+    auto_augment = fields.String(
+        metadata={
+            "description": "Automatically applies a predefined "
+            "augmentation policy (randaugment, "
+            "autoaugment, augmix), optimizing for"
+            " classification tasks by diversifying "
+            "the visual features.",
+        },
+        required=False,
+        validate=validate.OneOf(
+            ["randaugment", "autoaugment", "augmix"]
+        ),
     )
 
     disable_wandb = fields.Bool(

@@ -168,6 +168,7 @@ def train(**args):
                 "mlflow": False,
                 "datasets_dir": config.DATA_PATH,
                 "model_dir": config.MODELS_PATH,
+                "wandb": str(args["disable_wandb"]),
             }
         )
         # Modify the model name based on task type
@@ -210,6 +211,8 @@ def train(**args):
 
         else:
             model = YOLO(args["model"])
+        if "auto_augment" not in args:
+            args["auto_augment"] = None
 
         device = args.get("device", "cpu")
         if device != "cpu" and not torch.cuda.is_available():
@@ -315,15 +318,13 @@ if __name__ == "__main__":
     args = cmd_parser.parse_args()
 
     main()
-    
 
     """
     python3 api/__init__.py  train --model yolov8n.yaml\
     --task_type  det\
     --data /srv/football-players-detection-7/data.yaml\
     --Enable_MLFLOW --epochs 50
-    
-        python3 api/__init__.py  predict --files \
+    python3 api/__init__.py  predict --files \
     /srv/yolov8_api/tests/data/det/test/cat1.jpg\
     --task_type  det --accept application/json
     """

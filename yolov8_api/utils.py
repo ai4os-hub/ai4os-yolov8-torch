@@ -127,7 +127,6 @@ def get_git_info():
 
 
 def mlflow_update():
-
     # check the latest version of the model
     model_version_infos = client.search_model_versions(
         f"name = '{config.MLFLOW_MODEL_NAME}'"
@@ -212,7 +211,6 @@ def mlflow_logging(model, num_epochs, args):
             args["project"], args["name"], "results.csv"
         )
         with open(results, mode="r") as file:
-
             reader = csv.DictReader(file)
             for row in reader:
                 for key, value in row.items():
@@ -400,8 +398,6 @@ def mlflow_logging(model, num_epochs, args):
         mlflow.log_artifacts(
             str(model.trainer.save_dir), artifact_path="artifacts"
         )
-
-        run_id = active_run.info.run_id
         model_uri = mlflow.get_artifact_uri("artifacts")
         print("model url is ", model_uri)
 
@@ -422,7 +418,6 @@ def mlflow_logging(model, num_epochs, args):
 
 
 def mlflow_fetch():
-
     # check the latest version of the model
     model_version_infos = client.search_model_versions(
         f"name = '{config.MLFLOW_MODEL_NAME}'"
