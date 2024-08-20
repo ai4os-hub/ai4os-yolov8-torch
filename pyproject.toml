@@ -30,10 +30,11 @@ env = ["DATA_PATH=tests/data", "MODELS_PATH=tests/models"]
 addopts = "--import-mode=importlib"
 
 [tool.setuptools]
-packages = ["deep_species_detection", "deep_species_detection.api"]
+packages = ["yolov8", "deep_species_detection.api"]
 
 [tool.setuptools.package-dir]
 "deep_species_detection.api" = "api"
+"yolov8" = "yolov8"
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }

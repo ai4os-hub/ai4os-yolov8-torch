@@ -28,7 +28,7 @@ MODEL_LIST = [
     "yolov8x.pt",
 ]
 # Default AI model
-MODEL_NAME = os.getenv("MODEL_NAME", default="yolov8")
+MODEL_NAME = os.getenv("MODEL_NAME", default="deep_species_detection")
 
 # Get AI model metadata
 MODEL_METADATA = metadata.metadata(MODEL_NAME)
