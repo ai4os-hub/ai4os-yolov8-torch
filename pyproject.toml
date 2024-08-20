@@ -3,8 +3,8 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "yolov8_api"
-description = "add api to yolov8"
+name = "deep_species_detection"
+description = "Deep Sea Spieces Detection"
 # !! Authors and Authors_emails are taken from setup.py. Otherwise wrongly rendered !!
 readme = "README.md"
 requires-python = ">=3.8"
@@ -18,12 +18,11 @@ classifiers = [
 dynamic = ["version", "dependencies"]
 
 # Add author and author email here
-authors = [{name= "Fahimeh Alibabaei", email= "khadijeh.alibabaei@kit.edu"} ,{name= "Lisana Berberi", email= "lisana.berberi@kit.edu"} ]
-#authors-email = ["khadijeh.alibabaei@kit.edu"]
+authors = [{name= "Antoine Lebeaud", email= "antoine.lebeaud.ifremer@gmail.com"} ,{name= "Vanessa Tosello", email= "vanessa.tosello@ifremer.fr"} ]
 
 [project.urls]
-"Homepage" = "https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch"
-"Bug Tracker" = "https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch/issues"
+"Homepage" = "https://github.com/ai4os-hub/deep-species-detection"
+"Bug Tracker" = "https://github.com/ai4os-hub/deep-species-detection/issues"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
@@ -31,14 +30,14 @@ env = ["DATA_PATH=tests/data", "MODELS_PATH=tests/models"]
 addopts = "--import-mode=importlib"
 
 [tool.setuptools]
-packages = ["yolov8_api", "yolov8_api.api"]
+packages = ["deep_species_detection", "deep_species_detection.api"]
 
 [tool.setuptools.package-dir]
-"yolov8_api.api" = "api"
+"deep_species_detection.api" = "api"
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements.txt"] }
 version = { file = "VERSION" }
 
 [project.entry-points."deepaas.v2.model"]
-yolov8_api = "yolov8_api.api"
+deep_species_detection = "deep_species_detection.api"

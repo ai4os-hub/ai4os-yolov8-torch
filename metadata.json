@@ -1,6 +1,6 @@
 {
-  "title": "YoloV8 model",
-  "summary": "Object detection using YoloV8 model",
+  "title": "Deep Species Detection",
+  "summary": "Detect species from deep underwater",
   "description": [
     "Ultralytics YOLOv8 represents the forefront of object detection (segmentation/classification) models incorporating advancements",
     " from prior YOLO iterations while introducing novel features to enhance performance and versatility.",
@@ -24,19 +24,19 @@
     "pre-trained",
     "image",
     "video",
-    "general purpose"
+    "vo.imagine-ai.eu"
   ],
   "license": "MIT",
   "date_creation": "2023-08-09",
   "sources": {
-    "dockerfile_repo": "https://github.com/ai4os-hub/ai4os-yolov8-torch/",
-    "docker_registry_repo": "ai4oshub/ai4os-yolov8-torch",
-    "code": "https://github.com/ai4os-hub/ai4os-yolov8-torch",
+    "dockerfile_repo": "https://github.com/ai4os-hub/deep-species-detection",
+    "docker_registry_repo": "ai4oshub/deep-species-detection",
+    "code": "https://github.com/ai4os-hub/deep-species-detection",
     "ai4_template": "ai4-template/1.9.9"
   },
   "continuous_integration": {
-    "build_status_badge": "https://jenkins.services.ai4os.eu/buildStatus/icon?job=AI4OS-hub/ai4os-yolov8-torch/main",
-    "build_status_url": "https://jenkins.services.ai4os.eu/job/AI4OS-hub/job/ai4os-yolov8-torch/job/main/"
+    "build_status_badge": "https://jenkins.services.ai4os.eu/buildStatus/icon?job=AI4OS-hub/deep-species-detection/main",
+    "build_status_url": "https://jenkins.services.ai4os.eu/job/AI4OS-hub/job/deep-species-detection/job/main/"
   },
   "tosca": [
     {

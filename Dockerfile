@@ -17,9 +17,8 @@ ARG tag=1.13.1-cuda11.6-cudnn8-runtime
 # Base image, e.g. tensorflow/tensorflow:2.9.1
 FROM pytorch/pytorch:${tag}
 
-LABEL maintainer='Fahimeh, Lisana'
+LABEL maintainer='Antoine Lebeaud'
 LABEL version='0.1.0'
-# Add deep api to yolov8 model
 
 # What user branch to clone [!]
 ARG branch=main
@@ -72,8 +71,8 @@ RUN git clone https://github.com/ai4os/deep-start /srv/.deep-start && \
 ENV SHELL /bin/bash
 
 # Install user app
-RUN git clone --depth 1 -b $branch https://github.com/ai4os-hub/ai4os-yolov8-torch.git && \
-    cd  ai4os-yolov8-torch && \
+RUN git clone --depth 1 -b $branch https://github.com/ai4os-hub/deep-species-detection.git && \
+    cd  deep-species-detection && \
     pip3 install --no-cache-dir -e . && \
     cd ..
 

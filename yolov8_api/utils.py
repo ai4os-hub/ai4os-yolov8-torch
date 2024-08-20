@@ -7,7 +7,7 @@ All functions here are optional and you can add or remove them as you need.
 """
 
 import logging
-import yolov8_api.config as cfg
+import yolov8.config as cfg
 
 import yaml
 import os
@@ -28,7 +28,7 @@ import mlflow.pyfunc
 import torch
 
 from mlflow.models import infer_signature
-from yolov8_api import config
+from yolov8 import config
 
 
 logger = logging.getLogger(__name__)
@@ -98,9 +98,9 @@ def check_annotations_format(path):
                 raise ValueError(
                     "Invalid annotations format (json, xml): "
                     "please convert the annotations format into .txt. "
-                    "You can use either 'yolov8_api/preprocess_ann.py'"
+                    "You can use either 'yolov8/preprocess_ann.py'"
                     " (for a detection task) "
-                    "or 'yolov8_api/seg_coco_json_to_yolo.py'"
+                    "or 'yolov8/seg_coco_json_to_yolo.py'"
                     "(for segmentation)."
                 )
 

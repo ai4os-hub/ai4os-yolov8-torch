@@ -2,7 +2,7 @@
 sqa_criteria:
   qc_style:
     repos:
-      ai4os-yolov8-torch:
+      deep-species-detection:
         container: thisrepo-testing
         tox:
           tox_file: tox.ini
@@ -10,7 +10,7 @@ sqa_criteria:
             - qc.sty
   qc_coverage:
     repos:
-      ai4os-yolov8-torch:
+      deep-species-detection:
         container: thisrepo-testing
         tox:
           tox_file: tox.ini
@@ -18,7 +18,7 @@ sqa_criteria:
             - qc.cov
   qc_security:
     repos:
-      ai4os-yolov8-torch:
+      deep-species-detection:
         container: thisrepo-testing
         tox:
           tox_file: tox.ini

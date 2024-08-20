@@ -71,7 +71,7 @@ class PredArgsSchema(marshmallow.Schema):
         metadata={
             "description": "Load a model from your MLflow model registry. "
             "Please set the MLFLOW_MODEL_NAME in the "
-            "yolov8_api/config.py file to be loaded for "
+            "yolov8/config.py file to be loaded for "
             "prediction. Make sure you have passed the environment "
             "variables related to your MLflow (See readme)."
         },

@@ -22,9 +22,9 @@ from ultralytics import YOLO, settings
 from aiohttp.web import HTTPException
 from deepaas.model.v2.wrapper import UploadedFile
 
-import yolov8_api as aimodel
+import yolov8 as aimodel
 from . import config, responses, schemas, utils
-from yolov8_api.utils import (
+from yolov8.utils import (
     mlflow_fetch,
     mlflow_logging,
 )
@@ -325,6 +325,6 @@ if __name__ == "__main__":
     --data /srv/football-players-detection-7/data.yaml\
     --Enable_MLFLOW --epochs 50
     python3 api/__init__.py  predict --files \
-    /srv/yolov8_api/tests/data/det/test/cat1.jpg\
+    /srv/yolov8/tests/data/det/test/cat1.jpg\
     --task_type  det --accept application/json
     """

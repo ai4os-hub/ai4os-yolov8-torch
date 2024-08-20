@@ -1,0 +1,17 @@
+FROM ai4oshub/ci-images:python3.10
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        libgl1 \
+        libglib2.0-0 \
+        unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install rclone
+RUN curl -O https://downloads.rclone.org/rclone-current-linux-amd64.deb && \
+    dpkg -i rclone-current-linux-amd64.deb && \
+    apt install -f && \
+    mkdir /srv/.rclone/ && \
+    touch /srv/.rclone/rclone.conf && \
+    rm rclone-current-linux-amd64.deb && \
+    rm -rf /var/lib/apt/lists/*

@@ -1,7 +1,7 @@
 """Package to create dataset, build training and prediction pipelines.
 
 This file should define or import all the functions needed to operate the
-methods defined at yolov8_api/api.py. Complete the TODOs
+methods defined at yolov8/api.py. Complete the TODOs
 with your own code or replace them importing your own functions.
 For example:
 ```py
@@ -12,9 +12,9 @@ from your_module import your_function as training
 
 # TODO: add your imports here
 import logging
-import yolov8_api.config as cfg
+import yolov8.config as cfg
 from ultralytics import YOLO
-import yolov8_api.utils as utils
+import yolov8.utils as utils
 
 
 logger = logging.getLogger(__name__)

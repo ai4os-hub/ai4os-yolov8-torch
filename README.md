@@ -32,7 +32,7 @@ apt install -y libglib2.0-0
 ├── README.md               <- The top-level README for developers using this project.
 ├── VERSION                 <- Version file indicating the version of the model
 │
-├── yolov8_api
+├── yolov8
 │   ├── README.md           <- Instructions on how to integrate your model with DEEPaaS.
 │   ├── __init__.py         <- Makes <your-model-source> a Python module
 │   ├── ...                 <- Other source code files
@@ -198,8 +198,8 @@ data/
 
 ><span style="color:Blue">**Note:**</span>  If you have annotations files in Coco json format or Pascal VOC xml format, you can use the following script to convert them to the proper format for yolo. 
 ``` 
-ai4os-yolov8-torch/yolov8_api/seg_coco_json_to_yolo.py #for segmentation
-ai4os-yolov8-torch/yolov8_api/preprocess_ann.py #For detection
+ai4os-yolov8-torch/yolov8/seg_coco_json_to_yolo.py #for segmentation
+ai4os-yolov8-torch/yolov8/preprocess_ann.py #For detection
 ``` 
 # Available Models
 
