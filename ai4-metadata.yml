@@ -1,26 +1,33 @@
 metadata_version: 2.0.0
 title: YoloV8 model
 summary: Object detection using YoloV8 model
-description: '"Ultralytics YOLOv8 represents the forefront of object detection (segmentation/classification) models incorporating advancements" " from prior YOLO iterations while introducing novel features to enhance performance and versatility." " YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional" " solution across diverse tasks such as object detection, oriented bounding boxes detection, tracking, instance segmentation, and" " image classification. Its refined architecture and innovations make it an ideal choice for" " cutting-edge applications in the field of computer vision.\n" "**NOTE**: Among the training arguments, there are options related to augmentation, such as flipping, scaling, etc. The default values are set to automatically activate some of these options during training. If you want to disable augmentation entirely or partially, please review the default values and adjust them accordingly to deactivate the desired augmentations.\n" "**References**\n" "[1] Jocher, G., Chaurasia, A., & Qiu, J. (2023). YOLO by Ultralytics (Version 8.0.0) [Computer software]. https://github.com/ultralytics/ultralytics\n" "[2] https://docs.ultralytics.com/\n" "[3] Redmon, J., et al., You Only Look Once: Unified, Real-Time Object Detection, 2015, https://arxiv.org/abs/1506.02640 [cs.CV]"'
+description: |-
+  Ultralytics YOLOv8 represents the forefront of object detection (segmentation/classification) models incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. 
+  YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, oriented bounding boxes detection, tracking, instance segmentation, and" " image classification. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
+   **References**
+  [1] Jocher, G., Chaurasia, A., & Qiu, J. (2023). YOLO by Ultralytics (Version 8.0.0) [Computer software]. https://github.com/ultralytics/ultralytics
+  [2] https://docs.ultralytics.com
+  [3] Redmon, J., et al., You Only Look Once: Unified, Real-Time Object Detection, 2015, https://arxiv.org/abs/1506.02640 [cs.CV]
 dates:
   created: '2023-08-09'
-  updated: '2024-08-19'
+  updated: '2024-08-12'
 links:
   source_code: https://github.com/ai4os-hub/ai4os-yolov8-torch
   docker_image: ai4oshub/ai4os-yolov8-torch
   ai4_template: ai4-template/1.9.9
 tags:
-- docker
-- api-v2
-- pytorch
-- object detection
-- trainable
-- inference
-- pre-trained
-- image
-- video
-- general purpose
-tasks: []
-categories: []
+  - deep learning
+  - object detection
+  - vo.imagine-ai.eu
+tasks:
+  - Computer Vision
+  - Classification
+categories:
+  - AI4 pre trained
+  - AI4 trainable
+  - AI4 inference
 libraries:
-- Pytorch
+  - PyTorch
+data-type:
+  - Image
+  - Video
