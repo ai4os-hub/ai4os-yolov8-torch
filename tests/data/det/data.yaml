@@ -36,5 +36,5 @@ roboflow:
   url: https://universe.roboflow.com/joseph-nelson/plantdoc/dataset/1
   version: 1
   workspace: joseph-nelson
-train: /srv/ai4os-yolov8-torch/tests/data/det/train/images
-val: /srv/ai4os-yolov8-torch/tests/data/det/val/images
+train: /srv/deep-species-detection/tests/data/det/train/images
+val: /srv/deep-species-detection/tests/data/det/val/images

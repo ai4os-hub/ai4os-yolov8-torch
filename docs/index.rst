@@ -1,9 +1,9 @@
-.. ai4os-yolov8-torch documentation master file, created by
+.. deep-species-detection documentation master file, created by
    sphinx-quickstart.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-ai4os-yolov8-torch documentation!
+deep-species-detection documentation!
 ==============================================
 
 Contents:

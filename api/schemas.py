@@ -196,7 +196,7 @@ class TrainArgsSchema(marshmallow.Schema):
         metadata={
             "description": "Path to the config data file (for seg and det) or "
             "data (cls task), e.g., 'root/path/to/mydata/data.yaml' or "
-            "if it is in the 'path/to/ai4os-yolov8-torch/data/raw' just"
+            "if it is in the 'path/to/deep-species-detection/data/raw' just"
             "mydata/data.yaml"
         },
         allow_none=True,

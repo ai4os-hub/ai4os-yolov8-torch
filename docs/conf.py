@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# ai4os-yolov8-torch documentation build configuration file, created by
+# deep-species-detection documentation build configuration file, created by
 # sphinx-quickstart.
 #
 # This file is execfile()d with the current directory set
@@ -37,7 +37,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "ai4os-yolov8-torch"
+project = "deep-species-detection"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -158,7 +158,7 @@ html_static_path = ["_static"]
 # html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "ai4os-yolov8-torchdoc"
+htmlhelp_basename = "deep-species-detectiondoc"
 
 
 # -- Options for LaTeX output -------------
@@ -178,9 +178,9 @@ latex_elements = {
 latex_documents = [
     (
         "index",
-        "ai4os-yolov8-torch.tex",
-        "ai4os-yolov8-torch Documentation",
-        "Fahimeh",
+        "deep-species-detection.tex",
+        "deep-species-detection Documentation",
+        "Antoine",
         "manual",
     ),
 ]
@@ -213,9 +213,9 @@ latex_documents = [
 man_pages = [
     (
         "index",
-        "ai4os-yolov8-torch",
-        "ai4os-yolov8-torch Documentation",
-        ["Fahimeh"],
+        "deep-species-detection",
+        "deep-species-detection Documentation",
+        ["Antoine"],
         1,
     )
 ]
@@ -232,11 +232,11 @@ man_pages = [
 texinfo_documents = [
     (
         "index",
-        "ai4os-yolov8-torch",
-        "ai4os-yolov8-torch Documentation",
-        "Fahimeh",
-        "ai4os-yolov8-torch",
-        "add api to yolov8",
+        "deep-species-detection",
+        "deep-species-detection Documentation",
+        "Antoine",
+        "deep-species-detection",
+        "Detect species from deep underwater",
         "Miscellaneous",
     ),
 ]

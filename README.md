@@ -1,6 +1,6 @@
-# ai4os-yolov8-torch
+# Deep Species Detection
 
-[![Build Status](https://jenkins.services.ai4os.eu/buildStatus/icon?job=AI4OS-hub/ai4os-yolov8-torch/main)](https://jenkins.services.ai4os.eu/job/AI4OS-hub/job/ai4os-yolov8-torch/job/main/)
+[![Build Status](https://jenkins.services.ai4os.eu/buildStatus/icon?job=AI4OS-hub/deep-species-detection/main)](https://jenkins.services.ai4os.eu/job/AI4OS-hub/job/deep-species-detection/job/main/)
 
 Ultralytics YOLOv8 represents the forefront of object detection models, incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, ororiented bounding boxes detection, tracking, instance segmentation, and image classification. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
 
@@ -10,8 +10,8 @@ In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv
 # Install the API 
 To launch the API, first, install the package, and then run DeepaaS:
 ``` bash
-git clone --depth 1 https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch.git
-cd  ai4os-yolov8-torch
+git clone --depth 1 https://github.com/ai4os-hub/deep-species-detection.git
+cd  deep-species-detection
 pip install -e .
 deepaas-run --listen-ip 0.0.0.0
 ```
@@ -169,7 +169,7 @@ The `train` and `val` fields specify the paths to the directories containing the
 `names` is a dictionary of class names. The order of the names should match the order of the object class indices in the YOLO dataset files.
 
 ><span style="color:Blue">**Note:**</span>The train and val path should be a complete path or relative from
-data directory e.g. `root/path/to/mydata/train/images` or if it is in the `path/to/ai4os-yolov8-torch/data/raw` just 
+data directory e.g. `root/path/to/mydata/train/images` or if it is in the `path/to/deep-species-detection/data/raw` just 
 `mydata/train/images`
 
 
@@ -198,8 +198,8 @@ data/
 
 ><span style="color:Blue">**Note:**</span>  If you have annotations files in Coco json format or Pascal VOC xml format, you can use the following script to convert them to the proper format for yolo. 
 ``` 
-ai4os-yolov8-torch/yolov8/seg_coco_json_to_yolo.py #for segmentation
-ai4os-yolov8-torch/yolov8/preprocess_ann.py #For detection
+deep-species-detection/yolov8/seg_coco_json_to_yolo.py #for segmentation
+deep-species-detection/yolov8/preprocess_ann.py #For detection
 ``` 
 # Available Models
 

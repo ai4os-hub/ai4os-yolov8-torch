@@ -7,5 +7,5 @@ names:
 - soda
 - tomato sauce
 nc: 7
-train: /srv/ai4os-yolov8-torch/tests/data/seg/train/images
-val: /srv/ai4os-yolov8-torch/tests/data/seg/val/images
+train: /srv/deep-species-detection/tests/data/seg/train/images
+val: /srv/deep-species-detection/tests/data/seg/val/images
