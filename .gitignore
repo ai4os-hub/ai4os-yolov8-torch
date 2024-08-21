@@ -102,6 +102,7 @@ pmip
 .sw[nop]
 *.tmp
 *.vim
+*.html
 tags
 cscope.out
 # gnu global
