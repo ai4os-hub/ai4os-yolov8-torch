@@ -116,7 +116,7 @@ def predict(**args):
         with tempfile.TemporaryDirectory() as tmpdir:
             for f in [args["files"]]:
                 shutil.copy(
-                    f.filename, tmpdir + "/" + f.original_filename
+                    f.filename, tmpdir + "/" + os.path.basename(f.original_filename)
                 )
 
             args["files"] = [
