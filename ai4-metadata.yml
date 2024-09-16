@@ -2,16 +2,30 @@ metadata_version: 2.0.0
 title: Deep Species Detection
 summary: Deep Sea Spieces Detection
 description: |-
-  Ultralytics YOLOv8 represents the forefront of object detection (segmentation/classification) models incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. 
-  YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, oriented bounding boxes detection, tracking, instance segmentation, and" " image classification. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
-  **NOTE**: Among the training arguments, there are options related to augmentation, such as flipping, scaling, etc. The default values are set to automatically activate some of these options during training. If you want to disable augmentation entirely or partially, please review the default values and adjust them accordingly to deactivate the desired augmentations.
-   **References**
-  [1] Jocher, G., Chaurasia, A., & Qiu, J. (2023). YOLO by Ultralytics (Version 8.0.0) [Computer software]. https://github.com/ultralytics/ultralytics
-  [2] https://docs.ultralytics.com
-  [3] Redmon, J., et al., You Only Look Once: Unified, Real-Time Object Detection, 2015, https://arxiv.org/abs/1506.02640 [cs.CV]
+  Provided by Ifremer, and iMagine.
+
+  This module helps users that want to train a deep learning visual identification algorithm (Yolov8) with citizen science data.
+  It was developed with the intent to clean and train automatically on Deep Sea Spy data (citizen science project).
+  The cleaning is in 2 steps : 
+  - converting the bounding boxes in a regular format (optional). In Deep Sea Spy, they come in 3 different formats (points, lines and polygons).
+  - unify bounding boxes, using the redundancy of the information as a confirmation for the presence of an individual. 
+  There also are other data manipulation/visualisation tools provided in this module to help scientists with the data analysis.
+
+  The user can :
+  - Clean its own dataset using either the Deepas API, the Notebook.ipynb or the pipeline_txt.py file.
+  - Train with its own data from nextcloud (training is automatic in pipeline_txt.py)
+  - Use the existing model traind on Deep Sea Spy data (see zenodo : ) for inference.
+
+  Further information in the README.me file provided within this repository.
+
+  This module is mainly based on this already existing module : https://github.com/ai4os-hub/ai4os-yolov8-torch
+
+  You can find more information on Yolov8 here :
+  https://github.com/ultralytics/ultralytics
+  https://docs.ultralytics.com
 dates:
   created: '2024-08-20'
-  updated: '2024-08-12'
+  updated: '2024-09-11'
 links:
   source_code: https://github.com/ai4os-hub/deep-species-detection
   docker_image: ai4oshub/deep-species-detection
@@ -19,10 +33,14 @@ links:
 tags:
   - deep learning
   - object detection
+  - deep sea spy
+  - data preparation
+  - citizen science
   - vo.imagine-ai.eu
 tasks:
   - Computer Vision
   - Classification
+  - Data cleaning
 categories:
   - AI4 pre trained
   - AI4 trainable
@@ -32,3 +50,4 @@ libraries:
 data-type:
   - Image
   - Video
+  - Annotations

@@ -1,0 +1,81 @@
+# Paths
+# csv access :
+path_csv=C:\Users\alebeaud\Desktop\everyone is here\DeepSeaLab\DeepSeaLab_ai4osc\export_dss_20191018_pipeline.csv
+#path_csv=C:\Users\alebeaud\Desktop\save_pipeline\export_ubb.csv
+# images :
+path_imgs=C:\Users\alebeaud\Desktop\Image_dsp
+# save
+path_save=C:\Users\alebeaud\Desktop\save_pipeline
+
+# Dataset options
+polygons=false
+points=false
+lines=True
+iou=0.7
+
+# YOLO training hyperparameters
+# Those are the main Yolo hyperparameters you might want to tweak depending on your available resources
+# They strongly impact the performance of your model and the time it takes to complete it's training
+# Doc : https://docs.ultralytics.com/modes/train/#train-settings
+model=yolov8n.pt
+epochs=20
+imgsz=640
+batch=16
+device=None
+
+# YOLO complementary hyperparameters
+# Those parameters also impact the training of your model, but it depends on the type/quality of images you are feeding the model.
+# If you don't understand what they are doing, it is strongly recommendend to stay with this default configuration.
+# Doc : https://docs.ultralytics.com/modes/train/#train-settings
+# You can train your model to find it's best suited hyperparameters on it's own : https://docs.ultralytics.com/guides/hyperparameter-tuning/
+
+workers=8
+time=None
+patience=100
+save=True
+save_period=-1
+cache=False
+project=None
+name=None
+existe_ok=False
+pretrained=True
+optimizer='auto'
+verbose=False
+seed=0
+deterministic=True
+single_cls=False
+rect=False
+close_mosaic=10
+resume=False
+amp=False
+fraction=1.0
+profile=False
+freeze=None
+lr0=0.01
+lrf=0.01
+momentum=0.937
+weight_decay=0.0005
+warmup_epochs=3.0
+warmup_momentum=0.8
+warmup_bias_lr=0.1
+box=7.5
+cls=0.5
+dfl=1.5
+pose=12.0
+kobj=2.0
+label_smoothing=0.0
+nbs=64
+overlap_mask=True
+mask_ratio=4
+dropout=0.0
+val=True
+plots=False
+
+#python Pipeline.py --path_imgs /path/to/images --path_csv /path/to/data.csv --path_save /path/to/save --points True --lines False --polygons True --iou 0.2
+#parser.add_argument('--path_imgs', type=str, help='Path to your images')
+#parser.add_argument('--path_csv', type=str, help='Path to your dataset')
+#parser.add_argument('--path_save', type=str, help='Path where to store your training data')
+#parser.add_argument('--points', type=bool, help='Your dataset has points to convert in xmin/xmax/ymin/ymax format',default=False)
+#parser.add_argument('--lines', type=bool, help='Your dataset has lines to convert in xmin/xmax/ymin/ymax format',default=False)
+#parser.add_argument('--polygons', type=bool, help='Your dataset has polygons to convert in xmin/xmax/ymin/ymax format',default=False)
+#parser.add_argument('--iou', type=int, help='The minimum IoU allowed for the unification step', default=0.2)

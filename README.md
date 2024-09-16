@@ -1,28 +1,18 @@
 # Deep Species Detection
 
+Provided by Ifremer, iMagine.
+
 [![Build Status](https://jenkins.services.ai4os.eu/buildStatus/icon?job=AI4OS-hub/deep-species-detection/main)](https://jenkins.services.ai4os.eu/job/AI4OS-hub/job/deep-species-detection/job/main/)
 
-Ultralytics YOLOv8 represents the forefront of object detection models, incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, ororiented bounding boxes detection, tracking, instance segmentation, and image classification. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
+# Citizen science and data cleaning
+In this repository, we provided a pipeline that cleans citizen science image datasets.
+There is 3 ways to use the pipeline and the training :
+    - Deepaas API : you can easily visualise and change arguments of the pipeline/Yolov8 training
+    - Pipeline_txt.py : automatically cleans the dataset and launches the Yolov8 training with the arguments stored in config.txt
+    - DeepSeaLab.ipynb : step by step guide to clean the dataset and launch the Yolov8 training
 
-# Adding DeepaaS API into the existing codebase
-In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv8, enabling the seamless utilization of this pipeline. The inclusion of the DeepaaS API enhances the functionality and accessibility of the code, making it easier for users to leverage and interact with the pipeline efficiently.
-
-# Install the API 
-To launch the API, first, install the package, and then run DeepaaS:
-``` bash
-git clone --depth 1 https://github.com/ai4os-hub/deep-species-detection.git
-cd  deep-species-detection
-pip install -e .
-deepaas-run --listen-ip 0.0.0.0
-```
-
-><span style="color:Blue">**Note:**</span> Before installing the API, please make sure to install the following system packages: `gcc`, `libgl1`, and `libglib2.0-0` as well. These packages are essential for a smooth installation process and proper functioning of the framework.
-```
-apt update
-apt install -y gcc
-apt install -y libgl1
-apt install -y libglib2.0-0
-```
+The pipeline converts bounding boxes from Deep Sea Spy format (lines, points, polygons) to regular bounding boxes (xmin, xmax, ymin, ymax).
+This step is optional.
 
 ## Project structure
 
@@ -31,6 +21,12 @@ apt install -y libglib2.0-0
 ├── LICENSE                 <- License file
 ├── README.md               <- The top-level README for developers using this project.
 ├── VERSION                 <- Version file indicating the version of the model
+│
+├── deep-sea-lab            <- 
+│   ├── DeepSeaLab.ipynb    <- Notebook pipeline for data cleaning & Yolov8 training
+│   ├── Functions.py        <- Data processing file DeepSeaLab draws function from
+│   ├── Pipeline_txt.py     <- Automatic pipeline to clean the data & train Yolov8
+│   ├── config.txt          <- Configuration file for Pipeline.txt, which stores arguments to run the pipeline
 │
 ├── yolov8
 │   ├── README.md           <- Instructions on how to integrate your model with DEEPaaS.
@@ -83,11 +79,40 @@ apt install -y libglib2.0-0
 └── tox.ini                <- tox file with settings for running tox; see tox.testrun.org
 ```
 
+# Cleaning from Deepaas API
+
+To launch the API, first, install the package, and then run DeepaaS:
+
+```
+git clone https://github.com/ai4os-hub/deep-species-detection
+cd  deep-species-detection
+pip install -e .
+deepaas-run --listen-ip 0.0.0.0
+```
+
+# Cleaning from Pipeline_txt.py
+
+# Cleaning from DeepSeaLab.ipynb
+
+# Adding DeepaaS API into the existing codebase
+In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv8, enabling the seamless utilization of this pipeline. The inclusion of the DeepaaS API enhances the functionality and accessibility of the code, making it easier for users to leverage and interact with the pipeline efficiently.
+
+
+
+><span style="color:Blue">**Note:**</span> Before installing the API, please make sure to install the following system packages: `gcc`, `libgl1`, and `libglib2.0-0` as well. These packages are essential for a smooth installation process and proper functioning of the framework.
+```
+apt update
+apt install -y gcc
+apt install -y libgl1
+apt install -y libglib2.0-0
+```
+
+
 # Environment variables settings
 "In `./api/config.py` you can configure several environment variables:
 
 - `DATA_PATH`: Path definition for the data folder; the default is './data'.
--  `MODELS_PATH`: Path definition for saving trained models; the default is './models'.
+- `MODELS_PATH`: Path definition for saving trained models; the default is './models'.
 - `REMOTE_PATH`: Path to the remote directory containing your trained models. Rclone uses this path for downloading or listing the trained models.
 - `YOLOV8_DEFAULT_TASK_TYPE`: Specify the default tasks related to your work among detection (det), segmentation (seg), and classification (cls).
 - `YOLOV8_DEFAULT_WEIGHTS`: Define default timestamped weights for your trained models to be used during prediction. If no timestamp is specified by the user during prediction, the first model in YOLOV8_DEFAULT_WEIGHTS will be used. If it is set to None, the Yolov8n trained on coco/imagenet will be used. Format them as timestamp1, timestamp2, timestamp3, ..."
@@ -234,6 +259,7 @@ Then, open the Swagger interface, change the hyperparameters in the train sectio
 
 ><span style="color:Blue">**Note:**</span> Augmentation Settings:
 among the training arguments, there are options related to augmentation, such as flipping, scaling, etc. The default values are set to automatically activate some of these options during training. If you want to disable augmentation entirely or partially, please review the default values and adjust them accordingly to deactivate the desired augmentations.
+
 # Inference Methods
 
 You can utilize the Swagger interface to upload your images or videos and obtain the following outputs:
