@@ -40,7 +40,7 @@ tags:
 tasks:
   - Computer Vision
   - Classification
-  - Data cleaning
+  - Other
 categories:
   - AI4 pre trained
   - AI4 trainable
@@ -50,4 +50,4 @@ libraries:
 data-type:
   - Image
   - Video
-  - Annotations
+  - Other
