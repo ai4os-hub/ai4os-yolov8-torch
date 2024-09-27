@@ -6,23 +6,24 @@ description: |-
 
   This module helps users that want to train a deep learning visual identification algorithm (Yolov8) with citizen science data.
   It was developed with the intent to clean and train automatically on Deep Sea Spy data (citizen science project).
-  The cleaning is in 2 steps : 
+  
+  The cleaning is done in 2 steps: 
   - converting the bounding boxes in a regular format (optional). In Deep Sea Spy, they come in 3 different formats (points, lines and polygons).
   - unify bounding boxes, using the redundancy of the information as a confirmation for the presence of an individual. 
   There also are other data manipulation/visualisation tools provided in this module to help scientists with the data analysis.
 
-  The user can :
+  The user can:
   - Clean its own dataset using either the Deepas API, the Notebook.ipynb or the pipeline_txt.py file.
   - Train with its own data from nextcloud (training is automatic in pipeline_txt.py)
-  - Use the existing model traind on Deep Sea Spy data (see zenodo : ) for inference.
+  - Use the existing model traind on Deep Sea Spy data (see zenodo) for inference.
 
   Further information in the README.me file provided within this repository.
 
-  This module is mainly based on this already existing module : https://github.com/ai4os-hub/ai4os-yolov8-torch
+  This module is mainly based on this already [existing module](https://github.com/ai4os-hub/ai4os-yolov8-torch)
 
-  You can find more information on Yolov8 here :
-  https://github.com/ultralytics/ultralytics
-  https://docs.ultralytics.com
+  You can find more information on Yolov8 here:
+  * https://github.com/ultralytics/ultralytics
+  * https://docs.ultralytics.com
 dates:
   created: '2024-08-20'
   updated: '2024-09-11'
