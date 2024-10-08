@@ -1,11 +1,10 @@
 # Paths
 # csv access :
-path_csv=C:\Users\alebeaud\Desktop\everyone is here\DeepSeaLab\DeepSeaLab_ai4osc\export_dss_20191018_pipeline.csv
-#path_csv=C:\Users\alebeaud\Desktop\save_pipeline\export_ubb.csv
+path_csv=/storage/export.csv
 # images :
-path_imgs=C:\Users\alebeaud\Desktop\Image_dsp
+path_imgs=/storage/Image_dsp/
 # save
-path_save=C:\Users\alebeaud\Desktop\save_pipeline
+path_save=/storage/save
 
 # Dataset options
 polygons=false
@@ -39,7 +38,7 @@ project=None
 name=None
 existe_ok=False
 pretrained=True
-optimizer='auto'
+optimizer=auto
 verbose=False
 seed=0
 deterministic=True
@@ -70,12 +69,3 @@ mask_ratio=4
 dropout=0.0
 val=True
 plots=False
-
-#python Pipeline.py --path_imgs /path/to/images --path_csv /path/to/data.csv --path_save /path/to/save --points True --lines False --polygons True --iou 0.2
-#parser.add_argument('--path_imgs', type=str, help='Path to your images')
-#parser.add_argument('--path_csv', type=str, help='Path to your dataset')
-#parser.add_argument('--path_save', type=str, help='Path where to store your training data')
-#parser.add_argument('--points', type=bool, help='Your dataset has points to convert in xmin/xmax/ymin/ymax format',default=False)
-#parser.add_argument('--lines', type=bool, help='Your dataset has lines to convert in xmin/xmax/ymin/ymax format',default=False)
-#parser.add_argument('--polygons', type=bool, help='Your dataset has polygons to convert in xmin/xmax/ymin/ymax format',default=False)
-#parser.add_argument('--iou', type=int, help='The minimum IoU allowed for the unification step', default=0.2)

@@ -562,6 +562,8 @@ def create_yaml(df,path_save, output='output'):
     train_path = f"{path_save}/images/train"
     val_path = f"{path_save}/images/val"
     test_path = f"{path_save}/images/test"
+
+    
     
     # Creates a dictionary of all species
     names_dict = df.set_index('label')['name_sp'].to_dict()
@@ -659,7 +661,19 @@ def parse_config(file_path):
                 config[key] = value
     return config
 
-def run_script(path_imgs=None, path_csv=None, path_save=None, polygons=False, points=False, lines=False, iou=0.2):
+
+def reset_label(df):
+    labels=liste_especes(df)
+    df['label']=df['name_sp'].map(labels)
+    return(df)
+
+#def run_script(path_imgs=None, path_csv=None, path_save=None, polygons=False, points=False, lines=False, iou=0.2):
+def run_script(path_imgs, path_csv, path_save, polygons, points, lines, iou,
+               model_path, epochs, imgsz, batch_size, device, workers, patience, save, save_period, cache, project, name,
+               exist_ok, pretrained, optimizer, verbose, seed, deterministic, single_cls, rect, close_mosaic, resume, amp,
+               fraction, profile, freeze, lr0, lrf, momentum, weight_decay, warmup_epochs, warmup_momentum,
+               warmup_bias_lr, box, cls, dfl, pose, kobj, label_smoothing, nbs, overlap_mask, mask_ratio, dropout, val, plots):
+    
     path_img=Path(path_imgs)
     polybb, lignesbb, pointsbb = pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
     
@@ -680,23 +694,23 @@ def run_script(path_imgs=None, path_csv=None, path_save=None, polygons=False, po
         lines=data.dropna(subset=['x2'])
         lignesbb=lines2bb(lines)
     bb=pd.concat([polybb,lignesbb,pointsbb])
-    if lines==False and polygons==False and points==False :
+    if lines.empty and polygons.empty and points.empty :
         bb=data
     # Save the converted dataset
     SaveCSV(bb,path_save,'export_bb')
     tbc=unite(bb,iou)
     ubb=unite(tbc,0.5,nms=True)
+    ubb_rs=reset_label(ubb)
     # Save the converted dataset
-    SaveCSV(ubb,path_save,'export_ubb')
+    SaveCSV(ubb_rs,path_save,'export_ubb')
     #Size of your images
     size=[1920,1080]
-    convert_yolo(ubb,size)
-    prepare_yolo(ubb,path_save,path_img,prop=[.8,.1]) 
 
-    #ubb=data.copy()
+    convert_yolo(ubb_rs,size)
+    prepare_yolo(ubb_rs,path_save,path_img,prop=[.8,.1]) 
     
     # Creates a yaml file containing all of the information necessary for running Yolov8 on your data
-    create_yaml(ubb,path_save,'output')
+    create_yaml(ubb_rs,path_save,'output')
     
     # Get where the .yaml file is stored
     output=str('output'+'.yaml')
@@ -704,8 +718,16 @@ def run_script(path_imgs=None, path_csv=None, path_save=None, polygons=False, po
     
     print('Launching the training of YoloV8')
     model = YOLO('yolov8n.pt')
-    
-    model.train(data=yaml_path, epochs=10, imgsz=640)
+
+    model.train(
+    data=yaml_path, epochs=epochs, imgsz=imgsz, batch=batch_size, device=device, workers=workers, patience=patience,
+    save=save, save_period=save_period, cache=cache, project=project, name=name, exist_ok=exist_ok,
+    pretrained=pretrained, optimizer=optimizer, verbose=verbose, seed=seed, deterministic=deterministic,
+    single_cls=single_cls, rect=rect, close_mosaic=close_mosaic, resume=resume, amp=amp, fraction=fraction,
+    profile=profile, freeze=freeze, lr0=lr0, lrf=lrf, momentum=momentum, weight_decay=weight_decay,
+    warmup_epochs=warmup_epochs, warmup_momentum=warmup_momentum, warmup_bias_lr=warmup_bias_lr, box=box,
+    cls=cls, dfl=dfl, pose=pose, kobj=kobj, label_smoothing=label_smoothing, nbs=nbs, overlap_mask=overlap_mask,
+    mask_ratio=mask_ratio, dropout=dropout, val=val, plots=plots)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Citizen science data cleaning & yolo detection.')
@@ -714,14 +736,58 @@ if __name__ == "__main__":
 
     config = parse_config(args.config)
 
-    run_script(
-        config['path_imgs'],
-        config['path_csv'],
-        config['path_save'],
-        config['polygons'],
-        config['points'],
-        config['lines'],
-        config['iou'],
-        config['']
+run_script(
+        path_imgs=config['path_imgs'],
+        path_csv=config['path_csv'],
+        path_save=config['path_save'],
+        polygons=config.get('polygons', False),
+        points=config.get('points', False),
+        lines=config.get('lines', False),
+        iou=config.get('iou', 0.2),
+        model_path=config.get('model', 'yolov8n.pt'),
+        epochs=config.get('epochs', 10),
+        imgsz=config.get('imgsz', 640),
+        batch_size=config.get('batch', 16),
+        device=config.get('device', None),
+        workers=config.get('workers', 8),
+        patience=config.get('patience', 100),
+        save=config.get('save', True),
+        save_period=int(config.get('save_period', -1)),
+        cache=config.get('cache', False),
+        project=config.get('project', None),
+        name=config.get('name', None),
+        exist_ok=config.get('exist_ok', False),
+        pretrained=config.get('pretrained', True),
+        optimizer=config.get('optimizer', 'auto'),
+        verbose=config.get('verbose', False),
+        seed=config.get('seed', 0),
+        deterministic=config.get('deterministic', True),
+        single_cls=config.get('single_cls', False),
+        rect=config.get('rect', False),
+        close_mosaic=config.get('close_mosaic', 10),
+        resume=config.get('resume', False),
+        amp=config.get('amp', False),
+        fraction=config.get('fraction', 1.0),
+        profile=config.get('profile', False),
+        freeze=config.get('freeze', None),
+        lr0=config.get('lr0', 0.01),
+        lrf=config.get('lrf', 0.01),
+        momentum=config.get('momentum', 0.937),
+        weight_decay=config.get('weight_decay', 0.0005),
+        warmup_epochs=config.get('warmup_epochs', 3.0),
+        warmup_momentum=config.get('warmup_momentum', 0.8),
+        warmup_bias_lr=config.get('warmup_bias_lr', 0.1),
+        box=config.get('box', 7.5),
+        cls=config.get('cls', 0.5),
+        dfl=config.get('dfl', 1.5),
+        pose=config.get('pose', 12.0),
+        kobj=config.get('kobj', 2.0),
+        label_smoothing=config.get('label_smoothing', 0.0),
+        nbs=config.get('nbs', 64),
+        overlap_mask=config.get('overlap_mask', True),
+        mask_ratio=config.get('mask_ratio', 4),
+        dropout=config.get('dropout', 0.0),
+        val=config.get('val', True),
+        plots=config.get('plots', False)
     )
 
