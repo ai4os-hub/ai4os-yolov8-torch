@@ -5,14 +5,13 @@ Provided by Ifremer, iMagine.
 [![Build Status](https://jenkins.services.ai4os.eu/buildStatus/icon?job=AI4OS-hub/deep-species-detection/main)](https://jenkins.services.ai4os.eu/job/AI4OS-hub/job/deep-species-detection/job/main/)
 
 # Citizen science and data cleaning
-In this repository, we provided a pipeline that cleans citizen science image datasets.
-There is 3 ways to use the pipeline and the training :
-    - Deepaas API : you can easily visualise and change arguments of the pipeline/Yolov8 training
-    - Pipeline_txt.py : automatically cleans the dataset and launches the Yolov8 training with the arguments stored in config.txt
+In this repository, you will find a pipeline that cleans citizen science image datasets, and automatically trains a YoloV8 model on it.
+You may also use this module to run inference on a pre trained YoloV8 model, specifically on 2 species : Buccinidae and Bythograeidae.
+The pipeline converts bounding boxes from Deep Sea Spy format (lines, points, polygons) to regular bounding boxes (xmin, xmax, ymin, ymax). The conversion step is optional. It then unifies overlapping bounding boxes of each species, using the redundancy of citizen identifications as a 
+There is 3 ways to use the pipeline :
     - DeepSeaLab.ipynb : step by step guide to clean the dataset and launch the Yolov8 training
-
-The pipeline converts bounding boxes from Deep Sea Spy format (lines, points, polygons) to regular bounding boxes (xmin, xmax, ymin, ymax).
-This step is optional.
+    - Pipeline_txt.py : automatically cleans the dataset and launches the Yolov8 training with the arguments stored in config.txt
+    - Deepaas API : easily visualize, customize and monitor the Yolov8 training. Very useful for inference.
 
 ## Project structure
 
@@ -22,7 +21,7 @@ This step is optional.
 ├── README.md               <- The top-level README for developers using this project.
 ├── VERSION                 <- Version file indicating the version of the model
 │
-├── deep-sea-lab            <- 
+├── deep-sea-lab            <- All of the data cleaning files
 │   ├── DeepSeaLab.ipynb    <- Notebook pipeline for data cleaning & Yolov8 training
 │   ├── Functions.py        <- Data processing file DeepSeaLab draws function from
 │   ├── Pipeline_txt.py     <- Automatic pipeline to clean the data & train Yolov8
@@ -79,34 +78,104 @@ This step is optional.
 └── tox.ini                <- tox file with settings for running tox; see tox.testrun.org
 ```
 
-# Cleaning from Deepaas API
+# Running Deepaas for YoloV8 training and inference
 
-To launch the API, first, install the package, and then run DeepaaS:
+First, install the package :
 
 ```
 git clone https://github.com/ai4os-hub/deep-species-detection
 cd  deep-species-detection
 pip install -e .
+```
+
+You can then run the cleaning pipeline (see respective paragraphs for more information).
+
+You can launch DeepaaS and run inference on a pre trained model by using :
+
+```
 deepaas-run --listen-ip 0.0.0.0
 ```
 
-# Cleaning from Pipeline_txt.py
+## Data requirements
+
+The data required for the pipeline is to have a folder with your images, and a .csv file containing all of your annotations.
+
+If your dataset is incomplete, it is better to remove incomplete rows rather than . Missing images will not cause problems with the pipeline.
+For the conversion step, this pipeline converts data from Deep Sea Spy format :
+
+|shapes  |x1 |y1 |x2 |y2 |polygon_values|name_img|species    |
+|--------|---|---|---|---|--------------|--------|-----------|
+|point   |59 |34 |NaN|NaN|NaN           |4366.jpg|Pycnogonid |
+|lines   |761|451|859|364|NaN           |4366.jpg|Buccinidae |
+|polygons|NaN|NaN|NaN|NaN|[{\x":282,"y":115},{"x":15,"y":538},{"x":50,"y":679},{"x":285,"y":497}]|4366.jpg|Mussels coverage|
+
+To a regular format :
+
+|xmin |xmax |ymin |ymax |name_img|species    |
+|-----|-----|-----|-----|--------|-----------|
+|69   |49   |24   |44   |4366.jpg|Pycnogonid |
+|761  |859  |364  |451  |4366.jpg|Buccinidae |
+|15   |285  |115  |679  |4366.jpg|Mussels coverage|
+
+If your data is already in this format, you can skip the conversion steps (more details in the cleaning sections).
+
+The pipeline expects image resolution of 1920x1080. You can input images with a different size by changing width_images and height_images in the beginning of Functions.py. If you have images of varying resolutions, you can modify the functions so that they take in the type of image you have.
+
 
 # Cleaning from DeepSeaLab.ipynb
+The **Notebook** is a ready-to-use, step by step cleaning file that you can change based on your needs/dataset. This option is better for a first use of the module since the notebook brings more context and guidance to the cleaning steps.
+You can skip the conversion steps by skipping the cells that won't help your case. Arguments are pre filled to show you what's expected from the user.
+You can launch the notebook by double clicking the file on the left, inside the deep-sea-lab folder.
+
+# Cleaning from Pipeline_txt.py
+Python script that automatically runs all the functions needed for the cleaning and analysis of citizen science datasets.
+This option is more straight forward than using the python notebook. Detailed explanations of the functions can be found in the file in itself. You can modify them and use them as the basis for your work.
+This file uses arguments in the config.txt file, which are pre filled to show you what's expected from the user.
+You can modify arguments based on your needs.
+### Arguments and usage
+Paths to your data is required as the first arguments in the config.txt file
+```
+# Paths
+# csv access :
+path_csv=/storage/export.csv
+# images :
+path_imgs=/storage/Image_dsp/
+# save
+path_save=/storage/save
+```
+Those paths are by default, we are expecting you to have connected your Nextcloud account to the iMagine platform.
+For the path_save, we recommend you to save on the deployment first, and then copying your training dataset/results afterwards. It is way faster this way.
+path_imgs should refer to the folder containing all of your images.
+
+In the config.txt file, if your dataset only contains annotated lines, it is expected :
+```
+# Dataset options
+polygons=false
+points=false
+lines=True
+```
+If your dataset only contains annotated polygons and points, it is expected :
+```
+# Dataset options
+polygons=True
+points=True
+lines=false
+```
+If your dataset is already in the regular format cited in the data requirements (therefore, you do not need the data conversion), you can put everything in false :
+```
+# Dataset options
+polygons=false
+points=false
+lines=false
+```
+The pipeline will still create the training dataset from your data, and will train YoloV8 on it.
+
+In the config.txt file, you can change the YoloV8 training parameters. They are set by their default value (from https://github.com/ultralytics/ultralytics).
+You may also change the hyperparameters, but it is recommended to do so only if you know what each modified argument does to the training step.
+If you wish to train the hyperparameters on a specific model, you can do so by running the last cell in the DeepSeaLab Notebook.
 
 # Adding DeepaaS API into the existing codebase
 In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv8, enabling the seamless utilization of this pipeline. The inclusion of the DeepaaS API enhances the functionality and accessibility of the code, making it easier for users to leverage and interact with the pipeline efficiently.
-
-
-
-><span style="color:Blue">**Note:**</span> Before installing the API, please make sure to install the following system packages: `gcc`, `libgl1`, and `libglib2.0-0` as well. These packages are essential for a smooth installation process and proper functioning of the framework.
-```
-apt update
-apt install -y gcc
-apt install -y libgl1
-apt install -y libglib2.0-0
-```
-
 
 # Environment variables settings
 "In `./api/config.py` you can configure several environment variables:

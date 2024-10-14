@@ -15,7 +15,7 @@ description: |-
   The user can:
   - Clean its own dataset using either the Deepas API, the Notebook.ipynb or the pipeline_txt.py file.
   - Train with its own data from nextcloud (training is automatic in pipeline_txt.py)
-  - Use the existing model traind on Deep Sea Spy data (see zenodo) for inference.
+  - Use the existing model trained on [Deep Sea Spy data](https://doi.org/10.17882/101899) for inference.
 
   Further information in the README.me file provided within this repository.
 

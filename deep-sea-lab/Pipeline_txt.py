@@ -276,7 +276,7 @@ def stomp(path):
         os.makedirs(path)
 
 def prepare_yolo (df,path_save,path_img,prop=[.8,.1],method='copy',empty_images=False):
-    print('Preaparing dataset at location '+ path_save)
+    print('Preparing dataset at location '+ path_save)
     # Converts coordinates in yolo format (from xmin, xmax, ymin, ymax to x, y, w, h)
     # Size [w,h] should contain the width and height of your image(s)
     def convert_yolo(tt,size):

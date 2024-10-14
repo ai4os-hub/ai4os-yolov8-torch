@@ -21,6 +21,8 @@ epochs=20
 imgsz=640
 batch=16
 device=None
+project=Imagine-Yolov8
+name=runs
 
 # YOLO complementary hyperparameters
 # Those parameters also impact the training of your model, but it depends on the type/quality of images you are feeding the model.
@@ -34,8 +36,6 @@ patience=100
 save=True
 save_period=-1
 cache=False
-project=None
-name=None
 existe_ok=False
 pretrained=True
 optimizer=auto
