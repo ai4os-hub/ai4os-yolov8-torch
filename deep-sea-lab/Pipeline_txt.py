@@ -673,7 +673,28 @@ def run_script(path_imgs, path_csv, path_save, polygons, points, lines, iou,
                exist_ok, pretrained, optimizer, verbose, seed, deterministic, single_cls, rect, close_mosaic, resume, amp,
                fraction, profile, freeze, lr0, lrf, momentum, weight_decay, warmup_epochs, warmup_momentum,
                warmup_bias_lr, box, cls, dfl, pose, kobj, label_smoothing, nbs, overlap_mask, mask_ratio, dropout, val, plots):
-    
+    path_yaml=os.path.join(path_save,'output.yaml')
+    if os.path.exists(path_yaml):
+        response = input('found output.yaml file, do you want to skip the cleaning and train yolov8 ? y/n')
+        if response.lower() == 'y':
+            yaml_path=os.path.join(path_save,output)
+            
+            print('Launching the training of YoloV8')
+            model = YOLO('yolov8n.pt')
+
+            model.train(
+            data=yaml_path, epochs=epochs, imgsz=imgsz, batch=batch_size, device=device, workers=workers, patience=patience,
+            save=save, save_period=save_period, cache=cache, project=project, name=name, exist_ok=exist_ok,
+            pretrained=pretrained, optimizer=optimizer, verbose=verbose, seed=seed, deterministic=deterministic,
+            single_cls=single_cls, rect=rect, close_mosaic=close_mosaic, resume=resume, amp=amp, fraction=fraction,
+            profile=profile, freeze=freeze, lr0=lr0, lrf=lrf, momentum=momentum, weight_decay=weight_decay,
+            warmup_epochs=warmup_epochs, warmup_momentum=warmup_momentum, warmup_bias_lr=warmup_bias_lr, box=box,
+            cls=cls, dfl=dfl, pose=pose, kobj=kobj, label_smoothing=label_smoothing, nbs=nbs, overlap_mask=overlap_mask,
+            mask_ratio=mask_ratio, dropout=dropout, val=val, plots=plots)
+            print('Training completed')
+        else:
+            print('Cleaning the dataset.')
+
     path_img=Path(path_imgs)
     polybb, lignesbb, pointsbb = pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
     

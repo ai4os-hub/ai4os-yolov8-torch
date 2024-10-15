@@ -174,10 +174,12 @@ def lines2bb (lignes):
     
     # Total for the datetime function
     total=len(pls.index)
-    
+    print('Converting lines...')
     # For every line in our dataframe
     for i in pls.index:
-        print_progress(i*100//total)
+        progress = (i+1) * 100 // total
+        if progress in [25, 50, 75, 100]:
+            print_progress(progress)
         
         # You can add a padding to the coordinates before this function
         # Calculates coordinates
@@ -219,8 +221,12 @@ def polygones2bb(polygones):
     # Total of lines to show progress
     total=len(pls.index)
     
+    print('Converting polygons...')
+    # For every line in our dataframe
     for i in pls.index:
-        print_progress(i*100//total)
+        progress = (i+1) * 100 // total
+        if progress in [25, 50, 75, 100]:
+            print_progress(progress)
         
         # Corrects DEEPSEASPY format data
         # Get the coordinates of the polygon
@@ -275,9 +281,13 @@ def points2bb(df,buffer=1):
     h= 1080
     total=len(pls.index)
     
+
+    print('Converting points...')
+    # For every line in our dataframe
     for i in range(len(pls)):
-        print_progress(i*100//total)
-        
+        progress = (i+1) * 100 // total
+        if progress in [25, 50, 75, 100]:
+            print_progress(progress)
         x_min = max(0,(pls['x1'].iloc[i]-buffer))
         x_max = min(w,(pls['x1'].iloc[i]+buffer))
         y_min = max(0,(pls['y1'].iloc[i]-buffer))
@@ -333,14 +343,21 @@ def iou_calc(bb1,bb2,s_err=None):
 
 # Converts coordinates in yolo format (from xmin, xmax, ymin, ymax to x, y, w, h)
 # Size [w,h] should contain the width and height of your image(s)
-def convert_yolo(tt,size):
+def convert_yolo(tt,path_img):
     x=[]
     y=[]
     w=[]
     h=[] 
-    dw = 1./size[0]
-    dh = 1./size[1]
+    #dw = 1./size[0]
+    #dh = 1./size[1]
+    print('Converting coordinates to Yolo format...')
     for i in range(len(tt)):
+        progress = (i+1) * 100 // len(tt)
+        if progress in [25, 50, 75, 100]:
+            print_progress(progress)
+        im = cv2.imread(os.path.join(path_img,tt['name_img'].iloc[i]))
+        dw = 1./im.shape[1]
+        dh = 1./im.shape[0]
         # Finding x and y, the center of your bounding box
         xi = (tt['xmin'].iloc[i] + tt['xmax'].iloc[i])/2.0
         yi = (tt['ymin'].iloc[i] + tt['ymax'].iloc[i])/2.0
@@ -360,10 +377,26 @@ def convert_yolo(tt,size):
 
     return(tt)
 
+def generate_color_dict(animals, colormap_name='viridis'):
+    num_animals = len(animals)
+    colors = {}
+
+    if colormap_name == 'red':
+        for animal in animals:
+            colors[animal] = (0, 0, 255)  # Rouge en RGB
+    else :
+        colormap = plt.get_cmap(colormap_name)
+        indices = np.linspace(0, 1, num_animals)  # Divise la colormap en segments égaux
+        for i, animal in enumerate(animals):
+            rgba_color = colormap(indices[i])
+            rgb_color = tuple(int(255 * c) for c in rgba_color[:3])  # Convertir en valeurs RGB 0-255
+            colors[animal] = rgb_color
+    return colors
+
 # Allows the user to visualize data with bounding boxes
 # nb_img asks for a number of images, randomly picked in your df/data
 # colors
-def vision(df,path_img,colors,path_save=None,nb_img=None):
+def vision(df,path_img,path_save=None,nb_img=None,colors=None):
     # Get every name imgs in df
     startTime=datetime.now()
     names=sorted(df['name_img'].unique())
@@ -399,6 +432,13 @@ def vision(df,path_img,colors,path_save=None,nb_img=None):
         ff = df[df['name_img'].isin(index.values())]
     else :
         ff = df
+    
+    if colors==None:
+        animals=df['name_sp'].unique()
+        colors=generate_color_dict(animals,'viridis')
+    if colors=='red':
+        animals=df['name_sp'].unique()
+        colors=generate_color_dict(animals,'red')
     
     names_flt=sorted(ff['name_img'].unique())
     total=len(names_flt)
@@ -493,7 +533,7 @@ def stomp(path):
         os.makedirs(path)
 
 # Prepare the yolo data repositories
-# This function copies images, it can generate a lot fo data depending on their size
+# This function copies images, it can generate a lot of data depending on their size
 # Also, you can change the way images are copied by writing method='move' and uncommenting the corresponding rows below
 # Because it is risky (since you could erase your data by accident), we commented it
 # Still, it may be useful depending on your needs
@@ -520,7 +560,11 @@ def prepare_yolo (df,path_save,path_img,prop=[.8,.1],method='copy',empty_images=
     
     #For each folder (train, val set)
     files=['train','val','test']
+    print('Preparing Yolo training dataset...')
     for i in range(len(sub_df)):
+        progress = (i+1) * 100 // len(sub_df)
+        if progress in [25, 50, 75, 100]:
+            print_progress(progress)
         # Create the folder for the images and labels
         stomp(os.path.join(yolo_images,files[i]))
         stomp(os.path.join(yolo_labels,files[i]))
@@ -592,7 +636,7 @@ def prepare_yolo_monofolder (df,path_save,path_img,method='copy',empty_images=Fa
 
 # Catalog allows you to extract bb out of your images to easier verify them 
 # Deleting a thubmnail and then using the next function (get_df) will give you a df without deleted bb
-def catalog(df, path_img, path_save=None,padding=None):
+def catalog(df, path_img, path_save=None,padding=0):
     startTime=datetime.now()
     
     # Lists images
@@ -621,8 +665,11 @@ def catalog(df, path_img, path_save=None,padding=None):
     
     # For each image
     total=len(list_img)
+    print('Cataloguing snapshots...')
     for i, img in enumerate(list_img):
-        print_progress(i*100//total)
+        progress = (i+1) * 100 // total
+        if progress in [25, 50, 75, 100]:
+            print_progress(progress)
         im = Image.open(img)
         image=img.parts[-1]
         sdf = df[df['name_img'] == image]
@@ -1073,14 +1120,16 @@ def unite(df_og, iou_thresh=None, grouper_0=False, nms=False):
     # Adds label column, which associates to every species a specific number
     labels=liste_especes(df)
     df['label']=df['name_sp'].map(labels)
-    
+    print('Unifying bounding boxes...')
     # For every image
     for i, image in enumerate(images):
         
         # Subset of orginal df with only image i
         tt_i = df[df['name_img'] == image]
         labels_i = tt_i['name_sp'].unique()
-        print_progress_unite(i*100//total)
+        progress = (i+1) * 100 // total
+        if progress in [25, 50, 75, 100]:
+            print_progress(progress)
         
         # For each species in the image
         for label in labels_i:
@@ -1122,7 +1171,9 @@ def unite(df_og, iou_thresh=None, grouper_0=False, nms=False):
     # For each group
     clear_line()
     for group in groupes:
-        print_groups(group*100//len(groupes))
+        progress = (group+1) * 100 // len(groupes)
+        if progress in [25, 50, 75, 100]:
+            print_progress(progress)
         temp=df[df['group'] == group]
         
         row=temp.iloc[0]

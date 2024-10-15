@@ -6,6 +6,7 @@ Provided by Ifremer, iMagine.
 
 # Citizen science and data cleaning
 In this repository, you will find a pipeline that cleans citizen science image datasets, and automatically trains a YoloV8 model on it.
+The dataset used to develop this pipeline can be found [here](https://zenodo.org/records/13759095)
 You may also use this module to run inference on a pre trained YoloV8 model, specifically on 2 species : Buccinidae and Bythograeidae.
 The pipeline converts bounding boxes from Deep Sea Spy format (lines, points, polygons) to regular bounding boxes (xmin, xmax, ymin, ymax). The conversion step is optional. It then unifies overlapping bounding boxes of each species, using the redundancy of citizen identifications as a 
 There is 3 ways to use the pipeline :
@@ -23,7 +24,7 @@ There is 3 ways to use the pipeline :
 │
 ├── deep-sea-lab            <- All of the data cleaning files
 │   ├── DeepSeaLab.ipynb    <- Notebook pipeline for data cleaning & Yolov8 training
-│   ├── Functions.py        <- Data processing file DeepSeaLab draws function from
+│   ├── Functions.py        <- Data processing file, where DeepSeaLab.ipynb draws functions from
 │   ├── Pipeline_txt.py     <- Automatic pipeline to clean the data & train Yolov8
 │   ├── config.txt          <- Configuration file for Pipeline.txt, which stores arguments to run the pipeline
 │
@@ -100,7 +101,7 @@ deepaas-run --listen-ip 0.0.0.0
 
 The data required for the pipeline is to have a folder with your images, and a .csv file containing all of your annotations.
 
-If your dataset is incomplete, it is better to remove incomplete rows rather than . Missing images will not cause problems with the pipeline.
+If your dataset is incomplete, it is better to remove incomplete rows, as they will cause errors. Missing images will not cause problems with the pipeline.
 For the conversion step, this pipeline converts data from Deep Sea Spy format :
 
 |shapes  |x1 |y1 |x2 |y2 |polygon_values|name_img|species    |
@@ -117,10 +118,9 @@ To a regular format :
 |761  |859  |364  |451  |4366.jpg|Buccinidae |
 |15   |285  |115  |679  |4366.jpg|Mussels coverage|
 
-If your data is already in this format, you can skip the conversion steps (more details in the cleaning sections).
+If your data is already in this format, you can skip the conversion steps. You may find more details in the respective cleaning section.
 
-The pipeline expects image resolution of 1920x1080. You can input images with a different size by changing width_images and height_images in the beginning of Functions.py. If you have images of varying resolutions, you can modify the functions so that they take in the type of image you have.
-
+Varying image size causes no problems as the pipeline automatically fetches the images size.
 
 # Cleaning from DeepSeaLab.ipynb
 The **Notebook** is a ready-to-use, step by step cleaning file that you can change based on your needs/dataset. This option is better for a first use of the module since the notebook brings more context and guidance to the cleaning steps.
