@@ -15,7 +15,7 @@ description: |-
   example, if you input an image containing both a cat and a dog, and the model predicts a 50% probability for the dog and 80% for
   the cat, setting the threshold to 70% will result in only the cat being detected, as its probability exceeds 70%.
   The same PREDICT method is also used for semantic segmentation and classification, where the output includes segmented objects
-   in the image or video, or the classification of objects, respectively.
+   in the image or video, or the classification of objects, respectively. The following demonstrates the outputs for classification, detection, and segmentation tasks.
    <img class='fit', src='https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch/-/blob/main/tests/data/det/catin_cls.png'/>
    <img class='fit', src='https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch/-/blob/main/tests/data/det/catindet.png'/>
    <img class='fit', src='https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch/-/blob/main/tests/data/det/catin_seg.png'/>
