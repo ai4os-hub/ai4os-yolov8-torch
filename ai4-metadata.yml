@@ -17,11 +17,11 @@ description: |-
   The same PREDICT method is also used for semantic segmentation and classification, where the output includes segmented objects
    in the image or video, or the classification of objects, respectively. The following demonstrates the outputs for classification, detection, and segmentation tasks.
  
-   <img class='fit', src='https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch/-/blob/main/tests/data/det/catin_cls.png'/>
+   <img class='fit', src='https://raw.githubusercontent.com/ai4os-hub/ai4os-yolov8-torch/main/tests/data/det/catin_cls.png'/>
    
-   <img class='fit', src='https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch/-/blob/main/tests/data/det/catindet.png'/>
+   <img class='fit', src='https://raw.githubusercontent.com/ai4os-hub/ai4os-yolov8-torch/main/tests/data/det/catindet.png'/>
    
-   <img class='fit', src='https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch/-/blob/main/tests/data/det/catin_seg.png'/>
+   <img class='fit', src='https://raw.githubusercontent.com/ai4os-hub/ai4os-yolov8-torch/main/tests/data/det/catin_seg.png'/>
   
   You can use this model to retrain it on your custom dataset. For this purpose, please refer to the README to learn how to
    structure your dataset for different tasks. After preparing the dataset, you can adjust hyperparameters, such as the learning 
