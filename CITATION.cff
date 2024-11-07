@@ -1,0 +1,54 @@
+cff-version: 1.2.0
+title: deep-species-detection
+message: >-
+  If you use this code, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - name: IFREMER
+    address: 1625 route de Sainte-Anne
+    city: Plouzané
+    post-code: "29280"
+    country: FR
+    location: Bretagne
+    website: "https://www.ifremer.fr"
+repository-code: "https://github.com/ai4os-hub/deep-species-detection"
+abstract: >-
+  This tool assists users who wish to train a deep learning
+  visual identification algorithm (Yolov8) using citizen
+  science data. It was developed with the goal of automating
+  the cleaning and training processes on data from the Deep
+  Sea Spy citizen science project.
+keywords:
+  - deep learning
+  - object detection
+  - citizen science
+  - data preparation
+license: MIT
+references:
+  - authors:
+      - name: Glenn Jocher
+        orcid: "https://orcid.org/0000-0001-2345-6789"
+      - name: Jing Qiu
+        orcid: "https://orcid.org/0000-0002-3456-7890"
+      - name: Ayush Chaurasia
+        orcid: "https://orcid.org/0000-0003-4567-8901"
+    title: Ultralytics YOLOv8
+    type: software
+    version: 8.0.0
+    year: 2023
+    license: AGPL-3.0
+    repository-code: "https://github.com/ultralytics/ultralytics"
+    url: "https://ultralytics.com"
+  - authors:
+      - name: Lebeaud Antoine
+        orcid: "https://orcid.org/0009-0009-2078-9903"
+      - name: Tosello Vanessa
+        orcid: "https://orcid.org/0009-0009-7337-5245"
+      - name: Borremans Catherine
+        orcid: "https://orcid.org/0000-0002-8328-4306"
+      - name: Matabos Marjolaine
+        orcid: "https://orcid.org/0000-0003-1983-9896"
+    title: Deep-sea observatories images labeled by citizen for object detection algorithms
+    doi: 10.17882/101899
+    type: data
