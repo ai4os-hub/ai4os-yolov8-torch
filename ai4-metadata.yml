@@ -24,6 +24,9 @@ description: |-
   You can find more information on Yolov8 here:
   * https://github.com/ultralytics/ultralytics
   * https://docs.ultralytics.com
+
+  <img class='fit', src='https://raw.githubusercontent.com/ai4os-hub/deep-species-detection/main/data/deepseaspy_annotations.png'/>
+  
 dates:
   created: '2024-08-20'
   updated: '2024-09-11'
