@@ -30,6 +30,7 @@ dates:
 links:
   source_code: https://github.com/ai4os-hub/deep-species-detection
   docker_image: ai4oshub/deep-species-detection
+  dataset: https://doi.org/10.17882/101899
   ai4_template: ai4-template/1.9.9
 tags:
   - deep learning
