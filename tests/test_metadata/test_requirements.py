@@ -43,7 +43,7 @@ def test_description(metadata):
 def test_license(metadata):
     """Tests that metadata provides license information."""
     assert "license" in metadata
-    assert metadata["license"] == "MIT"
+    assert metadata["license"] == "AGPL-3.0-only"
 
 
 def test_version(metadata):
