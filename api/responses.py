@@ -76,6 +76,76 @@ def json_response(results, **options):
         logger.warning("Error converting result to JSON: %s", err)
         raise RuntimeError("Unsupported response type") from err
 
+def pdf_response(results, **options):
+    """Converts the prediction or training results into pdf return format.
+
+    Arguments:
+        result -- Result value from call, expected dict
+        options -- Not used, added for illustration purpose.
+
+    Raises:
+        RuntimeError: Unsupported response type.
+
+    Returns:
+        Converted result into pdf buffer format.
+    """
+    logger.debug("Response result type: %d", type(results))
+    logger.debug("Response result: %d", results)
+    logger.debug("Response options: %d", options)
+
+    try:
+        merger = PdfFileMerger()
+        for element in results[0]:
+            # result.append(element.plot())
+            im = Image.fromarray(
+                element.plot(
+                    labels=options["show_labels"],
+                    conf=options["show_conf"],
+                    boxes=options["show_boxes"],
+                )
+            )
+            im = im.convert("RGB")
+            buffer = BytesIO()
+            buffer.name = "output.pdf"
+            im.save(buffer)
+            merger.append(buffer)
+            buffer.seek(0)
+        buffer_out = BytesIO()
+        merger.write(buffer_out)
+        buffer_out.name = "output.pdf"
+        buffer_out.seek(0)
+        return buffer_out
+    except Exception as err:  # TODO: Fix to specific exception
+        logger.warning("Error converting result to pdf: %s", err)
+        raise RuntimeError("Unsupported response type") from err
+
+
+def png_response(results, **options):
+    logger.debug("Response result type: %d", type(results))
+    logger.debug("Response result: %d", results)
+    logger.debug("Response options: %d", options)
+    try:
+        for result in results[0]:
+            # this will return a numpy array with the labels
+            result = result.plot(
+                labels=options["show_labels"],
+                conf=options["show_conf"],
+                boxes=options["show_boxes"],
+                font_size=6.0,
+            )
+            success, buffer = cv2.imencode(".png", result)
+            if not success:
+                return "Error encoding image", 500
+
+            # Create a BytesIO object and write the buffer into it
+            image_buffer = BytesIO(buffer)
+
+        return image_buffer
+    except Exception as err:  # TODO: Fix to specific exception
+        logger.warning("Error converting result to png: %s", err)
+        raise RuntimeError("Unsupported response type") from err
+
+
 def create_video_in_buffer(frame_arrays, output_format="mp4"):
     height, width, _ = frame_arrays[0].shape
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
