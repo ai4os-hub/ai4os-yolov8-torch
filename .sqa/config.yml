@@ -28,4 +28,4 @@ sqa_criteria:
 environment:
   LANG: C.UTF-8
 
-timeout: 600
+timeout: 900
