@@ -2,7 +2,6 @@ metadata_version: 2.0.0
 title: YoloV8 model
 summary: Object detection using YoloV8 model
 description: |-
-
   Ultralytics YOLOv8 represents the forefront of object detection (segmentation/classification) models incorporating advancements from   prior YOLO iterations while introducing novel features to enhance performance and versatility. 
 
   YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, oriented bounding boxes detection, tracking, instance segmentation, and image classification.
