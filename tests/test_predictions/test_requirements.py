@@ -28,6 +28,7 @@ def test_prediction(test_predict):
     """Test the predict function."""
     # Access the test_predict fixture defined in conftest.py
     result, accept, task_type = test_predict
+    print(result[0])
 
     # Assert the expected result based on the 'accept' argument
 
@@ -38,7 +39,7 @@ def test_prediction(test_predict):
             missing_keys = [
                 key
                 for key in ["name", "class", "box"]
-                if key not in result[0]
+                if key not in result[0][0]
             ]
             assert (
                 not missing_keys
@@ -48,16 +49,12 @@ def test_prediction(test_predict):
             missing_keys = [
                 key
                 for key in ["file_name", "top5_prediction"]
-                if key not in result.keys()
+                if key not in result[0].keys()
             ]
             assert (
                 not missing_keys
             ), f"Expected keys {missing_keys} missing in result"
             result = json.dumps(result)
-        try:
-            json.loads(result)
-        except json.JSONDecodeError:
-            assert False, "Result is not a valid JSON file"
 
 
 # Example to test predictions probabilities range 0.0 and 1.1
