@@ -22,7 +22,7 @@ LABEL version='0.1.0'
 # Add deep api to yolov8 model
 
 # What user branch to clone [!]
-ARG branch=main
+ARG branch=mlflow
 
 # Install Ubuntu packages
 # - gcc is needed in Pytorch images because deepaas installation might break otherwise (see docs) (it is already installed in tensorflow images)
