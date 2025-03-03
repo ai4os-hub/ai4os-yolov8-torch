@@ -166,9 +166,9 @@ def train(**args):
         settings.update(
             {
                 "mlflow": False,
-                "datasets_dir": config.DATA_PATH,
-                "model_dir": config.MODELS_PATH,
-                "wandb": str(args["disable_wandb"]),
+                #"datasets_dir": config.DATA_PATH,
+              #  "model_dir": config.MODELS_PATH,
+                "wandb": args["disable_wandb"],
             }
         )
         # Modify the model name based on task type
