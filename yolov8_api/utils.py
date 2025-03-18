@@ -43,6 +43,7 @@ if "MLFLOW_TRACKING_URI" not in os.environ:
     mlflow.set_tracking_uri(mlflow_runs_path)
 else:
     mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
+ 
 
 
 client = MlflowClient(tracking_uri=mlflow.get_tracking_uri())
@@ -206,7 +207,9 @@ import pandas as pd
 def mlflow_logging(model, num_epochs, args):
     mlflow.end_run()  # stop any previous active mlflow run
     # mlflow.set_tracking_uri(os.environ["MLFLOW_TRACKING_URI"])
-
+    os.environ["MLFLOW_EXPERIMENT_NAME"] = os.getenv(
+        "MLFLOW_EXPERIMENT_NAME", default="yolov8"
+    )
     metrics = {}
 
     with mlflow.start_run(run_name=args["name"], nested=True):
@@ -319,12 +322,9 @@ def mlflow_logging(model, num_epochs, args):
         #sum_model_info_df = pd.DataFrame(summary_model_info)
 
         # logs params in mlflow
-        if get_git_info is not None:
-            git_repo, version = get_git_info()
-            git_info = {"git_repo": git_repo, "git_version": version}
-            merged_params = {
+ 
+        merged_params = {
                 **vars(model.trainer.model.args),
-                **git_info,
                 **summary_model_info
             }
         run.log_params(merged_params)
