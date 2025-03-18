@@ -26,6 +26,17 @@ MODEL_LIST = [
     "yolov8l.pt",
     "yolov8x.yaml",
     "yolov8x.pt",
+    "yolov9c.yaml",
+    "yolov9c.pt",
+    "yolov9e.pt",
+    "yolov9e.yaml",
+    "yolov9t.pt",
+    "yolov9t.yaml",
+    "yolov9s.pt",
+    "yolov9s.yaml",
+    "yolov9m.pt",
+    "yolov9m.yaml",
+
 ]
 # Default AI model
 MODEL_NAME = os.getenv("MODEL_NAME", default="yolov8_api")
