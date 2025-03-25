@@ -1,0 +1,57 @@
+defaults:
+  - override hydra/sweeper: optuna
+
+mlflow_project: hpo_yolov8_kitti
+mlflow_parent: basic_train_params_loss_30epochs_640imgsz
+
+hydra:
+  sweep:
+    dir: tmp_multirun
+  sweeper:
+    _target_: hydra_plugins.hydra_optuna_sweeper.optuna_sweeper.OptunaSweeper
+    sampler:
+      seed: 815
+    direction: maximize
+    n_trials: 30
+    n_jobs: 1
+    params:
+      train_params.optimizer: choice(SGD, Adam, AdamW)
+      train_params.lr0: interval(0.001, 0.2)
+      train_params.momentum: interval(0.6, 0.999)
+      train_params.weight_decay: interval(0.00001, 0.001)
+      train_params.box: interval(0.0, 10.0)
+      train_params.cls: interval(0.0, 10.0)
+      train_params.dfl: interval(0.0, 10.0)
+
+train_params:
+    model: yolov8m.pt
+    epochs: 40
+    patience: 10
+    # loss params
+    box: 7.5
+    cls: 0.5
+    dfl: 1.5
+    # train params
+    optimizer: 'auto'
+    cos_lr: False
+    lr0: 0.01
+    momentum: 0.937
+    weight_decay: 0.0005
+    # default params
+    data: &data configs/kitti.yaml
+    batch: &batch 16
+    imgsz: &imgsz 640
+    save: True
+    cache: True
+    device: &device 0
+    workers: 8
+    rect: &rect True
+    plots: &plots True
+val_test_params:
+    # default params
+    data: *data
+    imgsz: *imgsz
+    batch: *batch
+    device: *device
+    plots: *plots
+    rect: *rect
