@@ -36,7 +36,8 @@ apt install -y libglib2.0-0
 │   ├── README.md           <- Instructions on how to integrate your model with DEEPaaS.
 │   ├── __init__.py         <- Makes <your-model-source> a Python module
 │   ├── ...                 <- Other source code files
-│   └── config.py           <- Module to define CONSTANTS used across the AI-model python package
+│   └── config.py   <- Module to define CONSTANTS used across the AI-model python package
+│   └── hpo_yolov8 <- Hyperparameter Optimization using Optuna + Hydra + MLflow
 │
 ├── api                     <- API subpackage for the integration with DEEP API
 │   ├── __init__.py         <- Makes api a Python module, includes API interface methods
@@ -247,4 +248,8 @@ You can utilize the Swagger interface to upload your images or videos and obtain
 
     - A video with bounding boxes delineating objects of interest throughout.
     - A JSON string accompanying each frame, supplying bounding box coordinates, object names within the boxes, and confidence scores for the detected objects.
+
+# Hyperparameter Optimization using Optuna + Hydra + MLflow
+
+Please refer to the `README.md` inside the `yolov8_api/hpo_yolov8` directory to see how you can use these tools to automatically optimize YOLOv8 hyperparameters from the command line.
 
