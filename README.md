@@ -3,7 +3,12 @@
 [![Build Status](https://jenkins.services.ai4os.eu/buildStatus/icon?job=AI4OS-hub/ai4os-yolov8-torch/main)](https://jenkins.services.ai4os.eu/job/AI4OS-hub/job/ai4os-yolov8-torch/job/main/)
 
 Ultralytics YOLOv8 represents the forefront of object detection models, incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, ororiented bounding boxes detection, tracking, instance segmentation, and image classification. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
-
+This model suports: 
+- Integrated with DEEPaaS API (platform support)
+- Dockerized
+- Supports MLflow
+- Hyperparameter optimization with Hydra, Optuna & MLflow
+  
 # 🔌 Integrating DeepaaS API with YOLOv8
 In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv8, enabling the seamless utilization of this pipeline. The inclusion of the DeepaaS API enhances the functionality and accessibility of the code, making it easier for users to leverage and interact with the pipeline efficiently.
 
@@ -253,3 +258,10 @@ You can utilize the Swagger interface to upload your images or videos and obtain
 
 Please refer to the `README.md` inside the `yolov8_api/hpo_yolov8` directory to see how you can use these tools to automatically optimize YOLOv8 hyperparameters from the command line.
 
+## 📚 References
+
+- [Ultralytics YOLOv8 Documentation](https://docs.ultralytics.com/)
+- [Hydra – Elegant Configuration Management](https://hydra.cc/)
+- [Hydra Optuna Sweeper Plugin](https://github.com/facebookresearch/hydra/tree/main/plugins/hydra_optuna_sweeper)
+- [Optuna – Hyperparameter Optimization Framework](https://optuna.org/)
+- [MLflow – Open Source Experiment Tracking](https://mlflow.org/)
