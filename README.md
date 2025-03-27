@@ -4,10 +4,10 @@
 
 Ultralytics YOLOv8 represents the forefront of object detection models, incorporating advancements from prior YOLO iterations while introducing novel features to enhance performance and versatility. YOLOv8 prioritizes speed, precision, and user-friendliness, positioning itself as an exceptional solution across diverse tasks such as object detection, ororiented bounding boxes detection, tracking, instance segmentation, and image classification. Its refined architecture and innovations make it an ideal choice for cutting-edge applications in the field of computer vision.
 
-# Adding DeepaaS API into the existing codebase
+# 🔌 Integrating DeepaaS API with YOLOv8
 In this repository, we have integrated a DeepaaS API into the  Ultralytics YOLOv8, enabling the seamless utilization of this pipeline. The inclusion of the DeepaaS API enhances the functionality and accessibility of the code, making it easier for users to leverage and interact with the pipeline efficiently.
 
-# Install the API 
+# 🛠️ Install the API
 To launch the API, first, install the package, and then run DeepaaS:
 ``` bash
 git clone --depth 1 https://codebase.helmholtz.cloud/m-team/ai/ai4os-yolov8-torch.git
@@ -24,7 +24,7 @@ apt install -y libgl1
 apt install -y libglib2.0-0
 ```
 
-## Project structure
+## 📂Project structure
 
 ```
 ├── Jenkinsfile             <- Describes basic Jenkins CI/CD pipeline
@@ -84,7 +84,7 @@ apt install -y libglib2.0-0
 └── tox.ini                <- tox file with settings for running tox; see tox.testrun.org
 ```
 
-# Environment variables settings
+# ⚙️ Environment variables settings
 "In `./api/config.py` you can configure several environment variables:
 
 - `DATA_PATH`: Path definition for the data folder; the default is './data'.
@@ -93,7 +93,7 @@ apt install -y libglib2.0-0
 - `YOLOV8_DEFAULT_TASK_TYPE`: Specify the default tasks related to your work among detection (det), segmentation (seg), and classification (cls).
 - `YOLOV8_DEFAULT_WEIGHTS`: Define default timestamped weights for your trained models to be used during prediction. If no timestamp is specified by the user during prediction, the first model in YOLOV8_DEFAULT_WEIGHTS will be used. If it is set to None, the Yolov8n trained on coco/imagenet will be used. Format them as timestamp1, timestamp2, timestamp3, ..."
 
-# Track your experiments with Mlfow
+# 📊 Track Your Experiments with MLflow
 If you want to use Mflow to track and log your experiments, you should first set the following environment variables:
 - `MLFLOW_TRACKING_URI`
 - `MLFLOW_TRACKING_USERNAME`
@@ -109,7 +109,7 @@ optional options:
 - Then you should set the argument `Enable_MLFLOW` to `True` during the execution of the training.
 
 
-# Dataset Preparation
+# 📁 Dataset Preparation
 - Detection (det), oriented bounding boxes detection (obb) and Segmentation Tasks (seg):
 
     - To train the yolov8 model, your annotations should be saved as yolo formats (.txt). Please organize your data in the following structure:
@@ -202,7 +202,7 @@ data/
 ai4os-yolov8-torch/yolov8_api/seg_coco_json_to_yolo.py #for segmentation
 ai4os-yolov8-torch/yolov8_api/preprocess_ann.py #For detection
 ``` 
-# Available Models
+# 📦 Available Models
 
 The Ultralytics YOLOv8 model can be used to train multiple tasks including classification, detection, and segmentatio.
 To train the model based on your project, you can select on of the task_type option in the training arguments and the corresponding model will be loaded and trained.
@@ -223,7 +223,7 @@ for each task, you can select the model arguments among the following options:
 `yolov8X.yaml` bulid a model from scratch and
 `yolov8X.pt` load a pretrained model (recommended for training).
 
-# Launching the API
+# 🚀 Launching the API
 
 To train the model, run:
 ```
@@ -235,7 +235,7 @@ Then, open the Swagger interface, change the hyperparameters in the train sectio
 
 ><span style="color:Blue">**Note:**</span> Augmentation Settings:
 among the training arguments, there are options related to augmentation, such as flipping, scaling, etc. The default values are set to automatically activate some of these options during training. If you want to disable augmentation entirely or partially, please review the default values and adjust them accordingly to deactivate the desired augmentations.
-# Inference Methods
+# 🔍 Inference Methods
 
 You can utilize the Swagger interface to upload your images or videos and obtain the following outputs:
 
@@ -249,7 +249,7 @@ You can utilize the Swagger interface to upload your images or videos and obtain
     - A video with bounding boxes delineating objects of interest throughout.
     - A JSON string accompanying each frame, supplying bounding box coordinates, object names within the boxes, and confidence scores for the detected objects.
 
-# Hyperparameter Optimization using Optuna + Hydra + MLflow
+# ⚡ Hyperparameter Optimization using Optuna + Hydra + MLflow
 
 Please refer to the `README.md` inside the `yolov8_api/hpo_yolov8` directory to see how you can use these tools to automatically optimize YOLOv8 hyperparameters from the command line.
 
